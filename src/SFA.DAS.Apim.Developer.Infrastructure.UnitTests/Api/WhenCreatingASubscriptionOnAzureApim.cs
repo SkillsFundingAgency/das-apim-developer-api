@@ -15,7 +15,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
     public class WhenCreatingASubscriptionOnAzureApim
     {
         [Test, AutoData]
-        public async Task Then_The_Endpoint_Is_Called_And_CourseDirectory_Data_Returned(
+        public async Task Then_The_Endpoint_Is_Called_And_Subscription_Created(
             string apiKey,
             string apimManagementUrl)
         {

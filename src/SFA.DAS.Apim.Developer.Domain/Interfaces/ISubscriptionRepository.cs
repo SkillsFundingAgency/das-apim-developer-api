@@ -7,7 +7,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface ISubscriptionRepository
     {
-        Task Insert(Subscription subscription);
+        Task<Guid> Insert(Subscription subscription);
         Task<Subscription> Get(Guid id);
         Task<IEnumerable<Subscription>> GetAll();
     }

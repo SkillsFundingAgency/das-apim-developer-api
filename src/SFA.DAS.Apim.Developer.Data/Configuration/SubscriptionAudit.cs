@@ -13,6 +13,7 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
             builder.Property(x => x.SubscriptionId).HasColumnName("SubscriptionId").HasColumnType("uniqueidentifier").IsRequired();
             builder.Property(x => x.UserRef).HasColumnName("UserRef").HasColumnType("string").IsRequired();
             builder.Property(x => x.Action).HasColumnName("Action").HasColumnType("varchar").HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Timestamp).HasColumnName("Timestamp").HasColumnType("datetime").IsRequired();
             
             builder.HasOne(c => c.Subscription).WithMany(c => c.SubscriptionAudits)
                    .HasForeignKey(c => c.SubscriptionId).OnDelete(DeleteBehavior.Restrict);

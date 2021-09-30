@@ -8,6 +8,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Entities
         public Guid SubscriptionId { get; set; }
         public string UserRef { get; set; }
         public string Action { get; set; }
+        public DateTime Timestamp { get; set; }
 
         public virtual Subscription Subscription { get; set; }
     }

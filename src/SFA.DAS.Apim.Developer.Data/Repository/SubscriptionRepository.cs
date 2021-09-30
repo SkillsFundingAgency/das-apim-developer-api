@@ -16,10 +16,11 @@ namespace SFA.DAS.Apim.Developer.Data.Repository
             _apimDeveloperDataContext = apimDeveloperDataContext;
         }
 
-        public async Task Insert(Subscription subscription)
+        public async Task<Guid> Insert(Subscription subscription)
         {
             await _apimDeveloperDataContext.Subscription.AddAsync(subscription);
             _apimDeveloperDataContext.SaveChanges();
+            return subscription.Id;
         }
         public async Task<Subscription> Get(Guid id)
         {

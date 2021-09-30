@@ -16,11 +16,6 @@ namespace SFA.DAS.Apim.Developer.Data.Repository
             _apimDeveloperDataContext = apimDeveloperDataContext;
         }
 
-        public async Task Insert(SubscriberType subscriberType)
-        {
-            await _apimDeveloperDataContext.SubscriberType.AddAsync(subscriberType);
-            _apimDeveloperDataContext.SaveChanges();
-        }
         public async Task<SubscriberType> Get(string name)
         {
             var subscriberType = await _apimDeveloperDataContext

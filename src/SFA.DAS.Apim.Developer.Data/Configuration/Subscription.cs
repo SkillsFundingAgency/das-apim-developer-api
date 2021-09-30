@@ -18,7 +18,7 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
             builder.HasIndex(x => x.Id).IsUnique();
 
             builder.HasOne(c => c.SubscriberType).WithMany(c => c.Subscriptions)
-                   .HasForeignKey(c => c.SubscriberTypeId);
+                   .HasForeignKey(c => c.SubscriberTypeId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

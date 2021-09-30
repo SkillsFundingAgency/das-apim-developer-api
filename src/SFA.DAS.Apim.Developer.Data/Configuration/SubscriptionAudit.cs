@@ -15,7 +15,7 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
             builder.Property(x => x.Action).HasColumnName("Action").HasColumnType("varchar").HasMaxLength(50).IsRequired();
             
             builder.HasOne(c => c.Subscription).WithMany(c => c.SubscriptionAudits)
-                   .HasForeignKey(c => c.SubscriptionId);
+                   .HasForeignKey(c => c.SubscriptionId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

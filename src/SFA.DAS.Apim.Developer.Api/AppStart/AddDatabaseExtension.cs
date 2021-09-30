@@ -17,7 +17,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             }
             else if (environmentName.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
             {
-                services.AddDbContext<ApimDeveloperDataContext>(options => options.UseSqlServer(config.DbConnectionString), ServiceLifetime.Transient);
+                services.AddDbContext<ApimDeveloperDataContext>(options => options.UseSqlServer(config.ConnectionString), ServiceLifetime.Transient);
             }
             else
             {

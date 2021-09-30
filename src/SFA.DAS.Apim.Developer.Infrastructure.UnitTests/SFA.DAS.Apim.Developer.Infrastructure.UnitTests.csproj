@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="5.10.3" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.5" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.6" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+        <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="3.0.169" />
+        <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.Apim.Developer.Domain\SFA.DAS.Apim.Developer.Domain.csproj" />
+      <ProjectReference Include="..\SFA.DAS.Apim.Developer.Infrastructure\SFA.DAS.Apim.Developer.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -26,7 +26,7 @@ namespace SFA.DAS.Apim.Developer.Data.Repository
         {
             var subscription = await _apimDeveloperDataContext
                 .Subscription
-                .SingleOrDefaultAsync(c => c.Id.Equals(id));
+                .FindAsync(id);
             return subscription;
         }
 

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D69FDF88-CF86-4B9D-8CF3-307E9FC1C91D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Api", "SFA.DAS.Apim.Developer.Api\SFA.DAS.Apim.Developer.Api.csproj", "{4BFAFA0C-06BE-453F-9044-84CFF625A2C6}"

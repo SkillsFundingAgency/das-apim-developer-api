@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <Name>SFA.DAS.APIMDeveloper.Database</Name>
+    <Name>SFA.DAS.Apim.Developer.Database</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{8a55eb79-ed7b-47e9-a3eb-b5043371c356}</ProjectGuid>
@@ -12,8 +12,8 @@
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
-    <RootNamespace>SFA.DAS.APIMDeveloper.Database</RootNamespace>
-    <AssemblyName>SFA.DAS.APIMDeveloper.Database</AssemblyName>
+    <RootNamespace>SFA.DAS.Apim.Developer.Database</RootNamespace>
+    <AssemblyName>SFA.DAS.Apim.Developer.Database</AssemblyName>
     <ModelCollation>1033, CI</ModelCollation>
     <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
     <DeployToDatabase>True</DeployToDatabase>
@@ -58,10 +58,8 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
-    <Folder Include="Schemas" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Schemas\apim_dev.sql" />
     <Build Include="Tables\SubscriberType.sql" />
     <Build Include="Tables\Subscription.sql" />
     <Build Include="Tables\SubscriptionAudit.sql" />

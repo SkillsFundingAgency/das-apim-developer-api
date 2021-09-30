@@ -20,6 +20,7 @@ using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Apim.Developer.Api.AppStart;
 using SFA.DAS.Apim.Developer.Api.Infrastructure;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
+using SFA.DAS.Apim.Developer.Data;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
 
@@ -29,7 +30,7 @@ namespace SFA.DAS.Apim.Developer.Api
     {
         private readonly IConfigurationRoot _configuration;
 
-        public Startup (IConfiguration configuration)
+        public Startup(IConfiguration configuration)
         {
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
@@ -43,7 +44,7 @@ namespace SFA.DAS.Apim.Developer.Api
                     .AddJsonFile("appsettings.json", true)
                     .AddJsonFile("appsettings.Development.json", true);
 #endif
-                
+
                 config.AddAzureTableStorage(options =>
                     {
                         options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
@@ -53,7 +54,7 @@ namespace SFA.DAS.Apim.Developer.Api
                     }
                 );
             }
-            
+
             _configuration = config.Build();
         }
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -61,11 +62,17 @@ namespace SFA.DAS.Apim.Developer.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+            services.Configure<ApimDeveloperApiConfiguration>(_configuration.GetSection("ApimDeveloperApi"));
+            services.AddSingleton(cfg => cfg.GetService<IOptions<ApimDeveloperApiConfiguration>>().Value);
             services.Configure<AzureActiveDirectoryConfiguration>(_configuration.GetSection("AzureAd"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<AzureActiveDirectoryConfiguration>>().Value);
             services.Configure<AzureApimManagementConfiguration>(_configuration.GetSection("AzureApimManagement"));
             services.AddSingleton(cfg => cfg.GetService<IOptions<AzureApimManagementConfiguration>>().Value);
-            
+
+            var apimDeveloperApiConfiguration = _configuration
+                .GetSection("ApimDeveloperApi")
+                .Get<ApimDeveloperApiConfiguration>();
+
             if (!ConfigurationIsLocalOrDev())
             {
                 var azureAdConfiguration = _configuration
@@ -79,16 +86,23 @@ namespace SFA.DAS.Apim.Developer.Api
 
                 services.AddAuthentication(azureAdConfiguration, policies);
             }
-            
+
+            if (_configuration["Environment"] != "DEV")
+            {
+                services.AddHealthChecks()
+                    .AddDbContextCheck<ApimDeveloperDataContext>();
+            }
+
             services.AddMediatR(typeof(CreateUserSubscriptionCommand).Assembly);
             services.AddServiceRegistration();
-            
+            services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
+
             services
                 .AddMvc(o =>
                 {
                     if (!ConfigurationIsLocalOrDev())
                     {
-                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string>{PolicyNames.DataLoad}));
+                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string> { PolicyNames.DataLoad }));
                     }
                     o.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
@@ -100,7 +114,8 @@ namespace SFA.DAS.Apim.Developer.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApimDeveloperApi", Version = "v1" });
                 c.OperationFilter<SwaggerVersionHeaderFilter>();
             });
-            services.AddApiVersioning(opt => {
+            services.AddApiVersioning(opt =>
+            {
                 opt.ApiVersionReader = new HeaderApiVersionReader("X-Version");
             });
             services.AddLogging();
@@ -115,14 +130,14 @@ namespace SFA.DAS.Apim.Developer.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApimDeveloperApi");
                 c.RoutePrefix = string.Empty;
             });
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseAuthentication();
-            
+
             if (_configuration["Environment"] != "DEV")
             {
                 app.UseHealthChecks();
@@ -136,7 +151,7 @@ namespace SFA.DAS.Apim.Developer.Api
                     pattern: "api/{controller=Subscriptions}/{action=Index}/{id?}");
             });
         }
-        
+
         private bool ConfigurationIsLocalOrDev()
         {
             return _configuration["Environment"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) ||

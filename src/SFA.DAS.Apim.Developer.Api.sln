@@ -6,13 +6,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Api"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Infrastructure", "SFA.DAS.Apim.Developer.Infrastructure\SFA.DAS.Apim.Developer.Infrastructure.csproj", "{CAC7C7D0-4044-40CA-A105-1D6A9416AABE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Data", "SFA.DAS.Apim.Developer.Data\SFA.DAS.Apim.Developer.Data.csproj", "{902AE784-739F-431B-A592-5746E2116DE7}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Domain", "SFA.DAS.Apim.Developer.Domain\SFA.DAS.Apim.Developer.Domain.csproj", "{848B7160-D85E-4FC5-93A9-382388C54A07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Infrastructure.UnitTests", "SFA.DAS.Apim.Developer.Infrastructure.UnitTests\SFA.DAS.Apim.Developer.Infrastructure.UnitTests.csproj", "{BF957187-983A-45DF-863C-0FCFB19E76FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Application", "SFA.DAS.Apim.Developer.Application\SFA.DAS.Apim.Developer.Application.csproj", "{5807BEBA-AE53-4284-9CC6-32FEF2CB8F41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.APIMDeveloper.Database", "SFA.DAS.APIMDeveloper.Database\SFA.DAS.APIMDeveloper.Database.sqlproj", "{8A55EB79-ED7B-47E9-A3EB-B5043371C356}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Database", "SFA.DAS.Apim.Developer.Database\SFA.DAS.Apim.Developer.Database.sqlproj", "{8A55EB79-ED7B-47E9-A3EB-B5043371C356}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.Apim.Developer.Application.UnitTests", "SFA.DAS.Apim.Developer.Application.UnitTests\SFA.DAS.Apim.Developer.Application.UnitTests.csproj", "{93748851-A78C-4FBE-9CF7-CCAE18AEB693}"
 EndProject

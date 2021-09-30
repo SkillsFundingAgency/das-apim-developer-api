@@ -25,6 +25,7 @@
 </ItemGroup>
 <ItemGroup>
   <ProjectReference Include="..\SFA.DAS.Apim.Developer.Application\SFA.DAS.Apim.Developer.Application.csproj" />
+  <ProjectReference Include="..\SFA.DAS.Apim.Developer.Data\SFA.DAS.Apim.Developer.Data.csproj" />
   <ProjectReference Include="..\SFA.DAS.Apim.Developer.Domain\SFA.DAS.Apim.Developer.Domain.csproj" />
   <ProjectReference Include="..\SFA.DAS.Apim.Developer.Infrastructure\SFA.DAS.Apim.Developer.Infrastructure.csproj" />
 </ItemGroup>

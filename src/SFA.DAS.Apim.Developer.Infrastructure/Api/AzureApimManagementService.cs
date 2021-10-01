@@ -32,7 +32,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
         public async Task CreateSubscription(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
         {
-            var uri = $"{AzureResource}{AzureSubscriptionId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview";
+            var uri = $"{AzureResource}{AzureApimResourceId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview";
             var body = new PutSubscriptionRequest
             {
                 properties = new PutSubscriptionRequest.PutSubscriptionRequestProperties

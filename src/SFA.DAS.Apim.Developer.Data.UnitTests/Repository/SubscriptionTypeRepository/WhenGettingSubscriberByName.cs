@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Data.UnitTests.DatabaseMock;
@@ -48,8 +45,7 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.Repository.SubscriptionTypeRepos
 
             //Assert
             Assert.IsNotNull(subscriberType);
-            subscriberType.Should().BeEquivalentTo(_subscriberTypes.SingleOrDefault(c=>c.Name.Equals(ExpectedSubscriberTypeName)));
-
+            subscriberType.Should().BeEquivalentTo(_subscriberTypes.SingleOrDefault(c => c.Name.Equals(ExpectedSubscriberTypeName)));
         }
     }
 }

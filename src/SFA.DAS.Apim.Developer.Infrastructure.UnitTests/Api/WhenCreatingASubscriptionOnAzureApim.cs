@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
@@ -16,14 +17,14 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
     {
         [Test, AutoData]
         public async Task Then_The_Endpoint_Is_Called_And_Subscription_Created(
-            string apiKey,
-            string apimManagementUrl)
+            string apimServiceName)
         {
+            //TODO: fix
+
             //Arrange
-            apimManagementUrl = $"https://test.local/{apimManagementUrl}";
             var configuration = new Mock<IOptions<AzureApimManagementConfiguration>>();
-            configuration.Setup(x => x.Value.Key).Returns(apiKey);
-            configuration.Setup(x => x.Value.Url).Returns(apimManagementUrl);
+            var tokenProvider = new Mock<AzureServiceTokenProvider>();
+            configuration.Setup(x => x.Value.ApimServiceName).Returns(apimServiceName);
             var response = new HttpResponseMessage
             {
                 Content = new StringContent(JsonConvert.SerializeObject("")),
@@ -31,13 +32,13 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             };
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(apimManagementUrl), HttpMethod.Post);
             var client = new HttpClient(httpMessageHandler.Object);
-            var apprenticeshipService = new AzureApimManagementService(client, configuration.Object);
-            
+            var apprenticeshipService = new AzureApimManagementService(client, configuration.Object, tokenProvider.Object);
+
             //Act
             await apprenticeshipService.CreateSubscription();
-            
+
             //Assert
-            
+
         }
     }
 }

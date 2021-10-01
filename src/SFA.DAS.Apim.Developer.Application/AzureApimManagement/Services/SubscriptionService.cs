@@ -7,9 +7,19 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 {
     public class SubscriptionService : ISubscriptionService
     {
-        public Task<Guid> CreateUserSubscription(Subscription subscription)
+        private readonly IAzureApimManagementService _azureApimManagementService;
+
+        public SubscriptionService(IAzureApimManagementService azureApimManagementService)
         {
-            throw new NotImplementedException();
+            _azureApimManagementService = azureApimManagementService;
+        }
+
+        public async Task<Guid> CreateUserSubscription(Subscription subscription)
+        {
+            //TODO: 
+            await _azureApimManagementService.CreateSubscription("subscriptionId", "subscriberType", "internalUserRef", "apimUserId", "productId");
+
+            return new Guid();
         }
     }
 }

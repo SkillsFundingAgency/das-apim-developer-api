@@ -21,7 +21,6 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             }
             else
             {
-                services.AddSingleton(new AzureServiceTokenProvider());
                 services.AddDbContext<ApimDeveloperDataContext>(ServiceLifetime.Transient);
             }
 

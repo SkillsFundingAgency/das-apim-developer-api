@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -13,6 +14,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
+using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using SFA.DAS.Apim.Developer.Infrastructure.Api;
 using SFA.DAS.Apim.Developer.Infrastructure.Models;
 
@@ -25,7 +27,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             string authToken,
             string azureSubscriptionId,
             string apimResourceId,
-            string apimServiceName)
+            string apimServiceName,
+            AzureResourcesResponse.AzureResource azureResourcesResponse)
         {
 
             //Arrange
@@ -36,11 +39,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             var config = new AzureApimManagementConfiguration { ApimServiceName = apimServiceName };
             apimResourceConfiguration.Setup(x => x.Value).Returns(config);
 
-            var subsUrl = "/subscriptions?api-version=2020-01-01";
-            var subsExpectedUrl = $"https://management.azure.com{subsUrl}";
-
-            var apimResourceUrl = $"/subscriptions/{azureSubscriptionId}/resources?$filter=resourceType eq 'Microsoft.ApiManagement/service' and name eq '{apimResourceConfiguration.Object.Value.ApimServiceName}'&api-version=2021-04-01";
-            var apimResourceExpectedUrl = $"https://management.azure.com{apimResourceUrl}";
+            var subsExpectedUrl = $"https://management.azure.com/{new GetAzureSubscriptionsRequest().GetUrl}";
+            var apimResourceExpectedUrl = $"https://management.azure.com/{new GetAzureResourcesRequest(azureSubscriptionId, config.ApimServiceName).GetUrl}";
 
             var subsResponse = new HttpResponseMessage
             {
@@ -57,23 +57,16 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
                 })),
                 StatusCode = HttpStatusCode.OK
             };
-            var subsGetTestRequest = new AzureSubscriptionsRequest { GetUrl = subsUrl };
-
+            
+            azureResourcesResponse.id = apimResourceId;
             var apimResourcesResponse = new HttpResponseMessage
             {
                 Content = new StringContent(JsonConvert.SerializeObject(new AzureResourcesResponse
                 {
-                    value = new List<AzureResourcesResponse.AzureResource>{
-                        new AzureResourcesResponse.AzureResource
-                        {
-                            id = apimResourceId,
-                            name = "apim"
-                        }
-                    }
+                    value = new List<AzureResourcesResponse.AzureResource>{ azureResourcesResponse }
                 })),
                 StatusCode = HttpStatusCode.OK
             };
-            var apimResourcesGetTestRequest = new AzureResourcesRequest { GetUrl = apimResourceUrl };
 
             var subsHttpMessageHandler = MessageHandler.SetupMessageHandlerMock(subsResponse, new Uri(subsExpectedUrl), HttpMethod.Get);
             var apimResourcesHttpMessageHandler = MessageHandler.SetupMessageHandlerMock(apimResourcesResponse, new Uri(apimResourceExpectedUrl), HttpMethod.Get, subsHttpMessageHandler);
@@ -100,13 +93,13 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
                     "SendAsync", Times.Once(),
                     ItExpr.Is<HttpRequestMessage>(c =>
                         c.Method.Equals(HttpMethod.Get)
-                        && c.RequestUri.AbsoluteUri.Equals(apimResourceExpectedUrl)
+                        && c.RequestUri.Equals(new Uri(apimResourceExpectedUrl))
                         && c.Headers.Authorization.Scheme.Equals("Bearer")
                         && c.Headers.Authorization.Parameter.Equals(authToken)),
                     ItExpr.IsAny<CancellationToken>()
                 );
 
-            actualResult.Equals(apimResourceId);
+            actualResult.Should().Be(apimResourceId);
         }
     }
 }

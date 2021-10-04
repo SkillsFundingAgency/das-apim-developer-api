@@ -2,7 +2,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface IPutRequest
     {
-        string PostUrl { get; }
+        string PutUrl { get; }
         object Data { get; set; }       
     }
 }

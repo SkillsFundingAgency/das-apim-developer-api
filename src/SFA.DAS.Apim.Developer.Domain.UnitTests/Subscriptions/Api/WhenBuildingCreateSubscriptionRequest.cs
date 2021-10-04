@@ -1,7 +1,6 @@
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 
 namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
@@ -18,7 +17,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
         {
             var actual = new CreateSubscriptionRequest(subscriptionId, subscriberType, internalUserRef, apimUserId, productId);
 
-            actual.PostUrl.Should().Be($"/subscriptions/{subscriptionId}?api-version=2021-04-01-preview");
+            actual.PutUrl.Should().Be($"/subscriptions/{subscriptionId}?api-version=2021-04-01-preview");
             var actualData = (CreateSubscriptionRequestBody)actual.Data;
             actualData.Properties.DisplayName.Should().Be($"{subscriberType}-{internalUserRef}");
             actualData.Properties.OwnerId.Should().Be($"/users/{apimUserId}");

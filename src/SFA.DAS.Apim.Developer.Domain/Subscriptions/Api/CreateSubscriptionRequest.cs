@@ -22,7 +22,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
             };
         }
 
-        public string PostUrl => $"/subscriptions/{_subscriptionId}?api-version=2021-04-01-preview";
+        public string PutUrl => $"/subscriptions/{_subscriptionId}?api-version=2021-04-01-preview";
         public object Data { get; set; }
     }
 

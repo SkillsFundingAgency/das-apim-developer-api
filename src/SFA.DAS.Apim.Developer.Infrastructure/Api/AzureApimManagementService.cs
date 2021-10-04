@@ -1,14 +1,15 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Infrastructure.Models;
 using System.Linq;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
@@ -17,45 +18,72 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
         private const string AzureResource = "https://management.azure.com/";
         private string AzureApimResourceId;
-        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
+        private readonly IAzureTokenService _azureTokenService;
         private readonly HttpClient _client;
         private readonly IOptions<AzureApimManagementConfiguration> _configuration;
 
-        public AzureApimManagementService(HttpClient client, IOptions<AzureApimManagementConfiguration> configuration, AzureServiceTokenProvider azureServiceTokenProvider)
+        public AzureApimManagementService(HttpClient client, IOptions<AzureApimManagementConfiguration> configuration, IAzureTokenService azureTokenService)
         {
-            _azureServiceTokenProvider = azureServiceTokenProvider;
+            _azureTokenService = azureTokenService;
             _client = client;
+            _client.BaseAddress = new Uri("https://management.azure.com/");
             _configuration = configuration;
-            SetupAzureParameters(); // TODO: do this better
+            //SetupAzureParameters(); // TODO: do this better
         }
 
-        public async Task CreateSubscription(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
+        // public async Task CreateSubscription(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
+        // {
+        //     var request = new PutRequest
+        //     {
+        //         Url = $"{AzureResource}{AzureApimResourceId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview",
+        //         Body = new PutSubscriptionRequest
+        //         {
+        //             properties = new ApimSubscriptionContract
+        //             {
+        //                 displayName = $"{subscriberType}-{internalUserRef}",  // TODO: think about this more
+        //                 ownerId = $"/users/{apimUserId}",
+        //                 scope = $"/products/{productId}",
+        //                 state = SubscriptionState.active
+        //             }
+        //         }
+        //     };
+        //     var response = await Put<PutSubscriptionResponse>(request);
+        // }
+
+
+        public async Task<T> Get<T>(GetRequest getRequest)
         {
-            var request = new PutRequest
+            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.Url);
+            var token = await _azureTokenService.GetToken();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            using (var response = await _client.SendAsync(request))
             {
-                Url = $"{AzureResource}{AzureApimResourceId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview",
-                Body = new PutSubscriptionRequest
-                {
-                    properties = new ApimSubscriptionContract
-                    {
-                        displayName = $"{subscriberType}-{internalUserRef}",  // TODO: think about this more
-                        ownerId = $"/users/{apimUserId}",
-                        scope = $"/products/{productId}",
-                        state = SubscriptionState.active
-                    }
-                }
-            };
-            var response = await Put<PutSubscriptionResponse>(request);
+                response.EnsureSuccessStatusCode();
+                var responseString = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(responseString);
+            }
         }
 
-
-        private async Task<string> GetToken()
+        public async Task<ApiResponse<T>> Put<T>(IPutRequest putRequest)
         {
-            var token = await _azureServiceTokenProvider.GetAccessTokenAsync(AzureResource);
-            return token;
+            var request = new HttpRequestMessage(HttpMethod.Put, putRequest.PutUrl)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(putRequest.Data), Encoding.UTF8,
+                    "application/json")
+            };
+
+            var token = await _azureTokenService.GetToken();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.SendAsync(request);
+            //response.EnsureSuccessStatusCode(); //TODO if not in accetped range populate error content
+            var responseString = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<T>(responseString);
+
+            return new ApiResponse<T>(responseObject, response.StatusCode, "");
         }
 
-        // TODO: do all of this much better
+
         private async Task SetupAzureParameters()
         {
             var subsRequest = new GetRequest
@@ -80,35 +108,6 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             }
 
             AzureApimResourceId = apimResources.value.First().id;
-        }
-
-        private async Task<T> Get<T>(GetRequest getRequest)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.Url);
-            var token = await GetToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            using (var response = await _client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(responseString);
-            }
-        }
-
-        private async Task<T> Put<T>(PutRequest putRequest)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Put, putRequest.Url);
-            request.Content = new StringContent(JsonConvert.SerializeObject(putRequest.Body), Encoding.UTF8, "application/json");
-
-            var token = await GetToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            using (var response = await _client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(responseString);
-            }
         }
     }
 }

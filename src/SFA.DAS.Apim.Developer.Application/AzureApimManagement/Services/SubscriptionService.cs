@@ -17,7 +17,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task<Guid> CreateUserSubscription(Subscription subscription)
         {
             //TODO: 
-            await _azureApimManagementService.CreateSubscription("subscriptionId", "subscriberType", "internalUserRef", "apimUserId", "productId");
+            //await _azureApimManagementService.CreateSubscription("subscriptionId", "subscriberType", "internalUserRef", "apimUserId", "productId");
 
             return new Guid();
         }

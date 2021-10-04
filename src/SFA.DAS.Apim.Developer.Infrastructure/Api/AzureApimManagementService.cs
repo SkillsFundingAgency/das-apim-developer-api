@@ -3,12 +3,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Infrastructure.Models;
-using System.Linq;
 using System.Net;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -17,20 +14,16 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
     public class AzureApimManagementService : IAzureApimManagementService
     {
 
-        private const string AzureResource = "https://management.azure.com/";
-        private string AzureApimResourceId;
         private readonly IAzureTokenService _azureTokenService;
         private readonly IAzureApimResourceService _azureApimResourceService;
         private readonly HttpClient _client;
-        private readonly IOptions<AzureApimManagementConfiguration> _configuration;
 
-        public AzureApimManagementService(HttpClient client, IOptions<AzureApimManagementConfiguration> configuration, IAzureTokenService azureTokenService, IAzureApimResourceService azureApimResourceService)
+        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService, IAzureApimResourceService azureApimResourceService)
         {
             _azureTokenService = azureTokenService;
             _azureApimResourceService = azureApimResourceService;
             _client = client;
             _client.BaseAddress = new Uri("https://management.azure.com/");
-            _configuration = configuration;
         }
         
         public async Task<T> Get<T>(GetRequest getRequest)

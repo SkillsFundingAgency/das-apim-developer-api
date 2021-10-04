@@ -47,7 +47,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             var expectedUrl = $"{url}{resourceId}/{putTestRequest.PutUrl}";
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(expectedUrl), HttpMethod.Put);
             var client = new HttpClient(httpMessageHandler.Object);
-            var azureApimManagementService = new AzureApimManagementService(client, Mock.Of<IOptions<AzureApimManagementConfiguration>>(), tokenProvider.Object, azureApimResourceService.Object);
+            var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, azureApimResourceService.Object);
 
             //Act
             var actualResult = await azureApimManagementService.Put<TestResponse>(putTestRequest);
@@ -99,7 +99,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             var expectedUrl = $"{url}{resourceId}/{putTestRequest.PutUrl}";
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(expectedUrl), HttpMethod.Put);
             var client = new HttpClient(httpMessageHandler.Object);
-            var azureApimManagementService = new AzureApimManagementService(client, Mock.Of<IOptions<AzureApimManagementConfiguration>>(), tokenProvider.Object, azureApimResourceService.Object);
+            var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, azureApimResourceService.Object);
 
             //Act
             var actualResult = await azureApimManagementService.Put<TestResponse>(putTestRequest);

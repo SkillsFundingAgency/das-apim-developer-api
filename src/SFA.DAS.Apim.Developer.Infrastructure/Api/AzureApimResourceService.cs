@@ -1,11 +1,23 @@
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
     public class AzureApimResourceService : IAzureApimResourceService
     {
+        private readonly HttpClient _httpClient;
+        private readonly IOptions<AzureApimManagementConfiguration> _configuration;
+
+        public AzureApimResourceService (HttpClient httpClient, IOptions<AzureApimManagementConfiguration> configuration)
+        {
+            _httpClient = httpClient;
+            _configuration = configuration;
+            _httpClient.BaseAddress = new Uri("https://management.azure.com/");
+        }
         public Task<string> GetResourceId()
         {
             throw new NotImplementedException();

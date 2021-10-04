@@ -16,22 +16,30 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
 {
     public class WhenAddingServicesToTheContainer
     {
-        
+
         [TestCase(typeof(IAzureApimManagementService))]
         [TestCase(typeof(IAzureTokenService))]
         public void Then_The_Dependencies_Are_Correctly_Resolved(Type toResolve)
         {
             var hostEnvironment = new Mock<IWebHostEnvironment>();
             var serviceCollection = new ServiceCollection();
-            
+
             var configuration = GenerateConfiguration();
             serviceCollection.AddSingleton(hostEnvironment.Object);
             serviceCollection.AddSingleton(Mock.Of<IConfiguration>());
-            
+
             serviceCollection.AddConfigurationOptions(configuration);
             serviceCollection.AddDistributedMemoryCache();
             serviceCollection.AddServiceRegistration();
-            
+
+            foreach (var descriptor in serviceCollection.Where(
+                d => d.ServiceType ==
+                    typeof(IAzureApimResourceService)).ToList())
+            {
+                serviceCollection.Remove(descriptor);
+            }
+            serviceCollection.AddSingleton(Mock.Of<IAzureApimResourceService>());
+
             var provider = serviceCollection.BuildServiceProvider();
 
             var type = provider.GetService(toResolve);
@@ -51,7 +59,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
             serviceCollection.AddConfigurationOptions(configuration);
             serviceCollection.AddDistributedMemoryCache();
             serviceCollection.AddServiceRegistration();
-            foreach(var descriptor in serviceCollection.Where(
+            foreach (var descriptor in serviceCollection.Where(
                 d => d.ServiceType ==
                      typeof(IAzureApimResourceService)).ToList())
             {
@@ -63,7 +71,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
             var type = provider.GetService<ApimResourceConfiguration>();
             type.ApimResourceId.Should().Be("test");
         }
-        
+
         private static IConfigurationRoot GenerateConfiguration()
         {
             var configSource = new MemoryConfigurationSource

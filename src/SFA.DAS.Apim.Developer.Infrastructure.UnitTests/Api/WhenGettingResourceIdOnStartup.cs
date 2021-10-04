@@ -28,7 +28,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             string azureSubscriptionId,
             string apimResourceId,
             string apimServiceName,
-            AzureResourcesResponse.AzureResource azureResourcesResponse)
+            AzureResource azureResourcesResponse)
         {
 
             //Arrange
@@ -58,12 +58,12 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
                 StatusCode = HttpStatusCode.OK
             };
             
-            azureResourcesResponse.id = apimResourceId;
+            azureResourcesResponse.Id = apimResourceId;
             var apimResourcesResponse = new HttpResponseMessage
             {
                 Content = new StringContent(JsonConvert.SerializeObject(new AzureResourcesResponse
                 {
-                    value = new List<AzureResourcesResponse.AzureResource>{ azureResourcesResponse }
+                    AzureResources = new List<AzureResource>{ azureResourcesResponse }
                 })),
                 StatusCode = HttpStatusCode.OK
             };

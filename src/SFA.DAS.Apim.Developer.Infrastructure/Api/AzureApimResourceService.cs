@@ -36,12 +36,12 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
             var apimResources = await Get<AzureResourcesResponse>(new GetAzureResourcesRequest(subs.value.First().subscriptionId, _configuration.ApimServiceName));
             
-            if (apimResources.value.Count != 1)
+            if (apimResources.AzureResources.Count != 1)
             {
                 throw new Exception("Apim Resources count unexpected");
             }
 
-            return apimResources.value.First().id;
+            return apimResources.AzureResources.First().Id;
         }
 
         private async Task<T> Get<T>(IGetRequest getRequest)

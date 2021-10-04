@@ -1,21 +1,21 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
 {
     public class CreateSubscriptionResponse
     {
-        [JsonPropertyName("properties")]
+        [JsonProperty(PropertyName = "properties")]
         public ApimSubscriptionContract Properties { get; set; }
 
         public class ApimSubscriptionContract
         {
-            [JsonPropertyName("displayName")]
+            [JsonProperty(PropertyName = "displayName")]
             public string DisplayName { get; set; }
-            [JsonPropertyName("scope")]
+            [JsonProperty(PropertyName = "scope")]
             public string Scope { get; set; }
-            [JsonPropertyName("ownerId")]
+            [JsonProperty(PropertyName = "ownerId")]
             public string OwnerId { get; set; }
-            [JsonPropertyName("state")]
+            [JsonProperty(PropertyName = "state")]
             public SubscriptionState State { get; set; }
         }
     }

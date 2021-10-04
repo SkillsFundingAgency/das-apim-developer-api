@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,6 +20,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         public AzureApimResourceService(HttpClient client, IAzureTokenService azureTokenService, IOptions<AzureApimManagementConfiguration> configuration)
         {
             _client = client;
+            _client.BaseAddress = new Uri($"https://management.azure.com/");
             _azureTokenService = azureTokenService;
             _configuration = configuration;
         }
@@ -48,6 +50,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
             return apimResources.value.First().id;
         }
+
         private async Task<T> Get<T>(IGetRequest getRequest)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);

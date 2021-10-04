@@ -26,29 +26,26 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             _azureServiceTokenProvider = azureServiceTokenProvider;
             _client = client;
             _configuration = configuration;
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken().Result); // TODO: do this better
             SetupAzureParameters(); // TODO: do this better
         }
 
         public async Task CreateSubscription(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
         {
-            var uri = $"{AzureResource}{AzureApimResourceId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview";
-            var body = new PutSubscriptionRequest
+            var request = new PutRequest
             {
-                properties = new PutSubscriptionRequest.PutSubscriptionRequestProperties
+                Url = $"{AzureResource}{AzureApimResourceId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview",
+                Body = new PutSubscriptionRequest
                 {
-                    displayName = $"{subscriberType}-{internalUserRef}",  // TODO: think about this more
-                    ownerId = $"/users/{apimUserId}",
-                    scope = $"/products/{productId}",
-                    state = SubscriptionState.active.ToString()
+                    properties = new ApimSubscriptionContract
+                    {
+                        displayName = $"{subscriberType}-{internalUserRef}",  // TODO: think about this more
+                        ownerId = $"/users/{apimUserId}",
+                        scope = $"/products/{productId}",
+                        state = SubscriptionState.active
+                    }
                 }
             };
-            var content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
-            using (var response = await _client.PutAsync(uri, content))
-            {
-                response.EnsureSuccessStatusCode();
-                var result = await response.Content.ReadAsStringAsync();
-            }
+            var response = await Put<PutSubscriptionResponse>(request);
         }
 
 
@@ -61,37 +58,57 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         // TODO: do all of this much better
         private async Task SetupAzureParameters()
         {
-            var subscriptionsUri = $"{AzureResource}/subscriptions?api-version=2020-01-01";
-            var subs = new AzureSubscriptionsResponse();
-            using (var response = await _client.GetAsync(subscriptionsUri))
+            var subsRequest = new GetRequest
             {
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-                subs = JsonConvert.DeserializeObject<AzureSubscriptionsResponse>(responseString);
-
-            }
+                Url = $"{AzureResource}/subscriptions?api-version=2020-01-01"
+            };
+            var subs = await Get<AzureSubscriptionsResponse>(subsRequest);
             if (subs.value.Count != 1)
             {
                 throw new System.Exception("Subscription count unexpected");
             }
-
             var subscriptionId = subs.value.First().subscriptionId;
 
-            var apimResourceUri = $"{AzureResource}/subscriptions/{subscriptionId}/resources?$filter=resourceType eq 'Microsoft.ApiManagement/service' and name eq '{_configuration.Value.ApimServiceName}'&api-version=2021-04-01";
-            var apimResources = new AzureResourcesReponse();
-            using (var response = await _client.GetAsync(apimResourceUri))
+            var apimRequest = new GetRequest
             {
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-                apimResources = JsonConvert.DeserializeObject<AzureResourcesReponse>(responseString);
-
-            }
+                Url = $"{AzureResource}/subscriptions/{subscriptionId}/resources?$filter=resourceType eq 'Microsoft.ApiManagement/service' and name eq '{_configuration.Value.ApimServiceName}'&api-version=2021-04-01"
+            };
+            var apimResources = await Get<AzureResourcesReponse>(apimRequest);
             if (apimResources.value.Count != 1)
             {
                 throw new System.Exception("Apim Resources count unexpected");
             }
 
             AzureApimResourceId = apimResources.value.First().id;
+        }
+
+        private async Task<T> Get<T>(GetRequest getRequest)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.Url);
+            var token = await GetToken();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            using (var response = await _client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var responseString = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(responseString);
+            }
+        }
+
+        private async Task<T> Put<T>(PutRequest putRequest)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Put, putRequest.Url);
+            request.Content = new StringContent(JsonConvert.SerializeObject(putRequest.Body), Encoding.UTF8, "application/json");
+
+            var token = await GetToken();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            using (var response = await _client.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var responseString = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<T>(responseString);
+            }
         }
     }
 }

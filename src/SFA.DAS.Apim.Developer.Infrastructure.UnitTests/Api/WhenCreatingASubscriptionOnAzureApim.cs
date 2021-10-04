@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -25,13 +24,16 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             string putContent,
             string responseContent,
             string apimServiceName,
+            string resourceId,
             string authToken)
         {
          
             //Arrange
-            var url = "https://management.azure.com";
+            var url = "https://management.azure.com/";
             var tokenProvider = new Mock<IAzureTokenService>();
             tokenProvider.Setup(x => x.GetToken()).ReturnsAsync(authToken);
+            var azureApimResourceService = new Mock<IAzureApimResourceService>();
+            azureApimResourceService.Setup(x => x.GetResourceId()).ReturnsAsync(resourceId);
             
             var response = new HttpResponseMessage
             {
@@ -42,10 +44,10 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             {
                 Data = putContent
             };
-            var expectedUrl = $"{url}{putTestRequest.PutUrl}";
+            var expectedUrl = $"{url}{resourceId}/{putTestRequest.PutUrl}";
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(expectedUrl), HttpMethod.Put);
             var client = new HttpClient(httpMessageHandler.Object);
-            var azureApimManagementService = new AzureApimManagementService(client, Mock.Of<IOptions<AzureApimManagementConfiguration>>(), tokenProvider.Object);
+            var azureApimManagementService = new AzureApimManagementService(client, Mock.Of<IOptions<AzureApimManagementConfiguration>>(), tokenProvider.Object, azureApimResourceService.Object);
 
             //Act
             var actualResult = await azureApimManagementService.Put<TestResponse>(putTestRequest);
@@ -74,13 +76,16 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             string putContent,
             string responseContent,
             string apimServiceName,
+            string resourceId,
             string authToken)
         {
             //Arrange
-            var url = "https://management.azure.com";
+            var url = "https://management.azure.com/";
             var tokenProvider = new Mock<IAzureTokenService>();
             tokenProvider.Setup(x => x.GetToken()).ReturnsAsync(authToken);
-
+            var azureApimResourceService = new Mock<IAzureApimResourceService>();
+            azureApimResourceService.Setup(x => x.GetResourceId()).ReturnsAsync(resourceId);
+            
             var responseObject = JsonConvert.SerializeObject(new TestResponse{MyResponse = responseContent});
             var response = new HttpResponseMessage
             {
@@ -91,10 +96,10 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             {
                 Data = putContent
             };
-            var expectedUrl = $"{url}{putTestRequest.PutUrl}";
+            var expectedUrl = $"{url}{resourceId}/{putTestRequest.PutUrl}";
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(expectedUrl), HttpMethod.Put);
             var client = new HttpClient(httpMessageHandler.Object);
-            var azureApimManagementService = new AzureApimManagementService(client, Mock.Of<IOptions<AzureApimManagementConfiguration>>(), tokenProvider.Object);
+            var azureApimManagementService = new AzureApimManagementService(client, Mock.Of<IOptions<AzureApimManagementConfiguration>>(), tokenProvider.Object, azureApimResourceService.Object);
 
             //Act
             var actualResult = await azureApimManagementService.Put<TestResponse>(putTestRequest);
@@ -124,7 +129,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
                 _id = id;
             }
             public object Data { get; set; }
-            public string PutUrl => $"/test-url/get{_id}";
+            public string PutUrl => $"test-url/get{_id}";
         }
         private class TestResponse
         {

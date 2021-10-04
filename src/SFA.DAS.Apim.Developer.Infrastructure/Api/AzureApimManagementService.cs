@@ -20,38 +20,19 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         private const string AzureResource = "https://management.azure.com/";
         private string AzureApimResourceId;
         private readonly IAzureTokenService _azureTokenService;
+        private readonly IAzureApimResourceService _azureApimResourceService;
         private readonly HttpClient _client;
         private readonly IOptions<AzureApimManagementConfiguration> _configuration;
 
-        public AzureApimManagementService(HttpClient client, IOptions<AzureApimManagementConfiguration> configuration, IAzureTokenService azureTokenService)
+        public AzureApimManagementService(HttpClient client, IOptions<AzureApimManagementConfiguration> configuration, IAzureTokenService azureTokenService, IAzureApimResourceService azureApimResourceService)
         {
             _azureTokenService = azureTokenService;
+            _azureApimResourceService = azureApimResourceService;
             _client = client;
             _client.BaseAddress = new Uri("https://management.azure.com/");
             _configuration = configuration;
-            //SetupAzureParameters(); // TODO: do this better
         }
-
-        // public async Task CreateSubscription(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
-        // {
-        //     var request = new PutRequest
-        //     {
-        //         Url = $"{AzureResource}{AzureApimResourceId}/subscriptions/{subscriptionId}?api-version=2021-04-01-preview",
-        //         Body = new PutSubscriptionRequest
-        //         {
-        //             properties = new ApimSubscriptionContract
-        //             {
-        //                 displayName = $"{subscriberType}-{internalUserRef}",  // TODO: think about this more
-        //                 ownerId = $"/users/{apimUserId}",
-        //                 scope = $"/products/{productId}",
-        //                 state = SubscriptionState.active
-        //             }
-        //         }
-        //     };
-        //     var response = await Put<PutSubscriptionResponse>(request);
-        // }
-
-
+        
         public async Task<T> Get<T>(GetRequest getRequest)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, getRequest.Url);
@@ -67,7 +48,9 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
         public async Task<ApiResponse<T>> Put<T>(IPutRequest putRequest)
         {
-            var request = new HttpRequestMessage(HttpMethod.Put, putRequest.PutUrl)
+            var resourceId = await _azureApimResourceService.GetResourceId();
+            
+            var request = new HttpRequestMessage(HttpMethod.Put, $"{resourceId}/{putRequest.PutUrl}")
             {
                 Content = new StringContent(JsonConvert.SerializeObject(putRequest.Data), Encoding.UTF8,
                     "application/json")
@@ -98,30 +81,5 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             return !((int)statusCode >= 200 && (int)statusCode <= 299);
         }
 
-        private async Task SetupAzureParameters()
-        {
-            var subsRequest = new GetRequest
-            {
-                Url = $"{AzureResource}/subscriptions?api-version=2020-01-01"
-            };
-            var subs = await Get<AzureSubscriptionsResponse>(subsRequest);
-            if (subs.value.Count != 1)
-            {
-                throw new System.Exception("Subscription count unexpected");
-            }
-            var subscriptionId = subs.value.First().subscriptionId;
-
-            var apimRequest = new GetRequest
-            {
-                Url = $"{AzureResource}/subscriptions/{subscriptionId}/resources?$filter=resourceType eq 'Microsoft.ApiManagement/service' and name eq '{_configuration.Value.ApimServiceName}'&api-version=2021-04-01"
-            };
-            var apimResources = await Get<AzureResourcesReponse>(apimRequest);
-            if (apimResources.value.Count != 1)
-            {
-                throw new System.Exception("Apim Resources count unexpected");
-            }
-
-            AzureApimResourceId = apimResources.value.First().id;
-        }
     }
 }

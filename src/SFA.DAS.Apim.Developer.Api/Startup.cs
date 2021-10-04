@@ -62,13 +62,7 @@ namespace SFA.DAS.Apim.Developer.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions();
-            services.Configure<ApimDeveloperApiConfiguration>(_configuration.GetSection("ApimDeveloperApi"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<ApimDeveloperApiConfiguration>>().Value);
-            services.Configure<AzureActiveDirectoryConfiguration>(_configuration.GetSection("AzureAd"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<AzureActiveDirectoryConfiguration>>().Value);
-            services.Configure<AzureApimManagementConfiguration>(_configuration.GetSection("AzureApimManagement"));
-            services.AddSingleton(cfg => cfg.GetService<IOptions<AzureApimManagementConfiguration>>().Value);
+            
 
             var apimDeveloperApiConfiguration = _configuration
                 .GetSection("ApimDeveloperApi")
@@ -96,6 +90,7 @@ namespace SFA.DAS.Apim.Developer.Api
 
             services.AddMediatR(typeof(CreateUserSubscriptionCommand).Assembly);
             services.AddServiceRegistration();
+            services.AddConfigurationOptions(_configuration);
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
 
             services.AddSingleton(async (serviceProvider) =>

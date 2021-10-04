@@ -14,17 +14,16 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         private readonly IAzureApimManagementService _azureApimManagementService;
         private readonly IOptions<ApimResourceConfiguration> _apimResourceConfig;
 
-        public SubscriptionService(IAzureApimManagementService azureApimManagementService, IOptions<ApimResourceConfiguration> apimResourceConfig)
+        public SubscriptionService(IAzureApimManagementService azureApimManagementService)
         {
             _azureApimManagementService = azureApimManagementService;
-            _apimResourceConfig = apimResourceConfig;
         }
 
         public async Task<Guid> CreateUserSubscription(Subscription subscription)
         {
             throw new NotImplementedException();
             //TODO: pass real values
-            var createSubscriptionRequest = new CreateSubscriptionRequest(_apimResourceConfig.Value.ApimResourceId, "subscriptionId", "subscriberType", "internalUserRef", "apimUserId", "productId");
+            var createSubscriptionRequest = new CreateSubscriptionRequest("subscriptionId", "subscriberType", "internalUserRef", "apimUserId", "productId");
             var response = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
 
             //TODO: return something

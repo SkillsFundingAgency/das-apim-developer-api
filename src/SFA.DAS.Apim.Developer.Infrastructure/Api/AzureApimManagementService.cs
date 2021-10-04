@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using System.Net;
+using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
@@ -16,11 +17,11 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         private readonly IAzureTokenService _azureTokenService;
         private readonly HttpClient _client;
 
-        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService)
+        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService, ApimResourceConfiguration resourceConfiguration)
         {
             _azureTokenService = azureTokenService;
             _client = client;
-            _client.BaseAddress = new Uri("https://management.azure.com/");
+            _client.BaseAddress = new Uri($"https://management.azure.com/{resourceConfiguration.ApimResourceId}/");
         }
 
         public async Task<T> Get<T>(IGetRequest getRequest)

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
@@ -7,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.AppStart;
+using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
@@ -24,6 +27,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
             var configuration = GenerateConfiguration();
             serviceCollection.AddSingleton(hostEnvironment.Object);
             serviceCollection.AddSingleton(Mock.Of<IConfiguration>());
+            
             serviceCollection.AddConfigurationOptions(configuration);
             serviceCollection.AddDistributedMemoryCache();
             serviceCollection.AddServiceRegistration();
@@ -32,6 +36,32 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
 
             var type = provider.GetService(toResolve);
             Assert.IsNotNull(type);
+        }
+
+        [Test]
+        public void Then_The_ApimResourceId_Is_Set()
+        {
+            var hostEnvironment = new Mock<IWebHostEnvironment>();
+            var serviceCollection = new ServiceCollection();
+            var azureApimResourceService = new Mock<IAzureApimResourceService>();
+            azureApimResourceService.Setup(x => x.GetResourceId()).ReturnsAsync("test");
+            var configuration = GenerateConfiguration();
+            serviceCollection.AddSingleton(hostEnvironment.Object);
+            serviceCollection.AddSingleton(Mock.Of<IConfiguration>());
+            serviceCollection.AddConfigurationOptions(configuration);
+            serviceCollection.AddDistributedMemoryCache();
+            serviceCollection.AddServiceRegistration();
+            foreach(var descriptor in serviceCollection.Where(
+                d => d.ServiceType ==
+                     typeof(IAzureApimResourceService)).ToList())
+            {
+                serviceCollection.Remove(descriptor);
+            }
+            serviceCollection.AddSingleton(azureApimResourceService.Object);
+            var provider = serviceCollection.BuildServiceProvider();
+
+            var type = provider.GetService<ApimResourceConfiguration>();
+            type.ApimResourceId.Should().Be("test");
         }
         
         private static IConfigurationRoot GenerateConfiguration()

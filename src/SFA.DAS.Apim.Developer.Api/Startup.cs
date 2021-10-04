@@ -93,16 +93,7 @@ namespace SFA.DAS.Apim.Developer.Api
             services.AddConfigurationOptions(_configuration);
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
 
-            services.AddSingleton(async (serviceProvider) =>
-                {
-                    var service = serviceProvider.GetService<AzureApimResourceService>();
-                    var apimResourceId = await service.GetResourceId();
-                    var options = Options.Create<ApimResourceConfiguration>(new ApimResourceConfiguration
-                    {
-                        ApimResourceId = apimResourceId
-                    });
-                    return options;
-                });
+           
 
             services
                 .AddMvc(o =>

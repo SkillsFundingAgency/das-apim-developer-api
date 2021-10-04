@@ -5,7 +5,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface IAzureApimManagementService
     {
-        Task<T> Get<T>(IGetRequest getRequest);
         Task<ApiResponse<T>> Put<T>(IPutRequest putRequest);
     }
 }

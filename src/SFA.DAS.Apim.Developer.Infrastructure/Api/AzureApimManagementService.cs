@@ -24,18 +24,6 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             _client.BaseAddress = new Uri($"https://management.azure.com/{resourceConfiguration.ApimResourceId}/");
         }
 
-        public async Task<T> Get<T>(IGetRequest getRequest)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);
-            var token = await _azureTokenService.GetToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            using (var response = await _client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(responseString);
-            }
-        }
 
         public async Task<ApiResponse<T>> Put<T>(IPutRequest putRequest)
         {

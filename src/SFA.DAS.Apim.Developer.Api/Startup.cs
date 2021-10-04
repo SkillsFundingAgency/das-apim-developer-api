@@ -22,6 +22,7 @@ using SFA.DAS.Apim.Developer.Api.Infrastructure;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
 using SFA.DAS.Apim.Developer.Data;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
+using SFA.DAS.Apim.Developer.Infrastructure.Api;
 using SFA.DAS.Configuration.AzureTableStorage;
 
 namespace SFA.DAS.Apim.Developer.Api
@@ -96,6 +97,17 @@ namespace SFA.DAS.Apim.Developer.Api
             services.AddMediatR(typeof(CreateUserSubscriptionCommand).Assembly);
             services.AddServiceRegistration();
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
+
+            services.AddSingleton(async (serviceProvider) =>
+                {
+                    var service = serviceProvider.GetService<AzureApimResourceService>();
+                    var apimResourceId = await service.GetResourceId();
+                    var options = Options.Create<ApimResourceConfiguration>(new ApimResourceConfiguration
+                    {
+                        ApimResourceId = apimResourceId
+                    });
+                    return options;
+                });
 
             services
                 .AddMvc(o =>

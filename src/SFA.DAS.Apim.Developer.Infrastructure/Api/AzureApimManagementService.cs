@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
-using SFA.DAS.Apim.Developer.Infrastructure.Models;
 using System.Net;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -15,20 +14,18 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
     {
 
         private readonly IAzureTokenService _azureTokenService;
-        private readonly IAzureApimResourceService _azureApimResourceService;
         private readonly HttpClient _client;
 
-        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService, IAzureApimResourceService azureApimResourceService)
+        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService)
         {
             _azureTokenService = azureTokenService;
-            _azureApimResourceService = azureApimResourceService;
             _client = client;
             _client.BaseAddress = new Uri("https://management.azure.com/");
         }
-        
-        public async Task<T> Get<T>(GetRequest getRequest)
+
+        public async Task<T> Get<T>(IGetRequest getRequest)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.Url);
+            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);
             var token = await _azureTokenService.GetToken();
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             using (var response = await _client.SendAsync(request))
@@ -41,9 +38,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
         public async Task<ApiResponse<T>> Put<T>(IPutRequest putRequest)
         {
-            var resourceId = await _azureApimResourceService.GetResourceId();
-            
-            var request = new HttpRequestMessage(HttpMethod.Put, $"{resourceId}/{putRequest.PutUrl}")
+            var request = new HttpRequestMessage(HttpMethod.Put, putRequest.PutUrl)
             {
                 Content = new StringContent(JsonConvert.SerializeObject(putRequest.Data), Encoding.UTF8,
                     "application/json")
@@ -56,8 +51,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             var responseString = await response.Content.ReadAsStringAsync();
             var errorContent = "";
             var responseBody = (T)default;
-            
-            if(IsNot200RangeResponseCode(response.StatusCode))
+
+            if (IsNot200RangeResponseCode(response.StatusCode))
             {
                 errorContent = responseString;
             }
@@ -65,7 +60,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             {
                 responseBody = JsonConvert.DeserializeObject<T>(responseString);
             }
-            
+
             return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
         }
 

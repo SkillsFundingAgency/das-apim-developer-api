@@ -5,10 +5,12 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
 {
     public class CreateSubscriptionRequest : IPutRequest
     {
+        private readonly string _apimResourceId;
         private readonly string _subscriptionId;
-        
-        public CreateSubscriptionRequest(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
+
+        public CreateSubscriptionRequest(string apimResourceId, string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
         {
+            _apimResourceId = apimResourceId;
             _subscriptionId = subscriptionId;
             Data = new CreateSubscriptionRequestBody
             {
@@ -22,7 +24,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
             };
         }
 
-        public string PutUrl => $"/subscriptions/{_subscriptionId}?api-version=2021-04-01-preview";
+        public string PutUrl => $"{_apimResourceId}/subscriptions/{_subscriptionId}?api-version=2021-04-01-preview";
         public object Data { get; set; }
     }
 
@@ -31,7 +33,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
         [JsonPropertyName("properties")]
         public ApimSubscriptionContract Properties { get; set; }
     }
-    
+
     public class ApimSubscriptionContract
     {
         [JsonPropertyName("displayName")]

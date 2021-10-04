@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface IAzureApimManagementService
     {
-        //Task CreateSubscription(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId);
+        Task<T> Get<T>(IGetRequest getRequest);
+        Task<ApiResponse<T>> Put<T>(IPutRequest putRequest);
     }
 }

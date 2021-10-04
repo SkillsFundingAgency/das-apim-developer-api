@@ -12,6 +12,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
         {
             services.AddHttpClient<IAzureApimManagementService, AzureApimManagementService>();
 
+            services.AddTransient<IAzureApimResourceService, AzureApimResourceService>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
             services.AddSingleton(new AzureServiceTokenProvider());
         }

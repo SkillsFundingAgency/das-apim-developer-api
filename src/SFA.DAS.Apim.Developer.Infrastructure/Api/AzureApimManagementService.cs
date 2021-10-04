@@ -9,6 +9,7 @@ using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Infrastructure.Models;
 using System.Linq;
+using System.Net;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
@@ -76,13 +77,26 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _client.SendAsync(request);
-            //response.EnsureSuccessStatusCode(); //TODO if not in accetped range populate error content
             var responseString = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<T>(responseString);
-
-            return new ApiResponse<T>(responseObject, response.StatusCode, "");
+            var errorContent = "";
+            var responseBody = (T)default;
+            
+            if(IsNot200RangeResponseCode(response.StatusCode))
+            {
+                errorContent = responseString;
+            }
+            else
+            {
+                responseBody = JsonConvert.DeserializeObject<T>(responseString);
+            }
+            
+            return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
         }
 
+        private static bool IsNot200RangeResponseCode(HttpStatusCode statusCode)
+        {
+            return !((int)statusCode >= 200 && (int)statusCode <= 299);
+        }
 
         private async Task SetupAzureParameters()
         {

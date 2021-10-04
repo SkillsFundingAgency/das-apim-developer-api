@@ -24,7 +24,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             _azureTokenService = azureTokenService;
             _configuration = configuration;
         }
-        
+
         public async Task<string> GetResourceId()
         {
             var subsRequest = new AzureSubscriptionsRequest
@@ -42,7 +42,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             {
                 GetUrl = $"/subscriptions/{subscriptionId}/resources?$filter=resourceType eq 'Microsoft.ApiManagement/service' and name eq '{_configuration.Value.ApimServiceName}'&api-version=2021-04-01"
             };
-            var apimResources = await Get<AzureResourcesReponse>(apimRequest);
+            var apimResources = await Get<AzureResourcesResponse>(apimRequest);
             if (apimResources.value.Count != 1)
             {
                 throw new System.Exception("Apim Resources count unexpected");
@@ -56,12 +56,10 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);
             var token = await _azureTokenService.GetToken();
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            using (var response = await _client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<T>(responseString);
-            }
+            var response = await _client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(responseString);
         }
     }
 }

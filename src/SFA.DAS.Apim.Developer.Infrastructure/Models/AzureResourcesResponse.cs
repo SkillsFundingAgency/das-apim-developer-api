@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SFA.DAS.Apim.Developer.Infrastructure.Models
 {
     //https://docs.microsoft.com/en-us/rest/api/resources/resources/list
-    public class AzureResourcesReponse
+    public class AzureResourcesResponse
     {
 
 

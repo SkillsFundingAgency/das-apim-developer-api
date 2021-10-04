@@ -42,11 +42,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
         public string OwnerId { get; set; }
         [JsonPropertyName("state")]
         public SubscriptionState State { get; set; }
-
-        [JsonPropertyName("primaryKey")]
-        public string PrimaryKey { get; set; }
-        [JsonPropertyName("secondaryKey")]
-        public string SecondaryKey { get; set; }
     }
 
     public enum SubscriptionState

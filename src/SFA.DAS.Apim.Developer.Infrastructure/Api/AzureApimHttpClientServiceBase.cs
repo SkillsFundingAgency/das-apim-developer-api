@@ -34,20 +34,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.SendAsync(request);
-            var responseString = await response.Content.ReadAsStringAsync();
-            var errorContent = "";
-            var responseBody = (T)default;
 
-            if (IsNot200RangeResponseCode(response.StatusCode))
-            {
-                errorContent = responseString;
-            }
-            else
-            {
-                responseBody = JsonConvert.DeserializeObject<T>(responseString);
-            }
-
-            return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
+            return await ResponseHandler<T>(response);
         }
 
         public async Task<ApiResponse<T>> Get<T>(IGetRequest getRequest)
@@ -58,10 +46,20 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.SendAsync(request);
-            var responseString = await response.Content.ReadAsStringAsync();
-            var errorContent = "";
-            var responseBody = (T)default;
 
+            return await ResponseHandler<T>(response);
+        }
+
+        private static bool IsNot200RangeResponseCode(HttpStatusCode statusCode)
+        {
+            return !((int)statusCode >= 200 && (int)statusCode <= 299);
+        }
+
+        private async Task<ApiResponse<T>> ResponseHandler<T>(HttpResponseMessage response)
+        {
+            var responseBody = (T)default;
+            var errorContent = "";
+            var responseString = await response.Content.ReadAsStringAsync();
             if (IsNot200RangeResponseCode(response.StatusCode))
             {
                 errorContent = responseString;
@@ -70,14 +68,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             {
                 responseBody = JsonConvert.DeserializeObject<T>(responseString);
             }
-
-            responseString = await response.Content.ReadAsStringAsync();
             return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
-        }
-
-        private static bool IsNot200RangeResponseCode(HttpStatusCode statusCode)
-        {
-            return !((int)statusCode >= 200 && (int)statusCode <= 299);
         }
     }
 }

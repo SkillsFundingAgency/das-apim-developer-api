@@ -4,7 +4,7 @@ using SFA.DAS.Apim.Developer.Domain.Configuration;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
-    public class AzureApimManagementService : AzureApimManagementServiceBase, IAzureApimManagementService
+    public class AzureApimManagementService : AzureApimHttpClientServiceBase, IAzureApimManagementService
     {
 
         public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService, ApimResourceConfiguration resourceConfiguration) 

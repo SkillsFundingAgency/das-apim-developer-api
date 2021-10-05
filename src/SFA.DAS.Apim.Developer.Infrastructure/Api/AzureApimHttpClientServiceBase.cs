@@ -10,12 +10,12 @@ using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
-    public abstract class AzureApimManagementServiceBase
+    public abstract class AzureApimHttpClientServiceBase
     {
         private readonly IAzureTokenService _azureTokenService;
         private readonly HttpClient _httpClient;
 
-        protected AzureApimManagementServiceBase (IAzureTokenService azureTokenService, HttpClient httpClient, string baseAddress)
+        protected AzureApimHttpClientServiceBase (IAzureTokenService azureTokenService, HttpClient httpClient, string baseAddress)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(baseAddress);

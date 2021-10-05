@@ -10,7 +10,7 @@ using SFA.DAS.Apim.Developer.Infrastructure.Models;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
-    public class AzureApimResourceService : AzureApimManagementServiceBase, IAzureApimResourceService
+    public class AzureApimResourceService : AzureApimHttpClientServiceBase, IAzureApimResourceService
     {
         
         private readonly AzureApimManagementConfiguration _configuration;

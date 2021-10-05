@@ -12,11 +12,11 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
     public class AzureApimResourceService : AzureApimHttpClientServiceBase, IAzureApimResourceService
     {
-        
+
         private readonly AzureApimManagementConfiguration _configuration;
 
         public AzureApimResourceService(HttpClient client, IAzureTokenService azureTokenService, IOptions<AzureApimManagementConfiguration> configuration) :
-            base(azureTokenService, client,"https://management.azure.com/")
+            base(azureTokenService, client, "https://management.azure.com/")
         {
             _configuration = configuration.Value;
         }
@@ -24,19 +24,19 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         public async Task<string> GetResourceId()
         {
             var subs = await Get<AzureSubscriptionsResponse>(new GetAzureSubscriptionsRequest());
-            if (subs.value.Count != 1)
+            if (subs.Body.AzureSubscriptions.Count != 1)
             {
                 throw new Exception("Subscription count unexpected");
             }
 
-            var apimResources = await Get<AzureResourcesResponse>(new GetAzureResourcesRequest(subs.value.First().subscriptionId, _configuration.ApimServiceName));
-            
-            if (apimResources.AzureResources.Count != 1)
+            var apimResources = await Get<AzureResourcesResponse>(new GetAzureResourcesRequest(subs.Body.AzureSubscriptions.First().SubscriptionId, _configuration.ApimServiceName));
+
+            if (apimResources.Body.AzureResources.Count != 1)
             {
                 throw new Exception("Apim Resources count unexpected");
             }
 
-            return apimResources.AzureResources.First().Id;
+            return apimResources.Body.AzureResources.First().Id;
         }
     }
 }

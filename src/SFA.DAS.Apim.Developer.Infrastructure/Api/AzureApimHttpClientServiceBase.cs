@@ -15,13 +15,13 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         private readonly IAzureTokenService _azureTokenService;
         private readonly HttpClient _httpClient;
 
-        protected AzureApimHttpClientServiceBase (IAzureTokenService azureTokenService, HttpClient httpClient, string baseAddress)
+        protected AzureApimHttpClientServiceBase(IAzureTokenService azureTokenService, HttpClient httpClient, string baseAddress)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(baseAddress);
             _azureTokenService = azureTokenService;
         }
-        
+
         public async Task<ApiResponse<T>> Put<T>(IPutRequest putRequest)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, putRequest.PutUrl)
@@ -49,18 +49,30 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
             return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
         }
-        
-        public async Task<T> Get<T>(IGetRequest getRequest)
+
+        public async Task<ApiResponse<T>> Get<T>(IGetRequest getRequest)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);
-            
+
             var token = await _azureTokenService.GetToken();
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            
+
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(responseString);
+            var errorContent = "";
+            var responseBody = (T)default;
+
+            if (IsNot200RangeResponseCode(response.StatusCode))
+            {
+                errorContent = responseString;
+            }
+            else
+            {
+                responseBody = JsonConvert.DeserializeObject<T>(responseString);
+            }
+
+            responseString = await response.Content.ReadAsStringAsync();
+            return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
         }
 
         private static bool IsNot200RangeResponseCode(HttpStatusCode statusCode)

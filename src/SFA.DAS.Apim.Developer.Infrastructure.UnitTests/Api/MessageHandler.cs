@@ -9,9 +9,9 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
 {
     public class MessageHandler
     {
-        public static Mock<HttpMessageHandler> SetupMessageHandlerMock(HttpResponseMessage response, Uri uri, HttpMethod httpMethod)
+        public static Mock<HttpMessageHandler> SetupMessageHandlerMock(HttpResponseMessage response, Uri uri, HttpMethod httpMethod, Mock<HttpMessageHandler> mockHandler = null)
         {
-            var httpMessageHandler = new Mock<HttpMessageHandler>();
+            var httpMessageHandler = mockHandler ?? new Mock<HttpMessageHandler>();
             httpMessageHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",

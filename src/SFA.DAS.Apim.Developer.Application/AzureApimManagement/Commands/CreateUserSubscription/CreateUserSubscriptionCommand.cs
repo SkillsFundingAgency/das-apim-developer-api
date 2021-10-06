@@ -5,9 +5,8 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
 {
     public class CreateUserSubscriptionCommand : IRequest<CreateUserSubscriptionCommandResponse>
     {
-        public Guid Id { get ; set ; }
-        public string ExternalSubscriberId { get ; set ; }
-        public int ExternalSubscriptionId { get ; set ; }
-        public int SubscriberTypeId { get ; set ; }
+        public string InternalUserId { get; set; }
+        public string ApimUserType { get; set; } // TODO: or id?
+        public string ProductName { get; set; }
     }
 }

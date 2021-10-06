@@ -7,18 +7,18 @@ using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Data.Repository
 {
-    public class SubscriptionAuditRepository : ISubscriptionAuditRepository
+    public class ApimAuditRepository : IApimAuditRepository
     {
         private readonly IApimDeveloperDataContext _apimDeveloperDataContext;
 
-        public SubscriptionAuditRepository(IApimDeveloperDataContext apimDeveloperDataContext)
+        public ApimAuditRepository(IApimDeveloperDataContext apimDeveloperDataContext)
         {
             _apimDeveloperDataContext = apimDeveloperDataContext;
         }
 
-        public async Task Insert(SubscriptionAudit subscriptionAudit)
+        public async Task Insert(ApimAudit apimAudit)
         {
-            await _apimDeveloperDataContext.SubscriptionAudit.AddAsync(subscriptionAudit);
+            await _apimDeveloperDataContext.ApimAudit.AddAsync(apimAudit);
             _apimDeveloperDataContext.SaveChanges();
         }
     }

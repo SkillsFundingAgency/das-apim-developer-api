@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SFA.DAS.Apim.Developer.Data.Configuration
 {
-    public class SubscriberType : IEntityTypeConfiguration<Domain.Entities.SubscriberType>
+    public class ApimUserType : IEntityTypeConfiguration<Domain.Entities.ApimUserType>
     {
-        public void Configure(EntityTypeBuilder<Domain.Entities.SubscriberType> builder)
+        public void Configure(EntityTypeBuilder<Domain.Entities.ApimUserType> builder)
         {
-            builder.ToTable("SubscriberType");
+            builder.ToTable("ApimUserType");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id).HasColumnName("Id").HasColumnType("int").IsRequired();

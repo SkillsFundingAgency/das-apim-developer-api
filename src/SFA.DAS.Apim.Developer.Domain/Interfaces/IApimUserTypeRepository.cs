@@ -4,9 +4,9 @@ using SFA.DAS.Apim.Developer.Domain.Entities;
 
 namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
-    public interface ISubscriberTypeRepository
+    public interface IApimUserTypeRepository
     {
-        Task<SubscriberType> Get(string name);
-        Task<IEnumerable<SubscriberType>> GetAll();
+        Task<ApimUserType> Get(string name);
+        Task<IEnumerable<ApimUserType>> GetAll();
     }
 }

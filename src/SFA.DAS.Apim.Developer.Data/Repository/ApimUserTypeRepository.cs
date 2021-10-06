@@ -7,30 +7,30 @@ using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Data.Repository
 {
-    public class SubscriberTypeRepository : ISubscriberTypeRepository
+    public class ApimUserTypeRepository : IApimUserTypeRepository
     {
         private readonly IApimDeveloperDataContext _apimDeveloperDataContext;
 
-        public SubscriberTypeRepository(IApimDeveloperDataContext apimDeveloperDataContext)
+        public ApimUserTypeRepository(IApimDeveloperDataContext apimDeveloperDataContext)
         {
             _apimDeveloperDataContext = apimDeveloperDataContext;
         }
 
-        public async Task<SubscriberType> Get(string name)
+        public async Task<ApimUserType> Get(string name)
         {
-            var subscriberType = await _apimDeveloperDataContext
-                .SubscriberType
+            var apimUserType = await _apimDeveloperDataContext
+                .ApimUserType
                 .SingleOrDefaultAsync(c => c.Name.Equals(name));
-            return subscriberType;
+            return apimUserType;
         }
 
-        public async Task<IEnumerable<SubscriberType>> GetAll()
+        public async Task<IEnumerable<ApimUserType>> GetAll()
         {
-            var subscriberTypes = await _apimDeveloperDataContext
-                .SubscriberType
+            var apimUserTypes = await _apimDeveloperDataContext
+                .ApimUserType
                 .ToListAsync();
 
-            return subscriberTypes;
+            return apimUserTypes;
         }
     }
 }

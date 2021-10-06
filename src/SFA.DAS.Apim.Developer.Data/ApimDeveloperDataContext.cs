@@ -10,9 +10,9 @@ namespace SFA.DAS.Apim.Developer.Data
 {
     public interface IApimDeveloperDataContext 
     {
-        DbSet<Domain.Entities.SubscriberType> SubscriberType { get; set; }
-        DbSet<Domain.Entities.Subscription> Subscription { get; set; }
-        DbSet<Domain.Entities.SubscriptionAudit> SubscriptionAudit { get; set; }
+        DbSet<Domain.Entities.ApimUserType> ApimUserType { get; set; }
+        DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
+        DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
 
         int SaveChanges();
     }
@@ -23,9 +23,9 @@ namespace SFA.DAS.Apim.Developer.Data
         
         private readonly ApimDeveloperApiConfiguration _configuration;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
-        public DbSet<Domain.Entities.SubscriberType> SubscriberType { get; set; }
-        public DbSet<Domain.Entities.Subscription> Subscription { get; set; }
-        public DbSet<Domain.Entities.SubscriptionAudit> SubscriptionAudit { get; set; }
+        public DbSet<Domain.Entities.ApimUserType> ApimUserType { get; set; }
+        public DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
+        public DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
 
         public ApimDeveloperDataContext()
         {
@@ -65,9 +65,9 @@ namespace SFA.DAS.Apim.Developer.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new SubscriberType());
-            modelBuilder.ApplyConfiguration(new Subscription());
-            modelBuilder.ApplyConfiguration(new SubscriptionAudit());
+            modelBuilder.ApplyConfiguration(new ApimUserType());
+            modelBuilder.ApplyConfiguration(new ApimUser());
+            modelBuilder.ApplyConfiguration(new ApimAudit());
 
             base.OnModelCreating(modelBuilder);
         }

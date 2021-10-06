@@ -7,14 +7,14 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
     {
         private readonly string _subscriptionId;
 
-        public CreateSubscriptionRequest(string subscriptionId, string subscriberType, string internalUserRef, string apimUserId, string productId)
+        public CreateSubscriptionRequest(string subscriptionId, string apimUserId, string productId)
         {
             _subscriptionId = subscriptionId;
             Data = new CreateSubscriptionRequestBody
             {
                 Properties = new ApimSubscriptionContract
                 {
-                    DisplayName = $"{subscriberType}-{internalUserRef}",
+                    DisplayName = _subscriptionId, // TODO: maybe something better?
                     OwnerId = $"/users/{apimUserId}",
                     Scope = $"/products/{productId}",
                     State = SubscriptionState.Active

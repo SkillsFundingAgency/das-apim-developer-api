@@ -3,8 +3,8 @@ using SFA.DAS.Apim.Developer.Domain.Entities;
 
 namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
-    public interface ISubscriptionAuditRepository
+    public interface IApimAuditRepository
     {
-        Task Insert(SubscriptionAudit subscriptionAudit);
+        Task Insert(ApimAudit apimAudit);
     }
 }

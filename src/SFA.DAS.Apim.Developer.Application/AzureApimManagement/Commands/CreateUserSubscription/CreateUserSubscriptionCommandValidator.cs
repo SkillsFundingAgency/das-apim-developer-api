@@ -7,10 +7,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
 {
     public class CreateUserSubscriptionCommandValidator : IValidator<CreateUserSubscriptionCommand>
     {
-        public CreateUserSubscriptionCommandValidator ()
-        {
-            
-        }
         public Task<ValidationResult> ValidateAsync(CreateUserSubscriptionCommand item)
         {
             var validationResult = new ValidationResult();

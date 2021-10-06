@@ -89,6 +89,7 @@ namespace SFA.DAS.Apim.Developer.Api
             }
 
             services.AddMediatR(typeof(CreateUserSubscriptionCommand).Assembly);
+            services.AddMediatorValidators();
             services.AddServiceRegistration();
             services.AddConfigurationOptions(_configuration);
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);

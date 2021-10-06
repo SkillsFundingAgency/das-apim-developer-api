@@ -16,21 +16,20 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
 {
     public class WhenHandlingCreatingUserSubscriptionCommand
     {
-        //TODO: test the validator
-        // [Test, MoqAutoData]
-        // public void Then_The_Request_Is_Validated_And_If_Not_Valid_Exception_Thrown(
-        //     CreateUserSubscriptionCommand request,
-        //     [Frozen]Mock<IValidator<CreateUserSubscriptionCommand>> validator,
-        //     CreateUserSubscriptionCommandHandler handler)
-        // {
-        //     //Arrange
-        //     validator
-        //         .Setup(x => x.ValidateAsync(request))
-        //         .ReturnsAsync(new ValidationResult {ValidationDictionary = { {"Error", "Some error"}}});
+        [Test, MoqAutoData]
+        public void Then_The_Request_Is_Validated_And_If_Not_Valid_Exception_Thrown(
+            CreateUserSubscriptionCommand request,
+            [Frozen]Mock<IValidator<CreateUserSubscriptionCommand>> validator,
+            CreateUserSubscriptionCommandHandler handler)
+        {
+            //Arrange
+            validator
+                .Setup(x => x.ValidateAsync(request))
+                .ReturnsAsync(new ValidationResult {ValidationDictionary = { {"Error", "Some error"}}});
             
-        //     //Act / Assert
-        //     Assert.ThrowsAsync<ValidationException>(() => handler.Handle(request, CancellationToken.None));
-        // }
+            //Act / Assert
+            Assert.ThrowsAsync<ValidationException>(() => handler.Handle(request, CancellationToken.None));
+        }
 
         [Test, MoqAutoData]
         public async Task Then_If_The_Request_Is_Valid_The_Service_Is_Called(
@@ -44,11 +43,9 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             validator
                 .Setup(x => x.ValidateAsync(request))
                 .ReturnsAsync(new ValidationResult( ));
-            service.Setup(x => x.CreateUserSubscription(
-                It.Is<string>( c => c.Equals(request.InternalUserId)),
-                It.Is<string>(c => c.Equals(request.ApimUserType)),
-                It.Is<string>(c => c.Equals(request.ProductName))
-            )).ReturnsAsync(subscriptionId);
+            service
+                .Setup(x => x.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName))
+                .ReturnsAsync(subscriptionId);
 
             //Act
             var actual = await handler.Handle(request, CancellationToken.None);

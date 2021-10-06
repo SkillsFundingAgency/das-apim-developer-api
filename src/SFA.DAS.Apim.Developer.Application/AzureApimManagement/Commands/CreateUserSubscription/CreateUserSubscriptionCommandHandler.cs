@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,12 +9,22 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
     public class CreateUserSubscriptionCommandHandler : IRequestHandler<CreateUserSubscriptionCommand, CreateUserSubscriptionCommandResponse>
     {
         private readonly ISubscriptionService _subscriptionService;
-        public CreateUserSubscriptionCommandHandler(ISubscriptionService subscriptionService)
+        private readonly IValidator<CreateUserSubscriptionCommand> _validator;
+
+        public CreateUserSubscriptionCommandHandler(ISubscriptionService subscriptionService, IValidator<CreateUserSubscriptionCommand> validator)
         {
             _subscriptionService = subscriptionService;
+            _validator = validator;
         }
         public async Task<CreateUserSubscriptionCommandResponse> Handle(CreateUserSubscriptionCommand request, CancellationToken cancellationToken)
         {
+            var validationResult = await _validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid())
+            {
+                throw new ValidationException(validationResult.DataAnnotationResult,null, null);
+            }
+            
             var subscriptionId = await _subscriptionService.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName);
 
             return new CreateUserSubscriptionCommandResponse()

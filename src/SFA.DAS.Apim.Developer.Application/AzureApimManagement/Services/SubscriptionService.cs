@@ -14,7 +14,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         private readonly IAzureApimManagementService _azureApimManagementService;
         private readonly IApimUserRepository _apimUserRepository;
         private readonly IApimUserTypeRepository _apimUserTypeRepository;
-        private readonly IOptions<ApimResourceConfiguration> _apimResourceConfig;
 
         public SubscriptionService(IAzureApimManagementService azureApimManagementService, IApimUserRepository apimUserRepository, IApimUserTypeRepository apimUserTypeRepository)
         {

@@ -44,7 +44,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
                 .Setup(x => x.ValidateAsync(request))
                 .ReturnsAsync(new ValidationResult( ));
             service
-                .Setup(x => x.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName))
+                .Setup(x => x.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName, request.ApimUserId))
                 .ReturnsAsync(subscriptionId);
 
             //Act

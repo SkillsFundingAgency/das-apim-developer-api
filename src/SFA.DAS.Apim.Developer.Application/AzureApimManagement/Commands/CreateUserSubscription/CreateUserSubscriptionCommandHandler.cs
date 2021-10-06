@@ -25,7 +25,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
                 throw new ValidationException(validationResult.DataAnnotationResult,null, null);
             }
             
-            var subscriptionId = await _subscriptionService.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName);
+            var subscriptionId = await _subscriptionService.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName, request.ApimUserId);
 
             return new CreateUserSubscriptionCommandResponse()
             {

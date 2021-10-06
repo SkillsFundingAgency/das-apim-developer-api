@@ -33,7 +33,8 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                 var queryResult = await _mediator.Send(new CreateUserSubscriptionCommand
                 {
                     ProductName = request.ProductId,
-                    InternalUserId = request.AccountIdentifier
+                    InternalUserId = request.AccountIdentifier,
+                    ApimUserId = id
                 });
 
                 return Created("", new {Id = queryResult.SubscriptionId});

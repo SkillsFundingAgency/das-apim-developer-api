@@ -6,6 +6,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface ISubscriptionService
     {
-        Task<string> CreateUserSubscription(string internalUserId, string apimUserType, string productName);
+        Task<string> CreateUserSubscription(string internalUserId, string apimUserType, string productName, Guid apimUserId);
     }
 }

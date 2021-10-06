@@ -25,6 +25,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
             {
                 validationResult.AddError(nameof(item.ProductName));
             }
+
+            if (item.ApimUserId.Equals(Guid.Empty))
+            {
+                validationResult.AddError(nameof(item.ApimUserId));
+            }
             
             return Task.FromResult(validationResult);
         }

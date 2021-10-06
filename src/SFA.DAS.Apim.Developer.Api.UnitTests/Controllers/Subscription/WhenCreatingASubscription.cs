@@ -31,7 +31,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
                 .Setup(mediator => mediator.Send(
                     It.Is<CreateUserSubscriptionCommand>(c =>
                         c.ProductName.Equals(request.ProductId)
-                        && c.InternalUserId.Equals(request.AccountIdentifier)),
+                        && c.InternalUserId.Equals(request.AccountIdentifier)
+                        && c.ApimUserId.Equals(id)),
                     It.IsAny<CancellationToken>())).ReturnsAsync(mediatorResponse);
 
             var controllerResult = await controller.CreateSubscription(id, request) as CreatedResult;

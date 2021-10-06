@@ -8,5 +8,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
         public string InternalUserId { get; set; }
         public string ApimUserType { get; set; } // TODO: or id?
         public string ProductName { get; set; }
+        public Guid ApimUserId { get ; set ; }
     }
 }

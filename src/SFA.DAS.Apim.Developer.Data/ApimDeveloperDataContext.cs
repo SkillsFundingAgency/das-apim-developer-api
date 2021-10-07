@@ -10,7 +10,6 @@ namespace SFA.DAS.Apim.Developer.Data
 {
     public interface IApimDeveloperDataContext 
     {
-        DbSet<Domain.Entities.ApimUserType> ApimUserType { get; set; }
         DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
         DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
 
@@ -24,7 +23,6 @@ namespace SFA.DAS.Apim.Developer.Data
         private readonly ApimDeveloperApiConfiguration _configuration;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
         private readonly EnvironmentConfiguration _environmentConfiguration;
-        public DbSet<Domain.Entities.ApimUserType> ApimUserType { get; set; }
         public DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
         public DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
 
@@ -69,7 +67,6 @@ namespace SFA.DAS.Apim.Developer.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ApimUserType());
             modelBuilder.ApplyConfiguration(new ApimUser());
             modelBuilder.ApplyConfiguration(new ApimAudit());
 

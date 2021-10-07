@@ -11,13 +11,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
         private readonly IApimUserRepository _apimUserRepository;
-        private readonly IApimUserTypeRepository _apimUserTypeRepository;
 
-        public SubscriptionService(IAzureApimManagementService azureApimManagementService, IApimUserRepository apimUserRepository, IApimUserTypeRepository apimUserTypeRepository)
+        public SubscriptionService(IAzureApimManagementService azureApimManagementService, IApimUserRepository apimUserRepository)
         {
             _azureApimManagementService = azureApimManagementService;
             _apimUserRepository = apimUserRepository;
-            _apimUserTypeRepository = apimUserTypeRepository;
         }
         public async Task<string> CreateUserSubscription(string internalUserId, ApimUserType apimUserType, string productName)
         {

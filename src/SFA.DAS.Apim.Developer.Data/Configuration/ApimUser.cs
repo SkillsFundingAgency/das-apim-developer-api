@@ -12,7 +12,7 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
 
             builder.Property(x => x.ApimUserId).HasColumnName("ApimUserId").HasColumnType("uniqueidentifier").IsRequired();
             builder.Property(x => x.InternalUserId).HasColumnName("InternalUserId").HasColumnType("varchar").HasMaxLength(50).IsRequired();
-            builder.Property(x => x.ApimUserTypeId).HasColumnName("ApimUserTypeId").HasColumnType("int").HasMaxLength(50).IsRequired();
+            builder.Property(x => x.ApimUserTypeId).HasColumnName("ApimUserTypeId").HasColumnType("smallint").IsRequired();
             
             builder.HasIndex(x => x.ApimUserId).IsUnique();
 

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.AppStart;
+using SFA.DAS.Apim.Developer.Data;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
@@ -19,6 +21,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
 
         [TestCase(typeof(IAzureApimManagementService))]
         [TestCase(typeof(IAzureTokenService))]
+        [TestCase(typeof(ISubscriptionService))]
         public void Then_The_Dependencies_Are_Correctly_Resolved(Type toResolve)
         {
             var hostEnvironment = new Mock<IWebHostEnvironment>();
@@ -27,10 +30,15 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
             var configuration = GenerateConfiguration();
             serviceCollection.AddSingleton(hostEnvironment.Object);
             serviceCollection.AddSingleton(Mock.Of<IConfiguration>());
-
             serviceCollection.AddConfigurationOptions(configuration);
             serviceCollection.AddDistributedMemoryCache();
             serviceCollection.AddServiceRegistration();
+
+            var apimDeveloperApiConfiguration = configuration
+                .GetSection("ApimDeveloperApi")
+                .Get<ApimDeveloperApiConfiguration>();
+            serviceCollection.AddDatabaseRegistration(apimDeveloperApiConfiguration, configuration["Environment"]);
+
 
             foreach (var descriptor in serviceCollection.Where(
                 d => d.ServiceType ==
@@ -79,7 +87,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
                 InitialData = new List<KeyValuePair<string, string>>
                 {
                     new KeyValuePair<string, string>("ApimDeveloperApi:ConnectionString", "test"),
-                    new KeyValuePair<string, string>("AzureApimManagement:ApimServiceName", "test")
+                    new KeyValuePair<string, string>("AzureApimManagement:ApimServiceName", "test"),
+                    new KeyValuePair<string, string>("Environment", "test"),
                 }
             };
 

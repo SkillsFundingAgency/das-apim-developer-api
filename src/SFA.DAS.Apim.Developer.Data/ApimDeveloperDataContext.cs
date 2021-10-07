@@ -23,6 +23,7 @@ namespace SFA.DAS.Apim.Developer.Data
         
         private readonly ApimDeveloperApiConfiguration _configuration;
         private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
+        private readonly EnvironmentConfiguration _environmentConfiguration;
         public DbSet<Domain.Entities.ApimUserType> ApimUserType { get; set; }
         public DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
         public DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
@@ -35,15 +36,18 @@ namespace SFA.DAS.Apim.Developer.Data
         {
             
         }
-        public ApimDeveloperDataContext(IOptions<ApimDeveloperApiConfiguration> config, DbContextOptions options, AzureServiceTokenProvider azureServiceTokenProvider) :base(options)
+        public ApimDeveloperDataContext(IOptions<ApimDeveloperApiConfiguration> config, DbContextOptions options, AzureServiceTokenProvider azureServiceTokenProvider, EnvironmentConfiguration environmentConfiguration) :base(options)
         {
             _configuration = config.Value;
             _azureServiceTokenProvider = azureServiceTokenProvider;
+            _environmentConfiguration = environmentConfiguration;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLazyLoadingProxies();
-            if (_configuration == null || _azureServiceTokenProvider == null)
+            if (_configuration == null 
+                || _environmentConfiguration.EnvironmentName.Equals("DEV", StringComparison.CurrentCultureIgnoreCase)
+                || _environmentConfiguration.EnvironmentName.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase))
             {
                 return;
             }

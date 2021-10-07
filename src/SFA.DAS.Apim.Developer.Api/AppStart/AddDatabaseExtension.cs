@@ -25,6 +25,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             }
 
 
+            services.AddSingleton(new EnvironmentConfiguration(environmentName));
 
             services.AddTransient<IApimDeveloperDataContext, ApimDeveloperDataContext>(provider => provider.GetService<ApimDeveloperDataContext>());
             services.AddTransient(provider => new Lazy<ApimDeveloperDataContext>(provider.GetService<ApimDeveloperDataContext>()));

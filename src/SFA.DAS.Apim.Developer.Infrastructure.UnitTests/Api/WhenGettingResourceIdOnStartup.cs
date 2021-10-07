@@ -103,7 +103,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
         }
 
         [Test, AutoData]
-        public async Task Then_An_Exception_Is_Thrown_If_No_Subscriptions_Are_Returned(
+        public void Then_An_Exception_Is_Thrown_If_No_Subscriptions_Are_Returned(
             string authToken)
         {
 
@@ -133,7 +133,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
         }
 
         [Test, AutoData]
-        public async Task Then_An_Exception_Is_Thrown_If_No_Apim_Resources_Are_Returned(
+        public void Then_An_Exception_Is_Thrown_If_No_Apim_Resources_Are_Returned(
             string authToken,
             string azureSubscriptionId,
             string apimResourceId,

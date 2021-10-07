@@ -21,7 +21,6 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
     {
         [Test, MoqAutoData]
         public async Task Then_The_Request_Is_Sent_To_The_Mediator_Handler(
-            Guid id,
             CreateSubscriptionApiRequest request,
             CreateUserSubscriptionCommandResponse mediatorResponse,
             [Frozen] Mock<IMediator> mockMediator,
@@ -31,11 +30,10 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
                 .Setup(mediator => mediator.Send(
                     It.Is<CreateUserSubscriptionCommand>(c =>
                         c.ProductName.Equals(request.ProductId)
-                        && c.InternalUserId.Equals(request.AccountIdentifier)
-                        && c.ApimUserId.Equals(id)),
+                        && c.InternalUserId.Equals(request.AccountIdentifier)),
                     It.IsAny<CancellationToken>())).ReturnsAsync(mediatorResponse);
 
-            var controllerResult = await controller.CreateSubscription(id, request) as CreatedResult;
+            var controllerResult = await controller.CreateSubscription(request) as CreatedResult;
 
             controllerResult!.StatusCode.Should().Be((int) HttpStatusCode.Created);
             controllerResult.Value.Should().BeEquivalentTo(new{Id=mediatorResponse.SubscriptionId});
@@ -43,7 +41,6 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
         
         [Test, MoqAutoData]
         public async Task And_Validation_Exception_Then_Returns_BadRequest(
-            Guid id,
             string errorKey,
             CreateSubscriptionApiRequest request,
             [Frozen] Mock<IMediator> mockMediator,
@@ -56,7 +53,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
                     It.IsAny<CancellationToken>()))
                 .Throws(new ValidationException(validationResult.DataAnnotationResult, null, null));
 
-            var controllerResult = await controller.CreateSubscription(id, request) as ObjectResult;
+            var controllerResult = await controller.CreateSubscription(request) as ObjectResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             controllerResult.Value.ToString().Should().Contain(errorKey);
@@ -64,7 +61,6 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
 
         [Test, RecursiveMoqAutoData]
         public async Task And_Exception_Then_Returns_Error(
-            Guid id,
             CreateSubscriptionApiRequest request,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] SubscriptionController controller)
@@ -75,7 +71,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
                     It.IsAny<CancellationToken>()))
                 .Throws<InvalidOperationException>();
 
-            var controllerResult = await controller.CreateSubscription(id, request) as StatusCodeResult;
+            var controllerResult = await controller.CreateSubscription(request) as StatusCodeResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         }

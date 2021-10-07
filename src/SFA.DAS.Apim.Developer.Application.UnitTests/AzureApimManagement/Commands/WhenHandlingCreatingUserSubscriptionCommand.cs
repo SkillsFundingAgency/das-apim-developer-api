@@ -32,7 +32,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
         }
 
         [Test, MoqAutoData]
-        public async Task Then_If_The_Request_Is_Valid_The_Service_Is_Called(
+        public async Task Then_If_The_Request_Is_Valid_The_Service_Is_Called_And_Marked_As_Employer_If_Alphanumeric_Id(
             string subscriptionId,
             CreateUserSubscriptionCommand request,
             [Frozen]Mock<IValidator<CreateUserSubscriptionCommand>> validator,
@@ -44,7 +44,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
                 .Setup(x => x.ValidateAsync(request))
                 .ReturnsAsync(new ValidationResult( ));
             service
-                .Setup(x => x.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName, request.ApimUserId))
+                .Setup(x => x.CreateUserSubscription(request.InternalUserId, Domain.Models.ApimUserType.Employer, request.ProductName))
                 .ReturnsAsync(subscriptionId);
 
             //Act
@@ -53,5 +53,30 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             //Assert
             actual.SubscriptionId.Should().Be(subscriptionId);
         }
+        
+        [Test, MoqAutoData]
+        public async Task Then_If_The_InternalUserId_Is_Numeric_Then_Marked_As_Provider(
+            int id,
+            string subscriptionId,
+            CreateUserSubscriptionCommand request,
+            [Frozen]Mock<IValidator<CreateUserSubscriptionCommand>> validator,
+            [Frozen]Mock<ISubscriptionService> service,
+            CreateUserSubscriptionCommandHandler handler)
+        {
+            request.InternalUserId = id.ToString();
+            validator
+                .Setup(x => x.ValidateAsync(request))
+                .ReturnsAsync(new ValidationResult( ));
+            service
+                .Setup(x => x.CreateUserSubscription(request.InternalUserId, Domain.Models.ApimUserType.Provider, request.ProductName))
+                .ReturnsAsync(subscriptionId);
+            
+            //Act
+            var actual = await handler.Handle(request, CancellationToken.None);
+
+            //Assert
+            actual.SubscriptionId.Should().Be(subscriptionId);
+        }
+        
     }
 }

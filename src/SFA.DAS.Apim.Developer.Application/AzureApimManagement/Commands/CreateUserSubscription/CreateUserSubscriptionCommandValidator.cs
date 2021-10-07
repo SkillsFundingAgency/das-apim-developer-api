@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Validation;
@@ -11,11 +10,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
         {
             var validationResult = new ValidationResult();
             
-            if (string.IsNullOrEmpty(item.ApimUserType))
-            {
-                validationResult.AddError(nameof(item.ApimUserType));
-            }
-            
             if (string.IsNullOrEmpty(item.InternalUserId))
             {
                 validationResult.AddError(nameof(item.InternalUserId));
@@ -24,11 +18,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
             if (string.IsNullOrEmpty(item.ProductName))
             {
                 validationResult.AddError(nameof(item.ProductName));
-            }
-
-            if (item.ApimUserId.Equals(Guid.Empty))
-            {
-                validationResult.AddError(nameof(item.ApimUserId));
             }
             
             return Task.FromResult(validationResult);

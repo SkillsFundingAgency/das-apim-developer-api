@@ -25,16 +25,15 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         }
         
         [HttpPost]
-        [Route("{id}")]
-        public async Task<IActionResult> CreateSubscription([FromRoute]Guid id, [FromBody]CreateSubscriptionApiRequest request)
+        [Route("")]
+        public async Task<IActionResult> CreateSubscription([FromBody]CreateSubscriptionApiRequest request)
         {
             try
             {
                 var queryResult = await _mediator.Send(new CreateUserSubscriptionCommand
                 {
                     ProductName = request.ProductId,
-                    InternalUserId = request.AccountIdentifier,
-                    ApimUserId = id
+                    InternalUserId = request.AccountIdentifier
                 });
 
                 return Created("", new {Id = queryResult.SubscriptionId});

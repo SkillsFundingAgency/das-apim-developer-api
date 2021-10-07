@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription
 {
@@ -25,7 +27,10 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
                 throw new ValidationException(validationResult.DataAnnotationResult,null, null);
             }
             
-            var subscriptionId = await _subscriptionService.CreateUserSubscription(request.InternalUserId, request.ApimUserType, request.ProductName, request.ApimUserId);
+            var subscriptionId = await _subscriptionService.CreateUserSubscription(
+                request.InternalUserId, 
+                Regex.IsMatch(request.InternalUserId, "^[0-9]+$") ? ApimUserType.Provider : ApimUserType.Employer, 
+                request.ProductName);
 
             return new CreateUserSubscriptionCommandResponse()
             {

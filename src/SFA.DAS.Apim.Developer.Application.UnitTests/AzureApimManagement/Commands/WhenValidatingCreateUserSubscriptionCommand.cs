@@ -37,22 +37,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             actual.ValidationDictionary.Should().ContainKey(nameof(command.InternalUserId));
         }
         
-        [Test]
-        [MoqInlineAutoData((string)null)]
-        [MoqInlineAutoData("")]
-        public async Task Then_If_No_ApimUserType_Set_Then_Error(
-            string apimUserType,
-            CreateUserSubscriptionCommand command,
-            CreateUserSubscriptionCommandValidator validator)
-        {
-            command.ApimUserType = apimUserType;
-            
-            var actual = await validator.ValidateAsync(command);
-            
-            actual.IsValid().Should().BeFalse();
-            actual.ValidationDictionary.Count.Should().Be(1);
-            actual.ValidationDictionary.Should().ContainKey(nameof(command.ApimUserType));
-        }
         
         [Test]
         [MoqInlineAutoData((string)null)]
@@ -69,20 +53,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             actual.IsValid().Should().BeFalse();
             actual.ValidationDictionary.Count.Should().Be(1);
             actual.ValidationDictionary.Should().ContainKey(nameof(command.ProductName));
-        }
-        
-        [Test, MoqAutoData]
-        public async Task Then_If_No_Id_Set_Then_Error(
-            CreateUserSubscriptionCommand command,
-            CreateUserSubscriptionCommandValidator validator)
-        {
-            command.ApimUserId = Guid.Empty;
-            
-            var actual = await validator.ValidateAsync(command);
-            
-            actual.IsValid().Should().BeFalse();
-            actual.ValidationDictionary.Count.Should().Be(1);
-            actual.ValidationDictionary.Should().ContainKey(nameof(command.ApimUserId));
         }
     }
 }

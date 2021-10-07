@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
 {
@@ -7,17 +8,16 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
     {
         private readonly string _apimUserId;
 
-        public CreateUserRequest(string apimUserId)
+        public CreateUserRequest(string apimUserId, UserDetails userDetails)
         {
             _apimUserId = apimUserId;
             Data = new CreateUserRequestBody
             {
                 Properties = new ApimCreateUserProperties
                 {
-                    //TODO: what to set these to
-                    Email = "test@testing.com",
-                    FirstName = "firstname",
-                    LastName = "lastname"
+                    Email = userDetails.EmailAddress,
+                    FirstName = userDetails.FirstName,
+                    LastName = userDetails.LastName
                 }
             };
         }

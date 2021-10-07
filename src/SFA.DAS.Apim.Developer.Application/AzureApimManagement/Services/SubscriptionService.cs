@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
+using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 
@@ -17,7 +18,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _azureApimManagementService = azureApimManagementService;
             _apimUserRepository = apimUserRepository;
         }
-        public async Task<string> CreateUserSubscription(string internalUserId, ApimUserType apimUserType, string productName)
+        public async Task<CreateSubscriptionResponse> CreateUserSubscription(string internalUserId, ApimUserType apimUserType, string productName, UserDetails userDetails)
         {
             var apimUser = await _apimUserRepository.GetByInternalIdAndType(internalUserId, (int)apimUserType);
 
@@ -29,8 +30,8 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                     ApimUserTypeId = (int)apimUserType,
                     InternalUserId = internalUserId
                 };
-                
-                var createApimUserTask = CreateApimUser(newUser);
+
+                var createApimUserTask = CreateApimUser(newUser, userDetails);
                 var apimUserTask = _apimUserRepository.Insert(newUser);
                 await Task.WhenAll(createApimUserTask, apimUserTask);
 
@@ -39,12 +40,12 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
             var createSubscriptionRequest = new CreateSubscriptionRequest($"{apimUserType}-{internalUserId}", apimUser.ApimUserId.ToString(), productName);
             var response = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
-            return response.Body.Properties.DisplayName;
+            return response.Body;
         }
 
-        private async Task<Guid> CreateApimUser(ApimUser apimUser)
+        private async Task<Guid> CreateApimUser(ApimUser apimUser, UserDetails userDetails)
         {
-            var newUserRequest = new CreateUserRequest(apimUser.ApimUserId.ToString());
+            var newUserRequest = new CreateUserRequest(apimUser.ApimUserId.ToString(), userDetails);
             var apimUserResponse = await _azureApimManagementService.Put<CreateUserResponse>(newUserRequest);
             return Guid.Parse(apimUserResponse.Body.Name);
         }

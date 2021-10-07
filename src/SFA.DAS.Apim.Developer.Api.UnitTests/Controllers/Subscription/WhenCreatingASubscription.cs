@@ -35,10 +35,10 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
 
             var controllerResult = await controller.CreateSubscription(request) as CreatedResult;
 
-            controllerResult!.StatusCode.Should().Be((int) HttpStatusCode.Created);
-            controllerResult.Value.Should().BeEquivalentTo(new{Id=mediatorResponse.SubscriptionId});
+            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
+            controllerResult.Value.Should().BeEquivalentTo(new { PrimaryKey = mediatorResponse.PrimaryKey, SecondaryKey = mediatorResponse.SecondaryKey });
         }
-        
+
         [Test, MoqAutoData]
         public async Task And_Validation_Exception_Then_Returns_BadRequest(
             string errorKey,
@@ -46,7 +46,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] SubscriptionController controller)
         {
-            var validationResult = new ValidationResult{ValidationDictionary = { {errorKey,"Some error"}}};
+            var validationResult = new ValidationResult { ValidationDictionary = { { errorKey, "Some error" } } };
             mockMediator
                 .Setup(mediator => mediator.Send(
                     It.IsAny<CreateUserSubscriptionCommand>(),

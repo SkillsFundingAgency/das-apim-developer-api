@@ -4,6 +4,12 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
 {
     public class CreateSubscriptionResponse
     {
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+
         [JsonProperty(PropertyName = "properties")]
         public ApimSubscriptionContract Properties { get; set; }
 
@@ -17,6 +23,12 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
             public string OwnerId { get; set; }
             [JsonProperty(PropertyName = "state")]
             public SubscriptionState State { get; set; }
+
+            [JsonProperty(PropertyName = "primaryKey")]
+            public string PrimaryKey { get; set; }
+
+            [JsonProperty(PropertyName = "secondaryKey")]
+            public string SecondaryKey { get; set; }
         }
     }
 }

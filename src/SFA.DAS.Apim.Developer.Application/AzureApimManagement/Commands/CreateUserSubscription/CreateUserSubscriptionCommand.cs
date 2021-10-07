@@ -1,5 +1,5 @@
-using System;
 using MediatR;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription
 {
@@ -7,5 +7,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
     {
         public string InternalUserId { get; set; }
         public string ProductName { get; set; }
+        public UserDetails UserDetails { get; set; }
     }
 }

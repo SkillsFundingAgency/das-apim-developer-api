@@ -15,9 +15,6 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
             builder.Property(x => x.ApimUserTypeId).HasColumnName("ApimUserTypeId").HasColumnType("smallint").IsRequired();
             
             builder.HasIndex(x => x.ApimUserId).IsUnique();
-
-            builder.HasOne(c => c.ApimUserType).WithMany(c => c.ApimUsers)
-                   .HasForeignKey(c => c.ApimUserTypeId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

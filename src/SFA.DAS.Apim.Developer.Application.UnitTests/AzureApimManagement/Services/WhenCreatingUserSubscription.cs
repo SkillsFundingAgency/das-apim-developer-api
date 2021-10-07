@@ -23,6 +23,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             string productName, 
             Guid apimUserId,
             ApimUser apimUser,
+            UserDetails userDetails,
             ApiResponse<CreateUserResponse> createUserApiResponse,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
@@ -47,17 +48,18 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
                 ))).ReturnsAsync(createSubscriptionApiResponse);
 
-            var actual = await subscriptionService.CreateUserSubscription(internalUserId,apimUserType, productName);
+            var actual = await subscriptionService.CreateUserSubscription(internalUserId,apimUserType, productName, userDetails);
             
-            actual.Should().Be(createSubscriptionApiResponse.Body.Properties.DisplayName);
+            actual.Should().Be(createSubscriptionApiResponse.Body);
         }
 
         [Test, RecursiveMoqAutoData]
-        public async Task Then_The_Subscription_Is_Created_For_The_User_And_Name_Returned(
+        public async Task Then_The_Subscription_Is_Created_For_The_User_And_Subscription_Returned(
             string internalUserId,
             ApimUserType apimUserType,
             string productName,
             ApimUser apimUser,
+            UserDetails userDetails,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             [Frozen] Mock<IApimUserRepository> apimUserRepository,
@@ -73,9 +75,9 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                         && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
                     ))).ReturnsAsync(createSubscriptionApiResponse);
             
-            var actual = await subscriptionService.CreateUserSubscription(internalUserId,apimUserType, productName);
+            var actual = await subscriptionService.CreateUserSubscription(internalUserId,apimUserType, productName, userDetails);
 
-            actual.Should().Be(createSubscriptionApiResponse.Body.Properties.DisplayName);
+            actual.Should().Be(createSubscriptionApiResponse.Body);
         }
     }
 }

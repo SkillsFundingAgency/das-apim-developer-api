@@ -24,18 +24,21 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
 
             if (!validationResult.IsValid())
             {
-                throw new ValidationException(validationResult.DataAnnotationResult,null, null);
+                throw new ValidationException(validationResult.DataAnnotationResult, null, null);
             }
-            
-            var subscriptionId = await _subscriptionService.CreateUserSubscription(
-                request.InternalUserId, 
-                Regex.IsMatch(request.InternalUserId, "^[0-9]+$") ? ApimUserType.Provider : ApimUserType.Employer, 
-                request.ProductName);
+
+            var subscriptionResponse = await _subscriptionService.CreateUserSubscription(
+                request.InternalUserId,
+                Regex.IsMatch(request.InternalUserId, "^[0-9]+$") ? ApimUserType.Provider : ApimUserType.Employer,
+                request.ProductName,
+                request.UserDetails);
 
             return new CreateUserSubscriptionCommandResponse()
             {
-                SubscriptionId = subscriptionId
-            }; //TODO: return something more useful?
+                SubscriptionId = subscriptionResponse.Name,
+                PrimaryKey = subscriptionResponse.Properties.PrimaryKey,
+                SecondaryKey = subscriptionResponse.Properties.SecondaryKey
+            };
         }
     }
 }

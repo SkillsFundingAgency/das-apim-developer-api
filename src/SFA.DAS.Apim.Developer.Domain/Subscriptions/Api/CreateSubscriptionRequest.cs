@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
@@ -14,7 +15,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
             {
                 Properties = new ApimSubscriptionContract
                 {
-                    DisplayName = _subscriptionId, // TODO: maybe something better?
+                    DisplayName = _subscriptionId,
                     OwnerId = $"/users/{apimUserId}",
                     Scope = $"/products/{productId}",
                     State = SubscriptionState.Active
@@ -41,6 +42,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
         [JsonProperty(PropertyName = "ownerId")]
         public string OwnerId { get; set; }
         [JsonProperty(PropertyName = "state")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public SubscriptionState State { get; set; }
     }
 

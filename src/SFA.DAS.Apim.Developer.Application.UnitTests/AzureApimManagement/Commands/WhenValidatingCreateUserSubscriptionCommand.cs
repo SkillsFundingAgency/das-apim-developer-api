@@ -15,6 +15,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             CreateUserSubscriptionCommand command,
             CreateUserSubscriptionCommandValidator validator)
         {
+            command.UserDetails.EmailAddress = $"{command.UserDetails.EmailAddress}@validemailaddress.com";
             var actual = await validator.ValidateAsync(command);
 
             actual.IsValid().Should().BeTrue();
@@ -29,6 +30,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             CreateUserSubscriptionCommandValidator validator)
         {
             command.InternalUserId = internalUserId;
+            command.UserDetails.EmailAddress = $"{command.UserDetails.EmailAddress}@validemailaddress.com";
                 
             var actual = await validator.ValidateAsync(command);
             
@@ -47,6 +49,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             CreateUserSubscriptionCommandValidator validator)
         {
             command.ProductName = productName;
+            command.UserDetails.EmailAddress = $"{command.UserDetails.EmailAddress}@validemailaddress.com";
             
             var actual = await validator.ValidateAsync(command);
             

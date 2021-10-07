@@ -18,25 +18,31 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         private readonly IMediator _mediator;
         private readonly ILogger<SubscriptionController> _logger;
 
-        public SubscriptionController (IMediator mediator, ILogger<SubscriptionController> logger)
+        public SubscriptionController(IMediator mediator, ILogger<SubscriptionController> logger)
         {
             _mediator = mediator;
             _logger = logger;
         }
-        
+
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> CreateSubscription([FromBody]CreateSubscriptionApiRequest request)
+        public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionApiRequest request)
         {
             try
             {
                 var queryResult = await _mediator.Send(new CreateUserSubscriptionCommand
                 {
                     ProductName = request.ProductId,
-                    InternalUserId = request.AccountIdentifier
+                    InternalUserId = request.AccountIdentifier,
+                    UserDetails = new Domain.Models.UserDetails
+                    {
+                        FirstName = request.FirstName,
+                        LastName = request.LastName,
+                        EmailAddress = request.EmailAddress
+                    }
                 });
 
-                return Created("", new {Id = queryResult.SubscriptionId});
+                return Created("", new { PrimaryKey = queryResult.PrimaryKey, SecondaryKey = queryResult.SecondaryKey });
             }
             catch (ValidationException e)
             {
@@ -45,7 +51,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode((int) HttpStatusCode.InternalServerError);
+                return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
     }

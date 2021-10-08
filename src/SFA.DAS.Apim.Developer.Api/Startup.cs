@@ -62,7 +62,7 @@ namespace SFA.DAS.Apim.Developer.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
 
             var apimDeveloperApiConfiguration = _configuration
                 .GetSection("ApimDeveloperApi")
@@ -94,14 +94,14 @@ namespace SFA.DAS.Apim.Developer.Api
             services.AddConfigurationOptions(_configuration);
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
 
-           
+
 
             services
                 .AddMvc(o =>
                 {
                     if (!ConfigurationIsLocalOrDev())
                     {
-                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string> { PolicyNames.DataLoad }));
+                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string> { }));
                     }
                     o.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);

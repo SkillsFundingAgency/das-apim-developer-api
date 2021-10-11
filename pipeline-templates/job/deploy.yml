@@ -58,7 +58,7 @@ jobs:
   - RunSqlDacpac
   environment: ${{ parameters.Environment }}
   variables:
-    ApiAppServiceName: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputs${{ parameters.Environment }}.ApiAppServiceName'] ]
+    AppServiceName: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputs${{ parameters.Environment }}.AppServiceName'] ]
     ResourceGroupName: $[ dependencies.DeployResources.outputs['DeployResources.ArmOutputs${{ parameters.Environment }}.ResourceGroupName'] ]
   strategy:
     runOnce:
@@ -67,5 +67,5 @@ jobs:
         - template: azure-pipelines-templates/deploy/step/app-deploy.yml@das-platform-building-blocks
           parameters:
             ServiceConnection: ${{ parameters.ServiceConnection }}
-            AppServiceName: $(ApiAppServiceName)
+            AppServiceName: $(AppServiceName)
             DeploymentPackagePath: $(Pipeline.Workspace)/drop/SFA.DAS.Apim.Developer.Api.zip

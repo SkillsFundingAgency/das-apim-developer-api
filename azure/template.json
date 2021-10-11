@@ -172,7 +172,7 @@
                         "value": {
                             "array": [
                                 {
-                                    "name": "EnvironmentName",
+                                    "name": "Environment",
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {

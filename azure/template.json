@@ -95,7 +95,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "app-service-certificate",
+            "name": "apimdev-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
@@ -122,7 +122,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "application-insights",
+            "name": "apimdev-application-insights",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -146,7 +146,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "app-service",
+            "name": "apimdev-app-service",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -189,7 +189,7 @@
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference('application-insights').outputs.InstrumentationKey.value]"
+                                    "value": "[reference('apimdev-application-insights').outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "LoggingRedisConnectionString",
@@ -206,7 +206,7 @@
                         "value": "[parameters('customHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference('app-service-certificate').outputs.certificateThumbprint.value]"
+                        "value": "[reference('apimdev-app-service-certificate').outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('backEndAccessRestrictions')]"
@@ -219,7 +219,7 @@
         },
         {
             "apiVersion": "2020-06-01",
-            "name": "sql-database",
+            "name": "apimdev-sql-database",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
@@ -258,7 +258,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "apim-role-assignment",
+            "name": "apimdev-apim-role-assignment",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedApimResourceGroup')]",
             "properties": {
@@ -269,7 +269,7 @@
                 },
                 "parameters": {
                     "principalId": {
-                        "value": "[reference('app-service').outputs.managedServiceIdentityId.value]"
+                        "value": "[reference('apimdev-app-service').outputs.managedServiceIdentityId.value]"
                     },
                     "assignmentType": {
                         "value": "DeveloperPortal"
@@ -281,7 +281,7 @@
             },
             "dependsOn": [
                 "[variables('resourceGroupName')]",
-                "app-service"
+                "apimdev-app-service"
             ]
         }
     ],

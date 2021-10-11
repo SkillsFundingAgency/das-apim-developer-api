@@ -23,15 +23,9 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
         public async Task<string> GetResourceId()
         {
-            var subs = await Get<AzureSubscriptionsResponse>(new GetAzureSubscriptionsRequest());
-            if (subs.Body.AzureSubscriptions.Count != 1)
-            {
-                throw new Exception("Subscription count unexpected");
-            }
+            var apimResources = await Post<AzureResourcesResponse>(new ListAzureApimResourcesRequest(_configuration.ApimServiceName));
 
-            var apimResources = await Get<AzureResourcesResponse>(new GetAzureResourcesRequest(subs.Body.AzureSubscriptions.First().SubscriptionId, _configuration.ApimServiceName));
-
-            if (apimResources.Body.AzureResources.Count != 1)
+            if (apimResources.Body.TotalRecords != 1)
             {
                 throw new Exception("Apim Resources count unexpected");
             }

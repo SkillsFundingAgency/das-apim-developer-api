@@ -37,6 +37,21 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
             return await ResponseHandler<T>(response);
         }
+        public async Task<ApiResponse<T>> Post<T>(IPostRequest postRequest)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, postRequest.PostUrl)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(postRequest.Data), Encoding.UTF8,
+                    "application/json")
+            };
+
+            var token = await _azureTokenService.GetToken();
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(request);
+
+            return await ResponseHandler<T>(response);
+        }
 
         public async Task<ApiResponse<T>> Get<T>(IGetRequest getRequest)
         {

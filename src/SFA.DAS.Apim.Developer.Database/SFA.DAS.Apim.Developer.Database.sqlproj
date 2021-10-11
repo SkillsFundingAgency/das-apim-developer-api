@@ -57,10 +57,10 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
+    <Folder Include="Tables\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Tables\ApimAudit.sql" />
-    <Content Include="Tables\ApimUser.sql" />
-    <Content Include="Tables\ApimUserType.sql" />
+    <Build Include="Tables\ApimAudit.sql" />
+    <Build Include="Tables\ApimUser.sql" />
   </ItemGroup>
 </Project>

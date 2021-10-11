@@ -268,3 +268,5 @@ desktop.ini
 App.Debug.config
 
 src/SFA.DAS.Apim.Developer.Api/appsettings.Development.json
+
+.vscode

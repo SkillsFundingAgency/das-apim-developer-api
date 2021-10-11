@@ -55,6 +55,25 @@
         },
         "sharedApimResourceGroup": {
             "type": "string"
+        },
+
+        "sharedSQLServerName": {
+            "type": "string"
+        },
+        "elasticPoolName": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "databaseSkuName": {
+            "type": "string",
+            "defaultValue": "S0"
+        },
+        "databaseTier": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -62,6 +81,7 @@
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
+        "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
         "configNames": "SFA.DAS.Apim.Developer.Api"
     },
     "resources": [
@@ -198,6 +218,45 @@
             ]
         },
         {
+            "apiVersion": "2020-06-01",
+            "name": "sql-database",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'sql-database.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "databaseName": {
+                        "value": "[variables('databaseName')]"
+                    },
+                    "sqlServerName": {
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "elasticPoolName": {
+                        "value": "[parameters('elasticPoolName')]"
+                    },
+                    "databaseSkuName": {
+                        "value": "[parameters('databaseSkuName')]"
+                    },
+                    "databaseTier": {
+                        "value": "[parameters('databaseTier')]"
+                    },
+                    "logAnalyticsSubscriptionId": {
+                        "value": "[subscription().subscriptionId]"
+                    },
+                    "logAnalyticsResourceGroup": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[parameters('logAnalyticsWorkspaceName')]"
+                    }
+                }
+            }
+        },
+        {
             "apiVersion": "2021-04-01",
             "name": "apim-role-assignment",
             "type": "Microsoft.Resources/deployments",
@@ -234,6 +293,10 @@
         "AppServiceName": {
             "type": "string",
             "value": "[variables('appServiceName')]"
+        },
+        "DatabaseName": {
+            "type": "string",
+            "value": "[variables('databaseName')]"
         }
     }
 }

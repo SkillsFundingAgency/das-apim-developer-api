@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
@@ -44,10 +46,54 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUser.ApimUserId}")
+                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{createUserApiResponse.Body.Name}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
                 ))).ReturnsAsync(createSubscriptionApiResponse);
 
+            var actual = await subscriptionService.CreateUserSubscription(internalUserId,apimUserType, productName, userDetails);
+            
+            actual.Should().Be(createSubscriptionApiResponse.Body);
+        }
+        
+        [Test, RecursiveMoqAutoData]
+        public async Task Then_If_The_User_Is_In_The_Portal_But_Not_Database_Then_Not_Created_Through_Api(
+            string internalUserId, 
+            ApimUserType apimUserType, 
+            string productName, 
+            Guid apimUserId,
+            ApimUser apimUser,
+            UserDetails userDetails,
+            CreateUserResponse createUserResponse,
+            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
+            ApiResponse<ApimUserResponse> apimUserResponse,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
+            [Frozen] Mock<IApimUserRepository> apimUserRepository, 
+            SubscriptionService subscriptionService)
+        {
+            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
+            createUserResponse.Name = apimUserId.ToString();
+            var createUserApiResponse =
+                new ApiResponse<CreateUserResponse>(createUserResponse, HttpStatusCode.BadRequest, "");
+            apimUserRepository.Setup(x => x.GetByInternalIdAndType(internalUserId, (int) apimUserType)).ReturnsAsync((ApimUser)null);
+            azureApimManagementService.Setup(x =>
+                    x.Put<CreateUserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/"))))
+                .ReturnsAsync(createUserApiResponse);
+            azureApimManagementService.Setup(x =>
+                x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
+                    c.GetUrl.Contains($"'{userDetails.EmailAddress}'")))).ReturnsAsync(apimUserResponse);
+            
+            apimUserRepository.Setup(x=>x.Insert(It.Is<ApimUser>(c=>
+                c.ApimUserTypeId.Equals((int) apimUserType)
+                && c.InternalUserId!=Guid.Empty.ToString()
+            ))).ReturnsAsync(apimUser);
+            azureApimManagementService.Setup(x =>
+                x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
+                    c.PutUrl.Contains($"subscriptions/{expectedSubscriptionId}?")
+                    && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
+                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserResponse.Body.Properties.First().Name}")
+                    && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
+                ))).ReturnsAsync(createSubscriptionApiResponse);
+        
             var actual = await subscriptionService.CreateUserSubscription(internalUserId,apimUserType, productName, userDetails);
             
             actual.Should().Be(createSubscriptionApiResponse.Body);

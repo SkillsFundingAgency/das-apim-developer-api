@@ -15,24 +15,6 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.Repository.ApimUserRepository
     public class WhenGettingAnApimUser
     {
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_Record_Exists_It_Is_Returned_By_Id(
-            Guid id,
-            ApimUser apimUserEntity,
-            [Frozen] Mock<IApimDeveloperDataContext> mockDbContext,
-            Data.Repository.ApimUserRepository repository)
-        {
-            //Arrange
-            mockDbContext.Setup(x => x.ApimUser.FindAsync(id))
-                .ReturnsAsync(apimUserEntity);
-            
-            //Act
-            var actual = await repository.Get(id);
-            
-            //Assert
-            actual.Should().BeEquivalentTo(apimUserEntity);
-        }
-
-        [Test, RecursiveMoqAutoData]
         public async Task Then_If_The_Record_Exists_It_Is_Returned_By_InternalId_And_Type(
             string internalUserId,
             int apimUserTypeId,

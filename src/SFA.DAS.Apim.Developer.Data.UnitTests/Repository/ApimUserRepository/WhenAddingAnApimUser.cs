@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.Repository.ApimUserRepository
         public void Arrange()
         {
             _apimUser = new ApimUser(){
-                 ApimUserId = new Guid(),
+                 Id = new Guid(),
                  ApimUserTypeId = 1,
                  InternalUserId = "123"
             };

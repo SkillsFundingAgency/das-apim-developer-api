@@ -24,6 +24,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
 
             services.AddTransient<IAzureTokenService, AzureTokenService>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddSingleton(typeof(AzureServiceTokenProvider));
 
             services.AddSingleton(serviceProvider =>

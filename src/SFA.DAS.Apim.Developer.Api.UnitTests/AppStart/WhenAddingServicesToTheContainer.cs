@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.AppStart;
-using SFA.DAS.Apim.Developer.Data;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
@@ -22,6 +20,9 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
         [TestCase(typeof(IAzureApimManagementService))]
         [TestCase(typeof(IAzureTokenService))]
         [TestCase(typeof(ISubscriptionService))]
+        [TestCase(typeof(IUserService))]
+        [TestCase(typeof(IApimUserRepository))]
+        [TestCase(typeof(IApimAuditRepository))]
         public void Then_The_Dependencies_Are_Correctly_Resolved(Type toResolve)
         {
             var hostEnvironment = new Mock<IWebHostEnvironment>();

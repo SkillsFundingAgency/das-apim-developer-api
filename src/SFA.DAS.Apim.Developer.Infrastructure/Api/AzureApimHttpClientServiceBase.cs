@@ -30,8 +30,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
                     "application/json")
             };
 
-            var token = await _azureTokenService.GetToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            await AddAuthorization(request);
 
             var response = await _httpClient.SendAsync(request);
 
@@ -45,8 +44,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
                     "application/json")
             };
 
-            var token = await _azureTokenService.GetToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            await AddAuthorization(request);
 
             var response = await _httpClient.SendAsync(request);
 
@@ -57,8 +55,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         {
             var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);
 
-            var token = await _azureTokenService.GetToken();
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            await AddAuthorization(request);
 
             var response = await _httpClient.SendAsync(request);
 
@@ -84,6 +81,12 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
                 responseBody = JsonConvert.DeserializeObject<T>(responseString);
             }
             return new ApiResponse<T>(responseBody, response.StatusCode, errorContent);
+        }
+
+        private async Task AddAuthorization(HttpRequestMessage httpRequestMessage)
+        {
+            var token = await _azureTokenService.GetToken();
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
     }
 }

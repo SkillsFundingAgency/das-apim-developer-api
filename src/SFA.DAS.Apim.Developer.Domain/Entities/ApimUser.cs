@@ -5,9 +5,10 @@ namespace SFA.DAS.Apim.Developer.Domain.Entities
 {
     public class ApimUser
     {
-        public Guid ApimUserId { get; set; }
+        public Guid Id { get; set; }
         public string InternalUserId { get; set; }
         public int ApimUserTypeId { get; set; }
+        public string ApimUserId { get; set; }
 
         public virtual ICollection<ApimAudit> ApimAudits { get; set; }
     }

@@ -22,13 +22,6 @@ namespace SFA.DAS.Apim.Developer.Data.Repository
             _apimDeveloperDataContext.SaveChanges();
             return apimUser;
         }
-        public async Task<ApimUser> Get(Guid id)
-        {
-            var apimUser = await _apimDeveloperDataContext
-                .ApimUser
-                .FindAsync(id);
-            return apimUser;
-        }
 
         public async Task<ApimUser> GetByInternalIdAndType(string internalUserId, int apimUserTypeId)
         {

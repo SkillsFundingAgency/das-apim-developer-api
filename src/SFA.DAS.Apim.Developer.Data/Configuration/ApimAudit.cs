@@ -15,6 +15,7 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
             builder.Property(x => x.Timestamp).HasColumnName("Timestamp").HasColumnType("datetime").IsRequired();
             
             builder.HasOne(c => c.ApimUser).WithMany(c => c.ApimAudits)
+                .HasPrincipalKey(c=>c.Id)
                    .HasForeignKey(c => c.ApimUserId).OnDelete(DeleteBehavior.Restrict);
         }
     }

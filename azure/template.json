@@ -41,14 +41,39 @@
         "keyVaultCertificateName": {
             "type": "string"
         },
-        "<sharedFrontEndAppServicePlanName> or <sharedBackEndAppServicePlanName>": { //PLACEHOLDER
+        "sharedBackEndAppServicePlanName": {
             "type": "string"
         },
-        "<sharedFrontEndSubnetResourceId> or <sharedBackEndSubnetResourceId>": { //PLACEHOLDER
+        "sharedBackEndSubnetResourceId": {
             "type": "string"
         },
-        "<frontEndAccessRestrictions> or <backEndAccessRestrictions>": { //PLACEHOLDER
+        "backEndAccessRestrictions": {
             "type": "array"
+        },
+        "sharedApimName": {
+            "type": "string"
+        },
+        "sharedApimResourceGroup": {
+            "type": "string"
+        },
+
+        "sharedSQLServerName": {
+            "type": "string"
+        },
+        "elasticPoolName": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "databaseSkuName": {
+            "type": "string",
+            "defaultValue": "S0"
+        },
+        "databaseTier": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -56,7 +81,8 @@
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
-        "configNames": "__SolutionBaseName__" //PLACEHOLDER
+        "databaseName": "[concat(variables('resourceNamePrefix'), '-db')]",
+        "configNames": "SFA.DAS.Apim.Developer.Api"
     },
     "resources": [
         {
@@ -69,7 +95,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "app-service-certificate",
+            "name": "apimdev-app-service-certificate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
             "properties": {
@@ -96,7 +122,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "application-insights",
+            "name": "apimdev-application-insights",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -120,7 +146,7 @@
         },
         {
             "apiVersion": "2021-04-01",
-            "name": "app-service",
+            "name": "apimdev-app-service",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
@@ -134,19 +160,19 @@
                         "value": "[variables('appServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[parameters('<sharedFrontEndAppServicePlanName> or <sharedBackEndAppServicePlanName>')]" //PLACEHOLDER
+                        "value": "[parameters('sharedBackEndAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedEnvResourceGroup')]"
                     },
                     "subnetResourceId": {
-                        "value": "[parameters('<sharedFrontEndSubnetResourceId> or <sharedBackEndSubnetResourceId>')]" //PLACEHOLDER
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
                             "array": [
                                 {
-                                    "name": "EnvironmentName",
+                                    "name": "Environment",
                                     "value": "[parameters('environmentName')]"
                                 },
                                 {
@@ -163,7 +189,7 @@
                                 },
                                 {
                                     "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                    "value": "[reference('application-insights').outputs.InstrumentationKey.value]"
+                                    "value": "[reference('apimdev-application-insights').outputs.InstrumentationKey.value]"
                                 },
                                 {
                                     "name": "LoggingRedisConnectionString",
@@ -180,15 +206,82 @@
                         "value": "[parameters('customHostname')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[reference('app-service-certificate').outputs.certificateThumbprint.value]"
+                        "value": "[reference('apimdev-app-service-certificate').outputs.certificateThumbprint.value]"
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('<frontEndAccessRestrictions> or <backEndAccessRestrictions>')]" //PLACEHOLDER
+                        "value": "[parameters('backEndAccessRestrictions')]"
                     }
                 }
             },
             "dependsOn": [
                 "[variables('resourceGroupName')]"
+            ]
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "name": "apimdev-sql-database",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedEnvResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'sql-database.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "databaseName": {
+                        "value": "[variables('databaseName')]"
+                    },
+                    "sqlServerName": {
+                        "value": "[parameters('sharedSQLServerName')]"
+                    },
+                    "elasticPoolName": {
+                        "value": "[parameters('elasticPoolName')]"
+                    },
+                    "databaseSkuName": {
+                        "value": "[parameters('databaseSkuName')]"
+                    },
+                    "databaseTier": {
+                        "value": "[parameters('databaseTier')]"
+                    },
+                    "logAnalyticsSubscriptionId": {
+                        "value": "[subscription().subscriptionId]"
+                    },
+                    "logAnalyticsResourceGroup": {
+                        "value": "[parameters('sharedManagementResourceGroup')]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[parameters('logAnalyticsWorkspaceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2021-04-01",
+            "name": "apimdev-apim-role-assignment",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('sharedApimResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('deploymentUrlBase'),'role-assignments/role-assignment-api-management.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[reference('apimdev-app-service').outputs.managedServiceIdentityId.value]"
+                    },
+                    "assignmentType": {
+                        "value": "DeveloperPortal"
+                    },
+                    "resourceName": {
+                        "value": "[parameters('sharedApimName')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]",
+                "apimdev-app-service"
             ]
         }
     ],
@@ -200,6 +293,10 @@
         "AppServiceName": {
             "type": "string",
             "value": "[variables('appServiceName')]"
+        },
+        "DatabaseName": {
+            "type": "string",
+            "value": "[variables('databaseName')]"
         }
     }
 }

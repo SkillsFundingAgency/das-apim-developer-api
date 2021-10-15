@@ -1,0 +1,7 @@
+CREATE TABLE [dbo].[ApimUser]
+(
+    [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    [InternalUserId] VARCHAR(50) NOT NULL,
+    [ApimUserTypeId] SMALLINT NOT NULL,
+    [ApimUserId] VARCHAR(50) NOT NULL
+)

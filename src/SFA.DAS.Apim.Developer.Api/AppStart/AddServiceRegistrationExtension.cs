@@ -1,8 +1,7 @@
 using System;
 using System.Net.Http;
-using Microsoft.Azure.Services.AppAuthentication;
+using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
@@ -25,7 +24,12 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             services.AddTransient<IAzureTokenService, AzureTokenService>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddSingleton(typeof(AzureServiceTokenProvider));
+            services.AddSingleton(new ChainedTokenCredential(
+                new ManagedIdentityCredential(),
+                new AzureCliCredential(),
+                new VisualStudioCodeCredential(),
+                new VisualStudioCredential())
+            );
 
             services.AddSingleton(serviceProvider =>
             {

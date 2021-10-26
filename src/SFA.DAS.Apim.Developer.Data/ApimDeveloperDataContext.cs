@@ -1,5 +1,6 @@
 ﻿using System;
-using Microsoft.Azure.Services.AppAuthentication;
+using Azure.Core;
+using Azure.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,7 +22,7 @@ namespace SFA.DAS.Apim.Developer.Data
         private const string AzureResource = "https://database.windows.net/";
         
         private readonly ApimDeveloperApiConfiguration _configuration;
-        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
+        private readonly ChainedTokenCredential _azureServiceTokenProvider;
         private readonly EnvironmentConfiguration _environmentConfiguration;
         public DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
         public DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
@@ -34,7 +35,7 @@ namespace SFA.DAS.Apim.Developer.Data
         {
             
         }
-        public ApimDeveloperDataContext(IOptions<ApimDeveloperApiConfiguration> config, DbContextOptions options, AzureServiceTokenProvider azureServiceTokenProvider, EnvironmentConfiguration environmentConfiguration) :base(options)
+        public ApimDeveloperDataContext(IOptions<ApimDeveloperApiConfiguration> config, DbContextOptions options, ChainedTokenCredential azureServiceTokenProvider, EnvironmentConfiguration environmentConfiguration) :base(options)
         {
             _configuration = config.Value;
             _azureServiceTokenProvider = azureServiceTokenProvider;
@@ -53,7 +54,7 @@ namespace SFA.DAS.Apim.Developer.Data
             var connection = new SqlConnection
             {
                 ConnectionString = _configuration.ConnectionString,
-                AccessToken = _azureServiceTokenProvider.GetAccessTokenAsync(AzureResource).Result,
+                AccessToken = _azureServiceTokenProvider.GetTokenAsync(new TokenRequestContext(scopes: new string[] { AzureResource })).Result.Token,
             };
             
             optionsBuilder.UseSqlServer(connection,options=>

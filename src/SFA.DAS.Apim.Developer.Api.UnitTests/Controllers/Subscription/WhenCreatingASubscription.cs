@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
+using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Api.Controllers;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
 using SFA.DAS.Testing.AutoFixture;
@@ -36,7 +37,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
             var controllerResult = await controller.CreateSubscription(request) as CreatedResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
-            controllerResult.Value.Should().BeEquivalentTo(new { PrimaryKey = mediatorResponse.PrimaryKey, SecondaryKey = mediatorResponse.SandboxPrimaryKey });
+            controllerResult.Value.Should().BeEquivalentTo((CreateSubscriptionApiResponse)mediatorResponse);
         }
 
         [Test, MoqAutoData]

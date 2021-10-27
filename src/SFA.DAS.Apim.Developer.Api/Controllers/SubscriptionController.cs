@@ -42,7 +42,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     }
                 });
 
-                return Created("", new { PrimaryKey = queryResult.PrimaryKey, SecondaryKey = queryResult.SecondaryKey });
+                return Created("", new { PrimaryKey = queryResult.PrimaryKey, SecondaryKey = queryResult.SandboxPrimaryKey });
             }
             catch (ValidationException e)
             {

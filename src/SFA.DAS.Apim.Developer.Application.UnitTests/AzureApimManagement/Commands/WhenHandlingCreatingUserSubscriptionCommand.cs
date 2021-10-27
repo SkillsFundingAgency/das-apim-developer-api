@@ -9,6 +9,7 @@ using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
 using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
+using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using SFA.DAS.Testing.AutoFixture;
 using ValidationResult = SFA.DAS.Apim.Developer.Domain.Validation.ValidationResult;
@@ -36,7 +37,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
         public async Task Then_If_The_Request_Is_Valid_The_Service_Is_Called_And_Marked_As_Employer_If_Alphanumeric_Id(
             string subscriptionId,
             CreateUserSubscriptionCommand request,
-            CreateSubscriptionResponse response,
+            UserSubscription response,
             [Frozen]Mock<IValidator<CreateUserSubscriptionCommand>> validator,
             [Frozen]Mock<ISubscriptionService> service,
             CreateUserSubscriptionCommandHandler handler)
@@ -61,7 +62,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             int id,
             string subscriptionId,
             CreateUserSubscriptionCommand request,
-            CreateSubscriptionResponse response,
+            UserSubscription response,
             [Frozen]Mock<IValidator<CreateUserSubscriptionCommand>> validator,
             [Frozen]Mock<ISubscriptionService> service,
             CreateUserSubscriptionCommandHandler handler)
@@ -80,6 +81,5 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             //Assert
             actual.SubscriptionId.Should().Be(response.Name);
         }
-        
     }
 }

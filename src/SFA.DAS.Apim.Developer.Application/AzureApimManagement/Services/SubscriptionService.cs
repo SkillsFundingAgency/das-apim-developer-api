@@ -16,15 +16,27 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _azureApimManagementService = azureApimManagementService;
             _userService = userService;
         }
-        public async Task<CreateSubscriptionResponse> CreateUserSubscription(string internalUserId, ApimUserType apimUserType, string productName, UserDetails userDetails)
+        
+        public async Task<UserSubscription> CreateUserSubscription(string internalUserId,
+            ApimUserType apimUserType, string productName, UserDetails userDetails)
         {
             var apimUserId = await _userService.CreateUser(internalUserId, userDetails, apimUserType);
             
             var createSubscriptionRequest = new CreateSubscriptionRequest($"{apimUserType}-{internalUserId}", apimUserId, productName);
+            var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
             
-            var response = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
+            var createSandboxSubscriptionRequest = new CreateSubscriptionRequest($"{apimUserType}-{internalUserId}-sandbox", apimUserId, productName);
+            var sandboxApiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSandboxSubscriptionRequest);
+
+            var subscription = new UserSubscription
+            {
+                Id = apiResponse.Body.Id,
+                Name = apiResponse.Body.Name,
+                PrimaryKey = apiResponse.Body.Properties.PrimaryKey,
+                SandboxPrimaryKey = sandboxApiResponse.Body.Properties.PrimaryKey
+            };
             
-            return response.Body;
+            return subscription;
         }
     }
 }

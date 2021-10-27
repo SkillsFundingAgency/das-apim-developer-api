@@ -36,7 +36,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
             var controllerResult = await controller.CreateSubscription(request) as CreatedResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
-            controllerResult.Value.Should().BeEquivalentTo(new { PrimaryKey = mediatorResponse.PrimaryKey, SecondaryKey = mediatorResponse.SecondaryKey });
+            controllerResult.Value.Should().BeEquivalentTo(new { PrimaryKey = mediatorResponse.PrimaryKey, SecondaryKey = mediatorResponse.SandboxPrimaryKey });
         }
 
         [Test, MoqAutoData]

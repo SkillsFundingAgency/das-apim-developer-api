@@ -107,6 +107,10 @@ namespace SFA.DAS.Apim.Developer.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApimDeveloperApi", Version = "v1" });
                 c.OperationFilter<SwaggerVersionHeaderFilter>();
+                if (!ConfigurationIsLocalOrDev())
+                {
+                    c.OperationFilter<SwaggerAuthorizationHeaderFilter>();
+                }
             });
             services.AddApiVersioning(opt =>
             {

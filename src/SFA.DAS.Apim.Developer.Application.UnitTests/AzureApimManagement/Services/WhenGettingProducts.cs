@@ -18,7 +18,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     public class WhenGettingProducts
     {
         [Test, MoqAutoData]
-        public async Task Then_The_Products_Are_Returned_From_The_Api_And_Filtered_By_Group(
+        public async Task Then_The_Products_Are_Returned_From_The_Api_And_Filtered_By_Group_Ignoring_Case(
             GetProductsResponse apiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             ProductService service)
@@ -42,7 +42,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             var actual = await service.GetProducts(new List<string>
             {
                 apiResponse.Value.First().Properties.Groups.First().Name, 
-                apiResponse.Value.Last().Properties.Groups.Last().Name
+                apiResponse.Value.Last().Properties.Groups.Last().Name.ToUpper()
             });
 
             //Assert

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var returnList = new List<Product>();
             foreach (var value in products.Body.Value)
             {
-                if (value.Properties.Groups.Any(propertiesGroup => allowedGroups.Contains(propertiesGroup.Name)))
+                if (value.Properties.Groups.Any(propertiesGroup => allowedGroups.Contains(propertiesGroup.Name, StringComparer.CurrentCultureIgnoreCase)))
                 {
                     returnList.Add(new Product{Name = value.Name});
                 }

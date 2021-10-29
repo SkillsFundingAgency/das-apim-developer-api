@@ -6,6 +6,7 @@ using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apim.Developer.Domain.Extensions;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 {
@@ -34,7 +35,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, apimUserId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
             
-            if (apiResponse.StatusCode != HttpStatusCode.OK)
+            if (!apiResponse.StatusCode.IsSuccessStatusCode())
             {
                 _logger.LogError(apiResponse?.ErrorContent);
                 throw new InvalidOperationException($"Response from create subscription for:[{subscriptionId}] was:[{apiResponse.StatusCode}]");
@@ -44,7 +45,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var createSandboxSubscriptionRequest = new CreateSubscriptionRequest(sandboxSubscriptionId, apimUserId, productName);
             var sandboxApiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSandboxSubscriptionRequest);
 
-            if (sandboxApiResponse.StatusCode != HttpStatusCode.OK)
+            if (!sandboxApiResponse.StatusCode.IsSuccessStatusCode())
             {
                 _logger.LogError(sandboxApiResponse?.ErrorContent);
                 throw new InvalidOperationException($"Response from create subscription for:[{sandboxSubscriptionId}] was:[{sandboxApiResponse.StatusCode}]");

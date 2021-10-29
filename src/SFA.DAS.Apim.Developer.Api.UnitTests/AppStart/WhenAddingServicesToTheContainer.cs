@@ -23,6 +23,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
         [TestCase(typeof(IUserService))]
         [TestCase(typeof(IApimUserRepository))]
         [TestCase(typeof(IApimAuditRepository))]
+        [TestCase(typeof(IProductService))]
         public void Then_The_Dependencies_Are_Correctly_Resolved(Type toResolve)
         {
             var hostEnvironment = new Mock<IWebHostEnvironment>();

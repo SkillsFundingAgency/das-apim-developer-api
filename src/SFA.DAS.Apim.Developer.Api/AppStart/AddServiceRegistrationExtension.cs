@@ -24,6 +24,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             services.AddTransient<IAzureTokenService, AzureTokenService>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddSingleton(new ChainedTokenCredential(
                 new ManagedIdentityCredential(),
                 new AzureCliCredential(),

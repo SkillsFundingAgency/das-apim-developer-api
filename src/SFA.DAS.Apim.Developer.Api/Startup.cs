@@ -15,7 +15,7 @@ using SFA.DAS.Api.Common.Configuration;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Apim.Developer.Api.AppStart;
 using SFA.DAS.Apim.Developer.Api.Infrastructure;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
 using SFA.DAS.Apim.Developer.Data;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -83,11 +83,13 @@ namespace SFA.DAS.Apim.Developer.Api
                     .AddDbContextCheck<ApimDeveloperDataContext>();
             }
 
-            services.AddMediatR(typeof(CreateSubscriptionCommand).Assembly);
+            services.AddMediatR(typeof(CreateUserSubscriptionCommand).Assembly);
             services.AddMediatorValidators();
             services.AddServiceRegistration();
             services.AddConfigurationOptions(_configuration);
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
+
+
 
             services
                 .AddMvc(o =>

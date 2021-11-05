@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
 {
@@ -31,10 +31,16 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         {
             try
             {
-                var queryResult = await _mediator.Send(new CreateSubscriptionCommand
+                var queryResult = await _mediator.Send(new CreateUserSubscriptionCommand
                 {
                     ProductName = request.ProductId,
-                    InternalUserId = request.AccountIdentifier
+                    InternalUserId = request.AccountIdentifier,
+                    UserDetails = new Domain.Models.UserDetails
+                    {
+                        FirstName = request.FirstName,
+                        LastName = request.LastName,
+                        EmailAddress = request.EmailAddress
+                    }
                 });
 
                 var response = (CreateSubscriptionApiResponse)queryResult;

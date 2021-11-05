@@ -1,6 +1,6 @@
-namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription
+namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription
 {
-    public class CreateSubscriptionCommandResponse
+    public class CreateUserSubscriptionCommandResponse
     {
         public string SubscriptionId { get; set; }
         public string PrimaryKey { get; set; }

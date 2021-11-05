@@ -8,7 +8,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
     {
         private readonly string _subscriptionId;
 
-        public CreateSubscriptionRequest(string subscriptionId, string productId)
+        public CreateSubscriptionRequest(string subscriptionId, string apimUserId, string productId)
         {
             _subscriptionId = subscriptionId;
             Data = new CreateSubscriptionRequestBody
@@ -16,6 +16,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
                 Properties = new ApimSubscriptionContract
                 {
                     DisplayName = _subscriptionId,
+                    OwnerId = $"/users/{apimUserId}",
                     Scope = $"/products/{productId}",
                     State = SubscriptionState.Active
                 }
@@ -38,6 +39,8 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
         public string DisplayName { get; set; }
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
+        [JsonProperty(PropertyName = "ownerId")]
+        public string OwnerId { get; set; }
         [JsonProperty(PropertyName = "state")]
         [JsonConverter(typeof(StringEnumConverter))]
         public SubscriptionState State { get; set; }

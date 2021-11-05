@@ -26,11 +26,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _logger = logger;
         }
         
-        public async Task<Subscription> CreateSubscription(string internalUserId,
-            ApimUserType apimUserType, string productName)
+        public async Task<UserSubscription> CreateUserSubscription(string internalUserId,
+            ApimUserType apimUserType, string productName, UserDetails userDetails)
         {
+            var apimUserId = await _userService.CreateUser(internalUserId, userDetails, apimUserType);
+
             var subscriptionId = $"{apimUserType}-{internalUserId}";
-            var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
+            var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, apimUserId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
             
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
@@ -40,7 +42,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             }
             
             var sandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
-            var createSandboxSubscriptionRequest = new CreateSubscriptionRequest(sandboxSubscriptionId, productName);
+            var createSandboxSubscriptionRequest = new CreateSubscriptionRequest(sandboxSubscriptionId, apimUserId, productName);
             var sandboxApiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSandboxSubscriptionRequest);
 
             if (!sandboxApiResponse.StatusCode.IsSuccessStatusCode())
@@ -49,7 +51,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 throw new InvalidOperationException($"Response from create subscription for:[{sandboxSubscriptionId}] was:[{sandboxApiResponse.StatusCode}]");
             }
 
-            return new Subscription
+            return new UserSubscription
             {
                 Id = apiResponse.Body.Id,
                 Name = apiResponse.Body.Name,

@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.Apim.Developer.Domain.Models
 {
-    public class UserSubscription
+    public class Subscription
     {
         public string Id { get; set; }
         public string Name { get; set; }

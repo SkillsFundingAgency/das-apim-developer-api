@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Api.AppStart
@@ -8,7 +8,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
     {
         public static void AddMediatorValidators(this IServiceCollection services)
         {
-            services.AddTransient<IValidator<CreateUserSubscriptionCommand>, CreateUserSubscriptionCommandValidator>();
+            services.AddTransient<IValidator<CreateSubscriptionCommand>, CreateSubscriptionCommandValidator>();
         }
     }
 }

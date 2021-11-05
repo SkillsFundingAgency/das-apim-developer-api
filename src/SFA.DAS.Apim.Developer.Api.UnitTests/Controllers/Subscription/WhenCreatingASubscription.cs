@@ -12,7 +12,7 @@ using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Api.Controllers;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
 using SFA.DAS.Testing.AutoFixture;
 using ValidationResult = SFA.DAS.Apim.Developer.Domain.Validation.ValidationResult;
 
@@ -23,13 +23,13 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
         [Test, MoqAutoData]
         public async Task Then_The_Request_Is_Sent_To_The_Mediator_Handler(
             CreateSubscriptionApiRequest request,
-            CreateUserSubscriptionCommandResponse mediatorResponse,
+            CreateSubscriptionCommandResponse mediatorResponse,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] SubscriptionController controller)
         {
             mockMediator
                 .Setup(mediator => mediator.Send(
-                    It.Is<CreateUserSubscriptionCommand>(c =>
+                    It.Is<CreateSubscriptionCommand>(c =>
                         c.ProductName.Equals(request.ProductId)
                         && c.InternalUserId.Equals(request.AccountIdentifier)),
                     It.IsAny<CancellationToken>())).ReturnsAsync(mediatorResponse);
@@ -50,7 +50,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
             var validationResult = new ValidationResult { ValidationDictionary = { { errorKey, "Some error" } } };
             mockMediator
                 .Setup(mediator => mediator.Send(
-                    It.IsAny<CreateUserSubscriptionCommand>(),
+                    It.IsAny<CreateSubscriptionCommand>(),
                     It.IsAny<CancellationToken>()))
                 .Throws(new ValidationException(validationResult.DataAnnotationResult, null, null));
 
@@ -68,7 +68,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Subscription
         {
             mockMediator
                 .Setup(mediator => mediator.Send(
-                    It.IsAny<CreateUserSubscriptionCommand>(),
+                    It.IsAny<CreateSubscriptionCommand>(),
                     It.IsAny<CancellationToken>()))
                 .Throws<InvalidOperationException>();
 

@@ -1,4 +1,4 @@
-﻿using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
+﻿using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
 
 namespace SFA.DAS.Apim.Developer.Api.ApiResponses
 {
@@ -7,7 +7,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public SubscriptionApiResponse LiveSubscription { get; set; }
         public SubscriptionApiResponse SandboxSubscription { get; set; }
 
-        public static implicit operator CreateSubscriptionApiResponse(CreateUserSubscriptionCommandResponse source)
+        public static implicit operator CreateSubscriptionApiResponse(CreateSubscriptionCommandResponse source)
         {
             return new CreateSubscriptionApiResponse
             {

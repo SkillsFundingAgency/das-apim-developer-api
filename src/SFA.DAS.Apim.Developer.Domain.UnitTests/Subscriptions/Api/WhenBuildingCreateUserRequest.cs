@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
+using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 
 namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
 {

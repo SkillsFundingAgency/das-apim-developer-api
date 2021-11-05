@@ -7,6 +7,8 @@ using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
+using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 {

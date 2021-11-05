@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
+using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 using SFA.DAS.Apim.Developer.Infrastructure.Models;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.Api

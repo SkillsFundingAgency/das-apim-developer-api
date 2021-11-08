@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 
@@ -43,6 +42,12 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             return createApimUserTask;
 
         }
+
+        public async Task<ApimUser> GetUser(string internalUserId, ApimUserType apimUserType)
+        {
+            return await _apimUserRepository.GetByInternalIdAndType(internalUserId, (int)apimUserType);
+        }
+
         private async Task<string> CreateApimUser(string apimUserId, UserDetails userDetails)
         {
             var apimUserResponse = await _azureApimManagementService.Put<CreateUserResponse>(

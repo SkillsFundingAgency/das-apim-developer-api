@@ -15,7 +15,7 @@ using SFA.DAS.Apim.Developer.Infrastructure.Api;
 
 namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
 {
-    public class WhenCreatingASubscriptionOnAzureApim
+    public class WhenCreatingAResource
     {
         [Test, AutoData]
         public async Task Then_The_Endpoint_Is_Called_And_Subscription_Created(

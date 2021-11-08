@@ -17,16 +17,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     public class SubscriptionService : ISubscriptionService
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
-        private readonly IUserService _userService;
         private readonly ILogger<SubscriptionService> _logger;
 
         public SubscriptionService(
-            IAzureApimManagementService azureApimManagementService, 
-            IUserService userService,
+            IAzureApimManagementService azureApimManagementService,
             ILogger<SubscriptionService> logger)
         {
             _azureApimManagementService = azureApimManagementService;
-            _userService = userService;
             _logger = logger;
         }
         

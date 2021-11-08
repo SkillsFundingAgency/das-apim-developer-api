@@ -1,12 +1,14 @@
 using System;
-using System.Net;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
+using SFA.DAS.Apim.Developer.Domain.Products.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Products.Api.Responses;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 
@@ -60,6 +62,36 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 PrimaryKey = apiResponse.Body.Properties.PrimaryKey,
                 SandboxPrimaryKey = sandboxApiResponse.Body.Properties.PrimaryKey
             };
+        }
+
+        public async Task<IEnumerable<UserSubscription>> GetUserSubscriptions(string internalUserId, ApimUserType apimUserType)
+        {
+            var apimSubscriptions =
+                await _azureApimManagementService.Get<GetUserSubscriptionsResponse>(
+                    new GetUserSubscriptionsRequest($"{apimUserType}-{internalUserId}"));
+
+            var returnList = new List<UserSubscription>();
+            foreach (var userSubscriptionItem in apimSubscriptions.Body.Value.Where(c=>c.Name.Contains($"{apimUserType}-{internalUserId}")))
+            { 
+                var subscriptionSecretsTask =
+                    _azureApimManagementService.Post<GetUserSubscriptionSecretsResponse>(
+                        new GetUserSubscriptionSecretsRequest(userSubscriptionItem.Name));
+
+                var productTask =
+                    _azureApimManagementService.Get<GetProductItem>(
+                        new GetProductRequest(userSubscriptionItem.Properties.Scope.Split("/")[^1]));
+
+                await Task.WhenAll(subscriptionSecretsTask, productTask);
+                
+                returnList.Add(new UserSubscription
+                {
+                    Id = userSubscriptionItem.Id,
+                    Name = productTask.Result.Body.Name,
+                    PrimaryKey = subscriptionSecretsTask.Result.Body.PrimaryKey
+                });
+            }
+
+            return returnList;
         }
     }
 }

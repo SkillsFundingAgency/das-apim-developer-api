@@ -17,7 +17,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Queri
         [Test, MoqAutoData]
         public async Task Then_The_Service_Is_Called_And_Data_Returned_For_Employer(
             GetUserSubscriptionsQuery query,
-            List<UserSubscription> serviceResponse,
+            List<Subscription> serviceResponse,
             [Frozen] Mock<ISubscriptionService> service,
             GetUserSubscriptionsQueryHandler handler)
         {
@@ -32,7 +32,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Queri
         public async Task Then_The_Service_Is_Called_And_Data_Returned_For_Provider(
             GetUserSubscriptionsQuery query,
             int providerId,
-            List<UserSubscription> serviceResponse,
+            List<Subscription> serviceResponse,
             [Frozen] Mock<ISubscriptionService> service,
             GetUserSubscriptionsQueryHandler handler)
         {

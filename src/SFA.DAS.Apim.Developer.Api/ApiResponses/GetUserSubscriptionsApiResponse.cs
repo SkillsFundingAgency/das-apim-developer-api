@@ -22,7 +22,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public string Key { get ; set ; }
         public string Name { get ; set ; }
 
-        public static implicit operator GetUserSubscriptionsApiResponseItem(UserSubscription source)
+        public static implicit operator GetUserSubscriptionsApiResponseItem(Subscription source)
         {
             return new GetUserSubscriptionsApiResponseItem
             {

@@ -30,13 +30,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _logger = logger;
         }
         
-        public async Task<UserSubscription> CreateUserSubscription(string internalUserId,
-            ApimUserType apimUserType, string productName, UserDetails userDetails)
+        public async Task<Subscription> CreateSubscription(string internalUserId,
+            ApimUserType apimUserType, string productName)
         {
-            var apimUserId = await _userService.CreateUser(internalUserId, userDetails, apimUserType);
-
             var subscriptionId = $"{apimUserType}-{internalUserId}";
-            var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, apimUserId, productName);
+            var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
             
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
@@ -46,7 +44,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             }
             
             var sandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
-            var createSandboxSubscriptionRequest = new CreateSubscriptionRequest(sandboxSubscriptionId, apimUserId, productName);
+            var createSandboxSubscriptionRequest = new CreateSubscriptionRequest(sandboxSubscriptionId, productName);
             var sandboxApiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSandboxSubscriptionRequest);
 
             if (!sandboxApiResponse.StatusCode.IsSuccessStatusCode())
@@ -55,7 +53,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 throw new InvalidOperationException($"Response from create subscription for:[{sandboxSubscriptionId}] was:[{sandboxApiResponse.StatusCode}]");
             }
 
-            return new UserSubscription
+            return new Subscription
             {
                 Id = apiResponse.Body.Id,
                 Name = apiResponse.Body.Name,
@@ -64,13 +62,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             };
         }
 
-        public async Task<IEnumerable<UserSubscription>> GetUserSubscriptions(string internalUserId, ApimUserType apimUserType)
+        public async Task<IEnumerable<Subscription>> GetUserSubscriptions(string internalUserId, ApimUserType apimUserType)
         {
             var apimSubscriptions =
-                await _azureApimManagementService.Get<GetUserSubscriptionsResponse>(
+                await _azureApimManagementService.Get<GetSubscriptionsResponse>(
                     new GetUserSubscriptionsRequest($"{apimUserType}-{internalUserId}"));
 
-            var returnList = new List<UserSubscription>();
+            var returnList = new List<Subscription>();
             foreach (var userSubscriptionItem in apimSubscriptions.Body.Value.Where(c=>c.Name.Contains($"{apimUserType}-{internalUserId}")))
             { 
                 var subscriptionSecretsTask =
@@ -83,7 +81,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
                 await Task.WhenAll(subscriptionSecretsTask, productTask);
                 
-                returnList.Add(new UserSubscription
+                returnList.Add(new Subscription
                 {
                     Id = userSubscriptionItem.Id,
                     Name = productTask.Result.Body.Name,

@@ -5,6 +5,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUser
 {
     public class GetUserSubscriptionsQueryResponse
     {
-        public IEnumerable<UserSubscription> UserSubscriptions { get ; set ; }
+        public IEnumerable<Subscription> UserSubscriptions { get ; set ; }
     }
 }

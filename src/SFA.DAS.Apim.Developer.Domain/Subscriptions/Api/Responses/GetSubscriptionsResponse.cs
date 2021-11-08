@@ -3,10 +3,10 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
 {
-    public class GetUserSubscriptionsResponse
+    public class GetSubscriptionsResponse
     {
         [JsonProperty("value")]
-        public List<UserSubscriptionItem> Value { get; set; }
+        public List<SubscriptionItem> Value { get; set; }
 
         [JsonProperty("count")]
         public long Count { get; set; }
@@ -15,7 +15,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
         public string NextLink { get; set; }
         
     }
-    public class UserSubscriptionItem
+    public class SubscriptionItem
     {
         [JsonProperty("id")]
         public string Id { get; set; }

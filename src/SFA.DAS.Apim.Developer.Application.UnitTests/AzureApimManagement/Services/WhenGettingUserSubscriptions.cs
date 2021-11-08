@@ -25,7 +25,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             string internalUserId,
             string product,
             string productSandbox,
-            GetUserSubscriptionsResponse userSubscriptionResponse,
+            GetSubscriptionsResponse subscriptionResponse,
             GetUserSubscriptionSecretsResponse userSubscriptionSecretsResponse,
             GetUserSubscriptionSecretsResponse userSubscriptionSecretsResponseSandbox,
             GetProductItem productItemResponse,
@@ -35,25 +35,25 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         {
             //Arrange
             var userType = ApimUserType.Provider;
-            userSubscriptionResponse.Value.First().Name = $"{userType}-{internalUserId}";
-            userSubscriptionResponse.Value.First().Properties.Scope = $"{userSubscriptionResponse.Value.First().Properties.Scope}/{product}";
-            userSubscriptionResponse.Value.Last().Name = $"{userType}-{internalUserId}-sandbox";
-            userSubscriptionResponse.Value.Last().Properties.Scope = $"{userSubscriptionResponse.Value.Last().Properties.Scope}/{productSandbox}";
+            subscriptionResponse.Value.First().Name = $"{userType}-{internalUserId}";
+            subscriptionResponse.Value.First().Properties.Scope = $"{subscriptionResponse.Value.First().Properties.Scope}/{product}";
+            subscriptionResponse.Value.Last().Name = $"{userType}-{internalUserId}-sandbox";
+            subscriptionResponse.Value.Last().Properties.Scope = $"{subscriptionResponse.Value.Last().Properties.Scope}/{productSandbox}";
             
             azureApimManagementService
-                .Setup(x => x.Get<GetUserSubscriptionsResponse>(
+                .Setup(x => x.Get<GetSubscriptionsResponse>(
                     It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}"))))
-                .ReturnsAsync(new ApiResponse<GetUserSubscriptionsResponse>(userSubscriptionResponse, HttpStatusCode.OK, null));
+                .ReturnsAsync(new ApiResponse<GetSubscriptionsResponse>(subscriptionResponse, HttpStatusCode.OK, null));
             azureApimManagementService
                 .Setup(c => c.Post<GetUserSubscriptionSecretsResponse>(
                     It.Is<GetUserSubscriptionSecretsRequest>(x =>
-                        x.PostUrl.Contains(userSubscriptionResponse.Value.First().Name)))).ReturnsAsync(
+                        x.PostUrl.Contains(subscriptionResponse.Value.First().Name)))).ReturnsAsync(
                     new ApiResponse<GetUserSubscriptionSecretsResponse>(userSubscriptionSecretsResponse,
                         HttpStatusCode.OK, null));
             azureApimManagementService
                 .Setup(c => c.Post<GetUserSubscriptionSecretsResponse>(
                     It.Is<GetUserSubscriptionSecretsRequest>(x =>
-                        x.PostUrl.Contains(userSubscriptionResponse.Value.Last().Name)))).ReturnsAsync(
+                        x.PostUrl.Contains(subscriptionResponse.Value.Last().Name)))).ReturnsAsync(
                     new ApiResponse<GetUserSubscriptionSecretsResponse>(userSubscriptionSecretsResponseSandbox,
                         HttpStatusCode.OK, null));
             azureApimManagementService
@@ -69,17 +69,17 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             var actual = await service.GetUserSubscriptions(internalUserId, userType);
             
             //Assert
-            actual.Should().BeEquivalentTo(new List<UserSubscription>
+            actual.Should().BeEquivalentTo(new List<Subscription>
             {
-                new UserSubscription
+                new Subscription
                 {
-                    Id = userSubscriptionResponse.Value.First().Id,
+                    Id = subscriptionResponse.Value.First().Id,
                     Name = productItemResponse.Name,
                     PrimaryKey = userSubscriptionSecretsResponse.PrimaryKey
                 },
-                new UserSubscription
+                new Subscription
                 {
-                    Id = userSubscriptionResponse.Value.Last().Id,
+                    Id = subscriptionResponse.Value.Last().Id,
                     Name = productItemResponseSandbox.Name,
                     PrimaryKey = userSubscriptionSecretsResponseSandbox.PrimaryKey
                 }
@@ -94,15 +94,15 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         {
             //Arrange
             var userType = ApimUserType.Provider;
-            var userSubscriptionResponse = new GetUserSubscriptionsResponse
+            var userSubscriptionResponse = new GetSubscriptionsResponse
             {
-                Value = new List<UserSubscriptionItem>(),
+                Value = new List<SubscriptionItem>(),
                 Count = 0
             };
             azureApimManagementService
-                .Setup(x => x.Get<GetUserSubscriptionsResponse>(
+                .Setup(x => x.Get<GetSubscriptionsResponse>(
                     It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}"))))
-                .ReturnsAsync(new ApiResponse<GetUserSubscriptionsResponse>(userSubscriptionResponse, HttpStatusCode.OK, null));
+                .ReturnsAsync(new ApiResponse<GetSubscriptionsResponse>(userSubscriptionResponse, HttpStatusCode.OK, null));
             
             //Act
             var actual = await service.GetUserSubscriptions(internalUserId, userType);

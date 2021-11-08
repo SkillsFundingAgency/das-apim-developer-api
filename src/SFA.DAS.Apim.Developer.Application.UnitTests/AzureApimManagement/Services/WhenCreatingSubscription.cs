@@ -17,15 +17,13 @@ using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 
 namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Services
 {
-    public class WhenCreatingUserSubscription
+    public class WhenCreatingSubscription
     {
         [Test, RecursiveMoqAutoData]
-        public async Task Then_The_Subscription_Is_Created_For_The_User_And_Subscription_Returned(
+        public async Task Then_The_Subscription_Is_Created_And_Subscription_Returned(
             string internalUserId,
             ApimUserType apimUserType,
             string productName,
-            string apimUserId,
-            UserDetails userDetails,
             CreateSubscriptionResponse createSubscriptionResponseBody,
             CreateSubscriptionResponse createSandboxSubscriptionResponseBody,
             [Frozen] Mock<IAzureApimManagementService> mockAzureApimManagementService,
@@ -42,23 +40,20 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 null);
             var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
             var expectedSandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
-            mockUserService.Setup(x => x.CreateUser(internalUserId,userDetails, apimUserType)).ReturnsAsync(apimUserId);
             mockAzureApimManagementService.Setup(x =>
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserId}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
                 ))).ReturnsAsync(createSubscriptionResponse);
             mockAzureApimManagementService.Setup(x =>
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserId}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSandboxSubscriptionId)
                 ))).ReturnsAsync(createSandboxSubscriptionResponse);
             
-            var actual = await subscriptionService.CreateUserSubscription(internalUserId, apimUserType, productName, userDetails);
+            var actual = await subscriptionService.CreateSubscription(internalUserId, apimUserType, productName);
 
             actual.Id.Should().Be(createSubscriptionResponseBody.Id);
             actual.Name.Should().Be(createSubscriptionResponseBody.Name);
@@ -71,8 +66,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             string internalUserId,
             ApimUserType apimUserType,
             string productName,
-            string apimUserId,
-            UserDetails userDetails,
             CreateSubscriptionResponse createSandboxSubscriptionResponseBody,
             [Frozen] Mock<IAzureApimManagementService> mockAzureApimManagementService,
             [Frozen] Mock<IUserService> mockUserService,
@@ -88,23 +81,20 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 null);
             var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
             var expectedSandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
-            mockUserService.Setup(x => x.CreateUser(internalUserId,userDetails, apimUserType)).ReturnsAsync(apimUserId);
             mockAzureApimManagementService.Setup(x =>
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserId}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
                 ))).ReturnsAsync(createSubscriptionResponse);
             mockAzureApimManagementService.Setup(x =>
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserId}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSandboxSubscriptionId)
                 ))).ReturnsAsync(createSandboxSubscriptionResponse);
             
-            Func<Task> act = async () => await subscriptionService.CreateUserSubscription(internalUserId, apimUserType, productName, userDetails); 
+            Func<Task> act = async () => await subscriptionService.CreateSubscription(internalUserId, apimUserType, productName); 
             
             act.Should().Throw<InvalidOperationException>();
         }
@@ -114,8 +104,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             string internalUserId,
             ApimUserType apimUserType,
             string productName,
-            string apimUserId,
-            UserDetails userDetails,
             CreateSubscriptionResponse createSubscriptionResponseBody,
             [Frozen] Mock<IAzureApimManagementService> mockAzureApimManagementService,
             [Frozen] Mock<IUserService> mockUserService,
@@ -131,23 +119,20 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 "error message");
             var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
             var expectedSandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
-            mockUserService.Setup(x => x.CreateUser(internalUserId,userDetails, apimUserType)).ReturnsAsync(apimUserId);
             mockAzureApimManagementService.Setup(x =>
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserId}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSubscriptionId)
                 ))).ReturnsAsync(createSubscriptionResponse);
             mockAzureApimManagementService.Setup(x =>
                 x.Put<CreateSubscriptionResponse>(It.Is<CreateSubscriptionRequest>(c => 
                     c.PutUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}?")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.Scope.Equals($"/products/{productName}")
-                    && ((CreateSubscriptionRequestBody)c.Data).Properties.OwnerId.Equals($"/users/{apimUserId}")
                     && ((CreateSubscriptionRequestBody)c.Data).Properties.DisplayName.Equals(expectedSandboxSubscriptionId)
                 ))).ReturnsAsync(createSandboxSubscriptionResponse);
             
-            Func<Task> act = async () => await subscriptionService.CreateUserSubscription(internalUserId, apimUserType, productName, userDetails); 
+            Func<Task> act = async () => await subscriptionService.CreateSubscription(internalUserId, apimUserType, productName); 
             
             act.Should().Throw<InvalidOperationException>();
         }

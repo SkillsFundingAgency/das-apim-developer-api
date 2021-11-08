@@ -12,7 +12,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
         {
             var actual = new GetUserSubscriptionSecretsRequest(subscriptionId);
 
-            actual.GetUrl.Should().Be($"subscriptions/{subscriptionId}/listSecrets?api-version=2021-04-01-preview");
+            actual.PostUrl.Should().Be($"subscriptions/{subscriptionId}/listSecrets?api-version=2021-04-01-preview");
         }
     }
 }

@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
 {

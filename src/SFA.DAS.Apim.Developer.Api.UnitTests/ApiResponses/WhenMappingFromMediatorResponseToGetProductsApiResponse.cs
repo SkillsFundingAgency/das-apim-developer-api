@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 
 namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
 {

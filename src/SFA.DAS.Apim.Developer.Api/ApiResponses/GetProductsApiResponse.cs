@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Api.ApiResponses

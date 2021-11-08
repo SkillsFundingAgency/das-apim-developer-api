@@ -34,5 +34,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
     { 
         [JsonProperty("displayName")]
         public string DisplayName { get; set; }
+        [JsonProperty("scope")]
+        public string Scope { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserSubscriptions;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
 {
@@ -50,6 +51,26 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             catch (ValidationException e)
             {
                 return BadRequest(e.ValidationResult.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task <IActionResult> GetUserSubscriptions([FromRoute] string id)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetUserSubscriptionsQuery
+                {
+                    InternalUserId = id
+                });
+            
+                return Ok((GetUserSubscriptionsApiResponse)result);
             }
             catch (Exception e)
             {

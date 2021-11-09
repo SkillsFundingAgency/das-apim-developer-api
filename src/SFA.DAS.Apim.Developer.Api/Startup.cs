@@ -15,7 +15,7 @@ using SFA.DAS.Api.Common.Configuration;
 using SFA.DAS.Api.Common.Infrastructure;
 using SFA.DAS.Apim.Developer.Api.AppStart;
 using SFA.DAS.Apim.Developer.Api.Infrastructure;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUserSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
 using SFA.DAS.Apim.Developer.Data;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -83,13 +83,11 @@ namespace SFA.DAS.Apim.Developer.Api
                     .AddDbContextCheck<ApimDeveloperDataContext>();
             }
 
-            services.AddMediatR(typeof(CreateUserSubscriptionCommand).Assembly);
+            services.AddMediatR(typeof(CreateSubscriptionCommand).Assembly);
             services.AddMediatorValidators();
             services.AddServiceRegistration();
             services.AddConfigurationOptions(_configuration);
             services.AddDatabaseRegistration(apimDeveloperApiConfiguration, _configuration["Environment"]);
-
-
 
             services
                 .AddMvc(o =>
@@ -107,6 +105,10 @@ namespace SFA.DAS.Apim.Developer.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApimDeveloperApi", Version = "v1" });
                 c.OperationFilter<SwaggerVersionHeaderFilter>();
+                if (!ConfigurationIsLocalOrDev())
+                {
+                    c.OperationFilter<SwaggerAuthorizationHeaderFilter>();
+                }
             });
             services.AddApiVersioning(opt =>
             {

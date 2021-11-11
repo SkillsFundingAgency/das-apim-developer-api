@@ -22,12 +22,16 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
     public class GetProductsApiResponseItem
     {
         public string Name { get; set; }
+        public string DisplayName { get ; set ; }
+        public string Description { get ; set ; }
 
         public static implicit operator GetProductsApiResponseItem(Product source)
         {
             return new GetProductsApiResponseItem
             {
-                Name = source.Name
+                Name = source.Name,
+                Description = source.Description,
+                DisplayName = source.DisplayName
             };
         }
     }

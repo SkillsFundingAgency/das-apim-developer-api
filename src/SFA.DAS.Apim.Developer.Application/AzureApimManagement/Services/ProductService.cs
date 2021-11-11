@@ -31,7 +31,21 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             {
                 if (value.Properties.Groups.Any(propertiesGroup => allowedGroups.Contains(propertiesGroup.Name, StringComparer.CurrentCultureIgnoreCase)))
                 {
-                    returnList.Add(new Product{Name = value.Name});
+                    var apiDetail =
+                        await _azureApimManagementService.Get<GetProductApisResponse>(
+                            new GetProductApiRequest(value.Name));
+
+                    if (apiDetail.Body.Count == 0)
+                    {
+                        continue;
+                    }
+                    
+                    returnList.Add(new Product
+                    {
+                        Name = apiDetail.Body.Value.First().Name,
+                        DisplayName = apiDetail.Body.Value.First().Properties.DisplayName,
+                        Description = apiDetail.Body.Value.First().Properties.Description
+                    });
                 }
             }
 

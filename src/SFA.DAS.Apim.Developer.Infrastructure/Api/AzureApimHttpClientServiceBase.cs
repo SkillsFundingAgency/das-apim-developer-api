@@ -1,10 +1,10 @@
 using System;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -36,6 +36,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
             return await ResponseHandler<T>(response);
         }
+        
         public async Task<ApiResponse<T>> Post<T>(IPostRequest postRequest)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, postRequest.PostUrl)
@@ -62,17 +63,12 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             return await ResponseHandler<T>(response);
         }
 
-        private static bool IsNot200RangeResponseCode(HttpStatusCode statusCode)
-        {
-            return !((int)statusCode >= 200 && (int)statusCode <= 299);
-        }
-
         private async Task<ApiResponse<T>> ResponseHandler<T>(HttpResponseMessage response)
         {
             var responseBody = (T)default;
             var errorContent = "";
             var responseString = await response.Content.ReadAsStringAsync();
-            if (IsNot200RangeResponseCode(response.StatusCode))
+            if (!response.StatusCode.IsSuccessStatusCode())
             {
                 errorContent = responseString;
             }

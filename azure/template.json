@@ -300,7 +300,7 @@
         },
         "ApimResourceId": {
             "type": "string",
-            "value": "[resourceId(parameters('sharedApimResourceGroup'), 'microsoft.apimanagement/service', parameters('sharedApimName'))]"
+            "value": "[concat(subscription().id,'/resourceGroups/', parameters('sharedApimResourceGroup'),'/providers/Microsoft.ApiManagement/service/', parameters('sharedApimName'))]"
         }
     }
 }

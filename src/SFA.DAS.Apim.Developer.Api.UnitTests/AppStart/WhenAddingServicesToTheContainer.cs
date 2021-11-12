@@ -41,45 +41,10 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
                 .Get<ApimDeveloperApiConfiguration>();
             serviceCollection.AddDatabaseRegistration(apimDeveloperApiConfiguration, configuration["Environment"]);
 
-
-            foreach (var descriptor in serviceCollection.Where(
-                d => d.ServiceType ==
-                    typeof(IAzureApimResourceService)).ToList())
-            {
-                serviceCollection.Remove(descriptor);
-            }
-            serviceCollection.AddSingleton(Mock.Of<IAzureApimResourceService>());
-
             var provider = serviceCollection.BuildServiceProvider();
 
             var type = provider.GetService(toResolve);
             Assert.IsNotNull(type);
-        }
-
-        [Test]
-        public void Then_The_ApimResourceId_Is_Set()
-        {
-            var hostEnvironment = new Mock<IWebHostEnvironment>();
-            var serviceCollection = new ServiceCollection();
-            var azureApimResourceService = new Mock<IAzureApimResourceService>();
-            azureApimResourceService.Setup(x => x.GetResourceId()).ReturnsAsync("test");
-            var configuration = GenerateConfiguration();
-            serviceCollection.AddSingleton(hostEnvironment.Object);
-            serviceCollection.AddSingleton(Mock.Of<IConfiguration>());
-            serviceCollection.AddConfigurationOptions(configuration);
-            serviceCollection.AddDistributedMemoryCache();
-            serviceCollection.AddServiceRegistration();
-            foreach (var descriptor in serviceCollection.Where(
-                d => d.ServiceType ==
-                     typeof(IAzureApimResourceService)).ToList())
-            {
-                serviceCollection.Remove(descriptor);
-            }
-            serviceCollection.AddSingleton(azureApimResourceService.Object);
-            var provider = serviceCollection.BuildServiceProvider();
-
-            var type = provider.GetService<ApimResourceConfiguration>();
-            type.ApimResourceId.Should().Be("test");
         }
 
         private static IConfigurationRoot GenerateConfiguration()

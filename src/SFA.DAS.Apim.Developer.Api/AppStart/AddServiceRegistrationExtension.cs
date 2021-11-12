@@ -18,8 +18,6 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
         {
             services.AddHttpClient<IAzureApimManagementService, AzureApimManagementService>()
                 .AddPolicyHandler(HttpClientRetryPolicy());
-            services.AddHttpClient<IAzureApimResourceService, AzureApimResourceService>()
-                .AddPolicyHandler(HttpClientRetryPolicy());
 
             services.AddTransient<IAzureTokenService, AzureTokenService>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
@@ -31,19 +29,6 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
                 new VisualStudioCodeCredential(),
                 new VisualStudioCredential())
             );
-
-            services.AddSingleton(serviceProvider =>
-            {
-                var service = serviceProvider.GetService<IAzureApimResourceService>();
-                var apimResourceId = service.GetResourceId().Result;
-                var options = new ApimResourceConfiguration
-                {
-                    ApimResourceId = apimResourceId
-                };
-
-                return options;
-            });
-
 
             services.AddTransient<IApimUserRepository, ApimUserRepository>();
             services.AddTransient<IApimAuditRepository, ApimAuditRepository>();

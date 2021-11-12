@@ -297,6 +297,10 @@
         "DatabaseName": {
             "type": "string",
             "value": "[variables('databaseName')]"
+        },
+        "ApimResourceId": {
+            "type": "string",
+            "value": "[resourceId(parameters('sharedApimResourceGroup'), 'microsoft.apimanagement/service', parameters('sharedApimName'))]"
         }
     }
 }

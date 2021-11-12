@@ -24,14 +24,12 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             string apimServiceName,
             string resourceId,
             string authToken,
-            ApimResourceConfiguration apimResourceConfiguration)
+            AzureApimManagementConfiguration azureApimManagementConfiguration)
         {
             //Arrange
-            var url = $"https://management.azure.com/{apimResourceConfiguration.ApimResourceId}/";
+            var url = $"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/";
             var tokenProvider = new Mock<IAzureTokenService>();
             tokenProvider.Setup(x => x.GetToken()).ReturnsAsync(authToken);
-            var azureApimResourceService = new Mock<IAzureApimResourceService>();
-            azureApimResourceService.Setup(x => x.GetResourceId()).ReturnsAsync(resourceId);
 
             var response = new HttpResponseMessage
             {
@@ -42,7 +40,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             var expectedUrl = $"{url}{getTestRequest.GetUrl}";
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(expectedUrl), HttpMethod.Get);
             var client = new HttpClient(httpMessageHandler.Object);
-            var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, apimResourceConfiguration);
+            var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, azureApimManagementConfiguration);
             
             //Act
             var actualResult = await azureApimManagementService.Get<TestResponse>(getTestRequest);
@@ -70,14 +68,12 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             string apimServiceName,
             string resourceId,
             string authToken,
-            ApimResourceConfiguration apimResourceConfiguration)
+            AzureApimManagementConfiguration azureApimManagementConfiguration)
         {
             //Arrange
-            var url = $"https://management.azure.com/{apimResourceConfiguration.ApimResourceId}/";
+            var url = $"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/";
             var tokenProvider = new Mock<IAzureTokenService>();
             tokenProvider.Setup(x => x.GetToken()).ReturnsAsync(authToken);
-            var azureApimResourceService = new Mock<IAzureApimResourceService>();
-            azureApimResourceService.Setup(x => x.GetResourceId()).ReturnsAsync(resourceId);
 
             var response = new HttpResponseMessage
             {
@@ -88,7 +84,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             var expectedUrl = $"{url}{getTestRequest.GetUrl}";
             var httpMessageHandler = MessageHandler.SetupMessageHandlerMock(response, new Uri(expectedUrl), HttpMethod.Get);
             var client = new HttpClient(httpMessageHandler.Object);
-            var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, apimResourceConfiguration);
+            var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, azureApimManagementConfiguration);
             
             //Act
             var actualResult = await azureApimManagementService.Get<TestResponse>(getTestRequest);

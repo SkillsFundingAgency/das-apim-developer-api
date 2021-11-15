@@ -11,6 +11,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
             _name = name;
         }
 
-        public string GetUrl => $"subscriptions?$filter=name eq '{_name}'&api-version=2021-08-01";
+        public string GetUrl => $"subscriptions?$filter=name startswith '{_name}'&api-version=2021-08-01";
     }
 }

@@ -12,7 +12,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
         {
             var actual = new GetUserSubscriptionsRequest(name);
 
-            actual.GetUrl.Should().Be($"subscriptions?$filter=name eq '{name}'&api-version=2021-08-01");
+            actual.GetUrl.Should().Be($"subscriptions?$filter=name startswith '{name}'&api-version=2021-08-01");
         }
     }
 }

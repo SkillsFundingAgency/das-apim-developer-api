@@ -18,7 +18,6 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             actual.Subscriptions.Should().BeEquivalentTo(source.UserSubscriptions, options => options
                 .Excluding(c=>c.Id)
                 .Excluding(c=>c.PrimaryKey)
-                .Excluding(c=>c.SandboxPrimaryKey)
             );
             actual.Subscriptions.Select(c => c.Key).Should()
                 .BeEquivalentTo(source.UserSubscriptions.Select(c => c.PrimaryKey).ToList());

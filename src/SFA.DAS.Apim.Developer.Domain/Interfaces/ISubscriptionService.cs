@@ -8,7 +8,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
     {
         Task<Subscription> CreateSubscription(string internalUserId,
             ApimUserType apimUserType, string productName);
-        Task RegenerateSubscription(
+        Task RegenerateSubscriptionKeys(
             string internalUserId, ApimUserType apimUserType);
         Task<IEnumerable<Subscription>> GetUserSubscriptions(string internalUserId, ApimUserType apimUserType);
     }

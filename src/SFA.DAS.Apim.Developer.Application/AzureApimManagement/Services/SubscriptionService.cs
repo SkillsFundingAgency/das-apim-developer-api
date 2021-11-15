@@ -48,7 +48,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             };
         }
 
-        public async Task RegenerateSubscription(string internalUserId, ApimUserType apimUserType)
+        public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType)
         {
             var subscriptionId = $"{apimUserType}-{internalUserId}";
             var sandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";

@@ -58,7 +58,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
             
-            await subscriptionService.RegenerateSubscription(internalUserId, apimUserType);
+            await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType);
 
             mockAzureApimManagementService.Verify(service => service.Post<object>(
                 It.Is<RegeneratePrimaryKeyRequest>(c =>
@@ -117,7 +117,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
             
-            Func<Task> act = async () => await subscriptionService.RegenerateSubscription(internalUserId, apimUserType);
+            Func<Task> act = async () => await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType);
 
             act.Should().Throw<AggregateException>()
                 .WithInnerException<ApplicationException>()
@@ -167,7 +167,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
             
-            Func<Task> act = async () => await subscriptionService.RegenerateSubscription(internalUserId, apimUserType);
+            Func<Task> act = async () => await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType);
 
             act.Should().Throw<AggregateException>()
                 .Which.InnerExceptions.Count.Should().Be(4);

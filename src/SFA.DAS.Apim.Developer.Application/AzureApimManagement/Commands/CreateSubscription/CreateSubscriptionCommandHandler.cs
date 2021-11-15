@@ -35,8 +35,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
             return new CreateSubscriptionCommandResponse
             {
                 SubscriptionId = subscriptionResponse.Name,
-                PrimaryKey = subscriptionResponse.PrimaryKey,
-                SandboxPrimaryKey = subscriptionResponse.SandboxPrimaryKey
+                PrimaryKey = subscriptionResponse.PrimaryKey
             };
         }
     }

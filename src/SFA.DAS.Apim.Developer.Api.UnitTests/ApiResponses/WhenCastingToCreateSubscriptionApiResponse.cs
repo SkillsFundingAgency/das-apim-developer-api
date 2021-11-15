@@ -15,8 +15,6 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
 
             result.LiveSubscription.Should().NotBeNull();
             result.LiveSubscription.PrimaryKey.Should().Be(source.PrimaryKey);
-            result.SandboxSubscription.Should().NotBeNull();
-            result.SandboxSubscription.PrimaryKey.Should().Be(source.SandboxPrimaryKey);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task<Subscription> CreateSubscription(string internalUserId,
             ApimUserType apimUserType, string productName)
         {
-            var subscriptionId = $"{apimUserType}-{internalUserId}";
+            var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
             
@@ -40,22 +40,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 throw new InvalidOperationException($"Response from create subscription for:[{subscriptionId}] was:[{apiResponse.StatusCode}]");
             }
             
-            var sandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
-            var createSandboxSubscriptionRequest = new CreateSubscriptionRequest(sandboxSubscriptionId, productName);
-            var sandboxApiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSandboxSubscriptionRequest);
-
-            if (!sandboxApiResponse.StatusCode.IsSuccessStatusCode())
-            {
-                _logger.LogError(sandboxApiResponse?.ErrorContent);
-                throw new InvalidOperationException($"Response from create subscription for:[{sandboxSubscriptionId}] was:[{sandboxApiResponse.StatusCode}]");
-            }
-
             return new Subscription
             {
                 Id = apiResponse.Body.Id,
                 Name = apiResponse.Body.Name,
-                PrimaryKey = apiResponse.Body.Properties.PrimaryKey,
-                SandboxPrimaryKey = sandboxApiResponse.Body.Properties.PrimaryKey
+                PrimaryKey = apiResponse.Body.Properties.PrimaryKey
             };
         }
 

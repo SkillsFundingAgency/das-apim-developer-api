@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewSubscriptionKeys;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserSubscriptions;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
@@ -41,6 +42,30 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                 var response = (CreateSubscriptionApiResponse)queryResult;
 
                 return Created("", response);
+            }
+            catch (ValidationException e)
+            {
+                return BadRequest(e.ValidationResult.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+        
+        [HttpPost]
+        [Route("{id}/renew")]
+        public async Task<IActionResult> RenewSubscriptionKeys([FromRoute] string id)
+        {
+            try
+            {
+                await _mediator.Send(new RenewSubscriptionKeysCommand
+                {
+                    InternalUserId = id
+                });
+
+                return NoContent();
             }
             catch (ValidationException e)
             {

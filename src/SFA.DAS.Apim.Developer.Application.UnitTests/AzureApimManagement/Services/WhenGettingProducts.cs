@@ -30,6 +30,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             {
                 new Product
                 {
+                    Id = apiResponse.Value.Last().Name,
                     Name = apiProductTwo.Value.First().Name,
                     DisplayName = apiProductTwo.Value.First().Properties.DisplayName,
                     Description = apiProductTwo.Value.First().Properties.Description

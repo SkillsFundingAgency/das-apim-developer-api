@@ -41,16 +41,13 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             mockValidator
                 .Setup(x => x.ValidateAsync(request))
                 .ReturnsAsync(new ValidationResult( ));
-            /*service
-                .Setup(x => x.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.Employer))
-                .ReturnsAsync();*/
 
             //Act
             await handler.Handle(request, CancellationToken.None);
 
             //Assert
             mockService.Verify(service => 
-                    service.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.Employer), 
+                    service.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.Employer, request.ProductName), 
                 Times.Once);
         }
         
@@ -68,16 +65,13 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             mockValidator
                 .Setup(x => x.ValidateAsync(request))
                 .ReturnsAsync(new ValidationResult( ));
-            /*service
-                .Setup(x => x.RegenerateSubscriptionKeys(request.InternalUserId, Domain.Models.ApimUserType.Provider))
-                .ReturnsAsync(Unit.Value);*/
-            
+
             //Act
             await handler.Handle(request, CancellationToken.None);
 
             //Assert
             mockService.Verify(service => 
-                    service.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.Provider), 
+                    service.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.Provider, request.ProductName), 
                 Times.Once);
         }
     }

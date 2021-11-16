@@ -30,7 +30,8 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewS
             
             await _subscriptionService.RegenerateSubscriptionKeys(
                 request.InternalUserId,
-                Regex.IsMatch(request.InternalUserId, "^[0-9]+$") ? ApimUserType.Provider : ApimUserType.Employer);
+                Regex.IsMatch(request.InternalUserId, "^[0-9]+$") ? ApimUserType.Provider : ApimUserType.Employer,
+                request.ProductName);
 
             return Unit.Value;
         }

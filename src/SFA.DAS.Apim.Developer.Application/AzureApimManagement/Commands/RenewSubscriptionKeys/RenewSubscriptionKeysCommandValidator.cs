@@ -14,6 +14,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewS
             {
                 validationResult.AddError(nameof(item.InternalUserId));
             }
+            
+            if (string.IsNullOrEmpty(item.ProductName))
+            {
+                validationResult.AddError(nameof(item.ProductName));
+            }
 
             return Task.FromResult(validationResult);
         }

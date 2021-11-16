@@ -27,12 +27,29 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             RenewSubscriptionKeysCommandValidator validator)
         {
             command.InternalUserId = internalUserId;
-
+            
             var actual = await validator.ValidateAsync(command);
             
             actual.IsValid().Should().BeFalse();
             actual.ValidationDictionary.Count.Should().Be(1);
             actual.ValidationDictionary.Should().ContainKey(nameof(command.InternalUserId));
+        }
+        
+        [Test]
+        [MoqInlineAutoData((string)null)]
+        [MoqInlineAutoData("")]
+        public async Task And_No_ProductName_Set_Then_Error(
+            string productName,
+            RenewSubscriptionKeysCommand command,
+            RenewSubscriptionKeysCommandValidator validator)
+        {
+            command.ProductName = productName;
+            
+            var actual = await validator.ValidateAsync(command);
+            
+            actual.IsValid().Should().BeFalse();
+            actual.ValidationDictionary.Count.Should().Be(1);
+            actual.ValidationDictionary.Should().ContainKey(nameof(command.ProductName));
         }
     }
 }

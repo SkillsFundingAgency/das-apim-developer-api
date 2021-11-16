@@ -5,5 +5,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewS
     public class RenewSubscriptionKeysCommand : IRequest<Unit>
     {
         public string InternalUserId { get; set; }
+        public string ProductName { get; set; }
     }
 }

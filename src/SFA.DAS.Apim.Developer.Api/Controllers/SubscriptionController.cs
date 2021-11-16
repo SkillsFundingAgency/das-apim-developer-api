@@ -55,14 +55,15 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         }
         
         [HttpPost]
-        [Route("{id}/renew")]
-        public async Task<IActionResult> RenewSubscriptionKeys([FromRoute] string id)
+        [Route("/renew")]
+        public async Task<IActionResult> RenewSubscriptionKeys([FromBody] RenewSubscriptionKeysApiRequest request)
         {
             try
             {
                 await _mediator.Send(new RenewSubscriptionKeysCommand
                 {
-                    InternalUserId = id
+                    InternalUserId = request.AccountIdentifier,
+                    ProductName = request.ProductId
                 });
 
                 return NoContent();

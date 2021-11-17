@@ -14,7 +14,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
             var actual = new RegenerateSecondaryKeyRequest(subscriptionId);
 
             actual.PostUrl.Should().Be($"subscriptions/{subscriptionId}/regenerateSecondaryKey?api-version=2021-04-01-preview");
-            actual.Data.Should().BeNull();
+            actual.Data.Should().NotBeNull();
         }
     }
 }

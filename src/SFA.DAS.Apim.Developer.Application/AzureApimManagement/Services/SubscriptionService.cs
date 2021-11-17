@@ -59,7 +59,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             };
 
             var taskList = requestList
-                .Select(request => _azureApimManagementService.Post<object>(request))
+                .Select(request => _azureApimManagementService.Post<string>(request))
                 .ToList();
 
             await Task.WhenAll(taskList);

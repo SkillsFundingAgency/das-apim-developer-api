@@ -24,30 +24,30 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             [Frozen] Mock<IUserService> mockUserService,
             SubscriptionService subscriptionService)
         {
-            var regeneratePrimaryResponse = new ApiResponse<object>(
-                204, 
+            var regeneratePrimaryResponse = new ApiResponse<string>(
+                null, 
                 HttpStatusCode.NoContent, 
                 null);
-            var regenerateSecondaryResponse = new ApiResponse<object>(
-                204, 
+            var regenerateSecondaryResponse = new ApiResponse<string>(
+                null, 
                 HttpStatusCode.NoContent, 
                 null);
             var expectedSubscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
+                x.Post<string>(It.Is<RegeneratePrimaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
+                x.Post<string>(It.Is<RegenerateSecondaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regenerateSecondaryResponse);
 
             await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType, productName);
 
-            mockAzureApimManagementService.Verify(service => service.Post<object>(
+            mockAzureApimManagementService.Verify(service => service.Post<string>(
                 It.Is<RegeneratePrimaryKeyRequest>(c =>
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?"))), Times.Once);
-            mockAzureApimManagementService.Verify(service => service.Post<object>(
+            mockAzureApimManagementService.Verify(service => service.Post<string>(
                 It.Is<RegenerateSecondaryKeyRequest>(c =>
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?"))), Times.Once);
         }
@@ -61,21 +61,21 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             [Frozen] Mock<IUserService> mockUserService,
             SubscriptionService subscriptionService)
         {
-            var regeneratePrimaryResponse = new ApiResponse<object>(
-                304, 
+            var regeneratePrimaryResponse = new ApiResponse<string>(
+                null, 
                 HttpStatusCode.NotModified, 
                 "nasty little error");
-            var regenerateSecondaryResponse = new ApiResponse<object>(
-                204, 
+            var regenerateSecondaryResponse = new ApiResponse<string>(
+                null, 
                 HttpStatusCode.NoContent, 
                 null);
             var expectedSubscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
+                x.Post<string>(It.Is<RegeneratePrimaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
+                x.Post<string>(It.Is<RegenerateSecondaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             
@@ -95,21 +95,21 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             [Frozen] Mock<IUserService> mockUserService,
             SubscriptionService subscriptionService)
         {
-            var regeneratePrimaryResponse = new ApiResponse<object>(
-                304, 
+            var regeneratePrimaryResponse = new ApiResponse<string>(
+                null, 
                 HttpStatusCode.NotModified, 
                 "nasty little error");
-            var regenerateSecondaryResponse = new ApiResponse<object>(
-                304, 
+            var regenerateSecondaryResponse = new ApiResponse<string>(
+                null, 
                 HttpStatusCode.NotModified, 
                 "nasty little error");
             var expectedSubscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
+                x.Post<string>(It.Is<RegeneratePrimaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
+                x.Post<string>(It.Is<RegenerateSecondaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regenerateSecondaryResponse);
             

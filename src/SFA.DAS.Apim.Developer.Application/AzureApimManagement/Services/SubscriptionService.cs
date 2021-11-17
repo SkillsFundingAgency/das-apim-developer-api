@@ -50,15 +50,12 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
         public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType, string productName)
         {
-            var subscriptionId = $"{apimUserType}-{internalUserId}";
-            var sandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
+            var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
 
             var requestList = new List<IPostRequest>
             {
                 new RegeneratePrimaryKeyRequest(subscriptionId),
-                new RegeneratePrimaryKeyRequest(sandboxSubscriptionId),
-                new RegenerateSecondaryKeyRequest(subscriptionId),
-                new RegenerateSecondaryKeyRequest(sandboxSubscriptionId)
+                new RegenerateSecondaryKeyRequest(subscriptionId)
             };
 
             var taskList = requestList
@@ -68,7 +65,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             await Task.WhenAll(taskList);
 
             var errorList = taskList
-                .Where(task => !task.Result.StatusCode.IsSuccessStatusCode())
+                .Where(task => !task.Result?.StatusCode.IsSuccessStatusCode() ?? false)
                 .ToList();
 
             if (errorList.Count == 0)

@@ -9,6 +9,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
         public RegeneratePrimaryKeyRequest(string subscriptionId)
         {
             _subscriptionId = subscriptionId;
+            Data = new { };
         }
         
         public string PostUrl => $"subscriptions/{_subscriptionId}/regeneratePrimaryKey?api-version=2021-04-01-preview";

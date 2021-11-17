@@ -28,51 +28,28 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 204, 
                 HttpStatusCode.NoContent, 
                 null);
-            var regenerateSandboxPrimaryResponse = new ApiResponse<object>(
-                204, 
-                HttpStatusCode.NoContent, 
-                null);
             var regenerateSecondaryResponse = new ApiResponse<object>(
                 204, 
                 HttpStatusCode.NoContent, 
                 null);
-            var regenerateSandboxSecondaryResponse = new ApiResponse<object>(
-                204, 
-                HttpStatusCode.NoContent, 
-                null);
-            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
-            var expectedSandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
+            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             mockAzureApimManagementService.Setup(x =>
                 x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regeneratePrimaryKey?")
-                ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
-            mockAzureApimManagementService.Setup(x =>
                 x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?")
-                ))).ReturnsAsync(regeneratePrimaryResponse);
-            mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?")
-                ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
-            
+                ))).ReturnsAsync(regenerateSecondaryResponse);
+
             await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType, productName);
 
             mockAzureApimManagementService.Verify(service => service.Post<object>(
                 It.Is<RegeneratePrimaryKeyRequest>(c =>
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?"))), Times.Once);
             mockAzureApimManagementService.Verify(service => service.Post<object>(
-                It.Is<RegeneratePrimaryKeyRequest>(c =>
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regeneratePrimaryKey?"))), Times.Once);
-            mockAzureApimManagementService.Verify(service => service.Post<object>(
                 It.Is<RegenerateSecondaryKeyRequest>(c =>
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?"))), Times.Once);
-            mockAzureApimManagementService.Verify(service => service.Post<object>(
-                It.Is<RegenerateSecondaryKeyRequest>(c =>
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?"))), Times.Once);
         }
         
         [Test, MoqAutoData]
@@ -88,36 +65,19 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 304, 
                 HttpStatusCode.NotModified, 
                 "nasty little error");
-            var regenerateSandboxPrimaryResponse = new ApiResponse<object>(
-                204, 
-                HttpStatusCode.NoContent, 
-                null);
             var regenerateSecondaryResponse = new ApiResponse<object>(
                 204, 
                 HttpStatusCode.NoContent, 
                 null);
-            var regenerateSandboxSecondaryResponse = new ApiResponse<object>(
-                204, 
-                HttpStatusCode.NoContent, 
-                null);
-            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
-            var expectedSandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
+            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             mockAzureApimManagementService.Setup(x =>
                 x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regeneratePrimaryKey?")
-                ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
-            mockAzureApimManagementService.Setup(x =>
                 x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
-            mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?")
-                ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
             
             Func<Task> act = async () => await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType, productName);
 
@@ -139,41 +99,24 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 304, 
                 HttpStatusCode.NotModified, 
                 "nasty little error");
-            var regenerateSandboxPrimaryResponse = new ApiResponse<object>(
-                304, 
-                HttpStatusCode.NotModified, 
-                "nasty little error");
             var regenerateSecondaryResponse = new ApiResponse<object>(
                 304, 
                 HttpStatusCode.NotModified, 
                 "nasty little error");
-            var regenerateSandboxSecondaryResponse = new ApiResponse<object>(
-                304, 
-                HttpStatusCode.NotModified, 
-                "nasty little error");
-            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}";
-            var expectedSandboxSubscriptionId = $"{apimUserType}-{internalUserId}-sandbox";
+            var expectedSubscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             mockAzureApimManagementService.Setup(x =>
                 x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?")
                 ))).ReturnsAsync(regeneratePrimaryResponse);
             mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegeneratePrimaryKeyRequest>(c => 
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regeneratePrimaryKey?")
-                ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
-            mockAzureApimManagementService.Setup(x =>
                 x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?")
-                ))).ReturnsAsync(regeneratePrimaryResponse);
-            mockAzureApimManagementService.Setup(x =>
-                x.Post<object>(It.Is<RegenerateSecondaryKeyRequest>(c => 
-                    c.PostUrl.Contains($"subscriptions/{expectedSandboxSubscriptionId}/regenerateSecondaryKey?")
-                ))).ReturnsAsync(regenerateSandboxPrimaryResponse);
+                ))).ReturnsAsync(regenerateSecondaryResponse);
             
             Func<Task> act = async () => await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType, productName);
 
             act.Should().Throw<AggregateException>()
-                .Which.InnerExceptions.Count.Should().Be(4);
+                .Which.InnerExceptions.Count.Should().Be(2);
         }
     }
 }

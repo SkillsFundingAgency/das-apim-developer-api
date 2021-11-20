@@ -1,0 +1,18 @@
+using SFA.DAS.Apim.Developer.Domain.Interfaces;
+
+namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
+{
+    public class GetUserSubscriptionSecretsRequest : IPostRequest
+    {
+        private readonly string _subscriptionId;
+
+        public GetUserSubscriptionSecretsRequest (string subscriptionId)
+        {
+            _subscriptionId = subscriptionId;
+            Data = new object();
+        }
+
+        public string PostUrl => $"subscriptions/{_subscriptionId}/listSecrets?api-version=2021-04-01-preview";
+        public object Data { get; set; }
+    }
+}

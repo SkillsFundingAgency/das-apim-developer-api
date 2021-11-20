@@ -7,8 +7,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
     public class AzureApimManagementService : AzureApimHttpClientServiceBase, IAzureApimManagementService
     {
 
-        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService, ApimResourceConfiguration resourceConfiguration) 
-            : base(azureTokenService,client,$"https://management.azure.com/{resourceConfiguration.ApimResourceId}/")
+        public AzureApimManagementService(HttpClient client, IAzureTokenService azureTokenService, AzureApimManagementConfiguration azureApimManagementConfiguration) 
+            : base(azureTokenService,client,$"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/")
         {
         
         }

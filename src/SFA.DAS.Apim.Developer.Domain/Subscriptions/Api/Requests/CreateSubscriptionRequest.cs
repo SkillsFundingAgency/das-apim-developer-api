@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
-namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
+namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
 {
     public class CreateSubscriptionRequest : IPutRequest
     {

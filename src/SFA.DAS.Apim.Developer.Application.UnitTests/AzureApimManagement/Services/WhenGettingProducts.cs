@@ -18,8 +18,10 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     public class WhenGettingProducts
     {
         [Test, MoqAutoData]
-        public async Task Then_The_Products_Are_Returned_From_The_Api_And_Filtered_By_Group_Ignoring_Case(
+        public async Task Then_The_Products_Are_Returned_From_The_Api_And_Filtered_By_Group_Ignoring_Case_And_Skipping_Products_With_No_Apis(
             GetProductsResponse apiResponse,
+            GetProductApisResponse apiProductOne,
+            GetProductApisResponse apiProductTwo,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             ProductService service)
         {
@@ -28,15 +30,21 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             {
                 new Product
                 {
-                    Name =apiResponse.Value.First().Name, 
-                },
-                new Product
-                {
-                    Name = apiResponse.Value.Last().Name, 
+                    Id = apiResponse.Value.Last().Name,
+                    Name = apiProductTwo.Value.First().Name,
+                    DisplayName = apiProductTwo.Value.First().Properties.DisplayName,
+                    Description = apiProductTwo.Value.First().Properties.Description
                 }
             };
+            apiProductOne.Count = 0;
             azureApimManagementService.Setup(x => x.Get<GetProductsResponse>(It.IsAny<GetProductsRequest>()))
                 .ReturnsAsync(new ApiResponse<GetProductsResponse>(apiResponse, HttpStatusCode.OK, ""));
+            azureApimManagementService
+                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.First().Name}/Apis"))))
+                .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductOne, HttpStatusCode.OK, ""));
+            azureApimManagementService
+                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.Last().Name}/Apis"))))
+                .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductTwo, HttpStatusCode.OK, ""));
             
             //Act
             var actual = await service.GetProducts(new List<string>

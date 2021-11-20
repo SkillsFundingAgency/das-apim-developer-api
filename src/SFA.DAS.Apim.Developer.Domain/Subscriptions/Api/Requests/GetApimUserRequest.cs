@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
-namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api
+namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
 {
     public class GetApimUserRequest : IGetRequest
     {

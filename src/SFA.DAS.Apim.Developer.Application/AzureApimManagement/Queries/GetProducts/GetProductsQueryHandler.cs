@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
-namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries
+namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts
 {
     public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, GetProductsQueryResponse>
     {

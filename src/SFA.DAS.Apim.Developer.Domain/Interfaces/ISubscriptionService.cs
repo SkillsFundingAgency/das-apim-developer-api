@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -7,5 +8,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
     {
         Task<Subscription> CreateSubscription(string internalUserId,
             ApimUserType apimUserType, string productName);
+        Task<IEnumerable<Subscription>> GetUserSubscriptions(string internalUserId, ApimUserType apimUserType);
     }
 }

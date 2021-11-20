@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Api.ApiResponses
@@ -20,13 +21,20 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
 
     public class GetProductsApiResponseItem
     {
+        public string Id { get ; set ; }
         public string Name { get; set; }
+        public string DisplayName { get ; set ; }
+        public string Description { get ; set ; }
+
 
         public static implicit operator GetProductsApiResponseItem(Product source)
         {
             return new GetProductsApiResponseItem
             {
-                Name = source.Name
+                Id = source.Id,
+                Name = source.Name,
+                Description = source.Description,
+                DisplayName = source.DisplayName
             };
         }
     }

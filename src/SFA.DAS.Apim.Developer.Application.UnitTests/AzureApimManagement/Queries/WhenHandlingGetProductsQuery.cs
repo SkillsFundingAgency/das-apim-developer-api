@@ -5,7 +5,7 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Testing.AutoFixture;

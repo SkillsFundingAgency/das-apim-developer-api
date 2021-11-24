@@ -56,7 +56,6 @@
         "sharedApimResourceGroup": {
             "type": "string"
         },
-
         "sharedSQLServerName": {
             "type": "string"
         },

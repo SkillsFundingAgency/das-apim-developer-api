@@ -1,5 +1,5 @@
 parameters:
-- name: RunBlockOnPossibleDataLoss
+- name: OverrideBlockOnPossibleDataLoss
   displayName: Add /p:BlockOnPossibleDataLoss=false argument to DACPAC deployment
   type: boolean
   default: false
@@ -67,7 +67,7 @@ stages:
     parameters:
       Environment: AT
       ServiceConnection: SFA-DAS-DevTest-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
 
 - stage: Deploy_TEST
   dependsOn: Build
@@ -80,7 +80,7 @@ stages:
     parameters:
       Environment: TEST
       ServiceConnection: SFA-DAS-DevTest-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
 
 - stage: Deploy_TEST2
   dependsOn: Build
@@ -93,7 +93,7 @@ stages:
     parameters:
       Environment: TEST2
       ServiceConnection: SFA-DAS-DevTest-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
 
 - stage: Deploy_PP
   dependsOn: Build
@@ -106,7 +106,7 @@ stages:
     parameters:
       Environment: PP
       ServiceConnection: SFA-DIG-PreProd-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
 
 - stage: Deploy_PROD
   dependsOn: Build
@@ -114,13 +114,13 @@ stages:
   variables:
   - group: PROD Management Resources
   - group: PROD Shared Resources
-  - group: RELEASE das-apim-developer-api
+  - group: PROD das-apim-developer-api
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:
       Environment: PROD
       ServiceConnection: SFA-DIG-Prod-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
 
 - stage: Deploy_MO
   dependsOn: Build
@@ -133,7 +133,7 @@ stages:
     parameters:
       Environment: MO
       ServiceConnection: SFA-ASM-ModelOffice-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
 
 - stage: Deploy_DEMO
   dependsOn: Build
@@ -146,4 +146,4 @@ stages:
     parameters:
       Environment: DEMO
       ServiceConnection: SFA-DAS-DevTest-ARM
-      OverrideBlockOnPossibleDataLoss : ${{ parameters.OverrideBlockOnPossibleDataLoss  }}
+      OverrideBlockOnPossibleDataLoss: ${{ parameters.OverrideBlockOnPossibleDataLoss  }}

@@ -48,6 +48,45 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             };
         }
 
+        public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType, string productName)
+        {
+            var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
+
+            var requestList = new List<IPostRequest>
+            {
+                new RegeneratePrimaryKeyRequest(subscriptionId),
+                new RegenerateSecondaryKeyRequest(subscriptionId)
+            };
+
+            var taskList = requestList
+                .Select(request => _azureApimManagementService.Post<string>(request))
+                .ToList();
+
+            await Task.WhenAll(taskList);
+
+            var errorList = taskList
+                .Where(task => !task.Result?.StatusCode.IsSuccessStatusCode() ?? false)
+                .ToList();
+
+            if (errorList.Count == 0)
+            {
+                return;
+            }
+
+            var exceptionList = new List<Exception>();
+            for (var i = 0; i < taskList.Count; i++)
+            {
+                var apiResponse = taskList[i].Result;
+                if (!apiResponse.StatusCode.IsSuccessStatusCode())
+                {
+                    _logger.LogError(apiResponse?.ErrorContent);
+                    exceptionList.Add(new ApplicationException(
+                        $"Response from regenerate key for:[{requestList[i].PostUrl}] was:[{apiResponse.StatusCode}]"));
+                }
+            }
+            throw new AggregateException(exceptionList);
+        }
+
         public async Task<IEnumerable<Subscription>> GetUserSubscriptions(string internalUserId, ApimUserType apimUserType)
         {
             var apimSubscriptions =

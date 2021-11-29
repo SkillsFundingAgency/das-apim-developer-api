@@ -21,6 +21,7 @@ variables:
   value: any cpu
 - group: RELEASE Management Resources
 - group: RELEASE das-apim-developer-api
+- group: ESFA - SonarCloud
 - name: Deploy
   value: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.Reason'], 'Manual'), eq(variables['Build.Reason'], 'PullRequest'))]
 

@@ -22,6 +22,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             GetProductsResponse apiResponse,
             GetProductApisResponse apiProductOne,
             GetProductApisResponse apiProductTwo,
+            string documentationResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             ProductService service)
         {
@@ -33,18 +34,22 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     Id = apiResponse.Value.Last().Name,
                     Name = apiProductTwo.Value.First().Name,
                     DisplayName = apiProductTwo.Value.First().Properties.DisplayName,
-                    Description = apiProductTwo.Value.First().Properties.Description
+                    Description = apiProductTwo.Value.First().Properties.Description,
+                    Documentation = documentationResponse
                 }
             };
             apiProductOne.Count = 0;
-            azureApimManagementService.Setup(x => x.Get<GetProductsResponse>(It.IsAny<GetProductsRequest>()))
+            azureApimManagementService.Setup(x => x.Get<GetProductsResponse>(It.IsAny<GetProductsRequest>(), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductsResponse>(apiResponse, HttpStatusCode.OK, ""));
             azureApimManagementService
-                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.First().Name}/Apis"))))
+                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.First().Name}/Apis")), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductOne, HttpStatusCode.OK, ""));
             azureApimManagementService
-                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.Last().Name}/Apis"))))
+                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.Last().Name}/Apis")),"application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductTwo, HttpStatusCode.OK, ""));
+            azureApimManagementService
+                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwo.Value.First().Name}?api-version=2021-04-01-preview")),"application/vnd.oai.openapi+json"))
+                .ReturnsAsync(new ApiResponse<object>(documentationResponse, HttpStatusCode.OK, ""));
             
             //Act
             var actual = await service.GetProducts(new List<string>
@@ -64,7 +69,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             ProductService service)
         {
             //Arrange
-            azureApimManagementService.Setup(x => x.Get<GetProductsResponse>(It.IsAny<GetProductsRequest>()))
+            azureApimManagementService.Setup(x => x.Get<GetProductsResponse>(It.IsAny<GetProductsRequest>(), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductsResponse>(null, HttpStatusCode.NotFound, ""));
             
             //Act

@@ -76,7 +76,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 .ReturnsAsync(createUserApiResponse);
             azureApimManagementService.Setup(x =>
                 x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
-                    c.GetUrl.Contains($"'{userDetails.EmailAddress}'")))).ReturnsAsync(apimUserResponse);
+                    c.GetUrl.Contains($"'{userDetails.EmailAddress}'")), "application/json")).ReturnsAsync(apimUserResponse);
             
             apimUserRepository.Setup(x=>x.Insert(It.Is<ApimUser>(c=>
                 c.ApimUserTypeId.Equals((int) apimUserType)

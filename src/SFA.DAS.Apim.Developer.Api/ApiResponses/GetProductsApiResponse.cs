@@ -25,6 +25,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public string Name { get; set; }
         public string DisplayName { get ; set ; }
         public string Description { get ; set ; }
+        public string Documentation { get ; set ; }
 
 
         public static implicit operator GetProductsApiResponseItem(Product source)
@@ -36,7 +37,8 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
-                DisplayName = source.DisplayName + (isSandbox ? " Sandbox" : default)
+                DisplayName = source.DisplayName + (isSandbox ? " Sandbox" : default),
+                Documentation = source.Documentation
             };
         }
     }

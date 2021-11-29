@@ -2,11 +2,11 @@ using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Domain.Products.Api.Requests
 {
-    public class GetProductApiDescriptionRequest : IGetRequest
+    public class GetProductApiDocumentationRequest : IGetRequest
     {
         private readonly string _apiName;
 
-        public GetProductApiDescriptionRequest(string apiName)
+        public GetProductApiDocumentationRequest(string apiName)
         {
             _apiName = apiName;
         }

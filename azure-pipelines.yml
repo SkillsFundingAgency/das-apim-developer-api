@@ -45,6 +45,8 @@ resources:
 
 stages:
 - stage: Build
+  variables:
+  - group: ESFA - SonarCloud
   jobs:
   - template: pipeline-templates/job/code-build.yml
     parameters:

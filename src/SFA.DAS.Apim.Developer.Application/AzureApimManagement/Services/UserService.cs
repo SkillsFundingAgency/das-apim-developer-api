@@ -18,7 +18,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _azureApimManagementService = azureApimManagementService;
         }
         
-        public async Task<UserDetails> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType)
+        public async Task<UserDetails> CreateUser(UserDetails userDetails)
         {
             var getUserResponse = await GetUser(userDetails.Email);
 

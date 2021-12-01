@@ -7,7 +7,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDetails> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType);
+        Task<UserDetails> CreateUser(UserDetails userDetails);
         Task<UserDetails> GetUser(string emailAddress);
     }
 }

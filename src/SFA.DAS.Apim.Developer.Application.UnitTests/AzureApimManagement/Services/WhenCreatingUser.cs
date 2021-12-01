@@ -19,8 +19,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     {
         [Test, RecursiveMoqAutoData]
         public async Task Then_If_The_User_Does_Not_Exist_It_Is_Created_On_The_Service(
-            string internalUserId, 
-            ApimUserType apimUserType, 
             UserDetails userDetails,
             ApiResponse<CreateUserResponse> createUserApiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
@@ -45,7 +43,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     )))
                 .ReturnsAsync(createUserApiResponse);
             
-            var actual = await userService.CreateUser(internalUserId, userDetails, apimUserType);
+            var actual = await userService.CreateUser(userDetails);
             
             actual.Email.Should().Be(createUserApiResponse.Body.Properties.Email);
             actual.FirstName.Should().Be(createUserApiResponse.Body.Properties.FirstName);
@@ -55,8 +53,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         
         [Test, RecursiveMoqAutoData]
         public async Task Then_If_The_User_Is_In_The_Portal_Then_Not_Created_Through_Api(
-            string internalUserId, 
-            ApimUserType apimUserType, 
             UserDetails userDetails,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             ApiResponse<ApimUserResponse> apimUserResponse,
@@ -67,7 +63,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
                     c.GetUrl.Contains($"'{userDetails.Email}'")), "application/json")).ReturnsAsync(apimUserResponse);
             
-            var actual = await userService.CreateUser(internalUserId, userDetails, apimUserType);
+            var actual = await userService.CreateUser(userDetails);
             
             actual.Email.Should().Be(apimUserResponse.Body.Properties.First().Email);
             actual.FirstName.Should().Be(apimUserResponse.Body.Properties.First().FirstName);

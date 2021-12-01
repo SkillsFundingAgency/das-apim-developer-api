@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 
-namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
+namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Responses
 {
     public class CreateUserResponse
     {

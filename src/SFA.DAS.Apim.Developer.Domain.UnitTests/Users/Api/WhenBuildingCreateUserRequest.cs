@@ -2,10 +2,9 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
 
-namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
+namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
 {
     public class WhenBuildingCreateUserRequest
     {

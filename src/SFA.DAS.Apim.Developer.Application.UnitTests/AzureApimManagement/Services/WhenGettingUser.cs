@@ -9,6 +9,7 @@ using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Services

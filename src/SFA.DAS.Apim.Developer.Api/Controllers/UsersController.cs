@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.UpdateUserState;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
 {
@@ -26,6 +27,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         }
 
         [HttpPost]
+        [Route("")]
         public async Task<IActionResult> CreateUser(CreateUserApiRequest request)
         {
             try
@@ -42,6 +44,25 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             catch (ValidationException e)
             {
                 return BadRequest(e.ValidationResult.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateUserState(string id)
+        {
+            try
+            {
+                await _mediator.Send(new UpdateUserStateCommand
+                {
+                    UserId = id
+                });
+                return NoContent();
             }
             catch (Exception e)
             {

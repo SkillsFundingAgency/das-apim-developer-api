@@ -37,7 +37,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
-                DisplayName = source.DisplayName + (isSandbox ? " Sandbox" : default),
+                DisplayName = source.DisplayName + (isSandbox ? " (Sandbox)" : " (Live)"),
                 Documentation = source.Documentation
             };
         }

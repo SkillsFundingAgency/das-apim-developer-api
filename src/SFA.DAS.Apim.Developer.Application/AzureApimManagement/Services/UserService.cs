@@ -65,6 +65,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         {
             var apimUserResponse = await _azureApimManagementService.Put<CreateUserResponse>(
                 new CreateUserRequest(apimUserId, userDetails));
+
+            if (!string.IsNullOrEmpty(apimUserResponse.ErrorContent))
+            {
+                throw new Exception(apimUserResponse.ErrorContent);
+            }
             
             return apimUserResponse.Body;
            

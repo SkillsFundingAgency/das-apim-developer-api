@@ -72,5 +72,27 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             azureApimManagementService.Verify(x =>
                 x.Put<CreateUserResponse>(It.IsAny<CreateUserRequest>()), Times.Never);
         }
+
+        [Test, RecursiveMoqAutoData]
+        public void Then_If_Error_From_Api_Then_Exception_Thrown(
+            UserDetails userDetails,
+            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
+            ApiResponse<ApimUserResponse> apimUserResponse,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
+            UserService userService)
+        {
+            azureApimManagementService.Setup(x =>
+                x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
+                    c.GetUrl.Contains($"'{userDetails.Email}'")), "application/json")).ReturnsAsync(
+                new ApiResponse<ApimUserResponse>(
+                    new ApimUserResponse
+                    {
+                        Count = 0
+                    }, HttpStatusCode.NotFound, ""));
+            azureApimManagementService.Setup(x =>
+                x.Put<CreateUserResponse>(It.IsAny<CreateUserRequest>())).ReturnsAsync(new ApiResponse<CreateUserResponse>(null, HttpStatusCode.BadRequest, "Error"));
+
+            Assert.ThrowsAsync<Exception>(() => userService.CreateUser(userDetails));
+        }
     }
 }

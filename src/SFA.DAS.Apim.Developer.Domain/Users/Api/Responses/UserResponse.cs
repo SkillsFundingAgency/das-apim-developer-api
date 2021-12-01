@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Responses
 {
-    public class CreateUserResponse
+    public class UserResponse
     {
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }

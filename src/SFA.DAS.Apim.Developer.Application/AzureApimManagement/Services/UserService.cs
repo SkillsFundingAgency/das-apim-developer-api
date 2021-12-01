@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Responses;
 
@@ -63,9 +61,9 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             };
         }
 
-        private async Task<CreateUserResponse> CreateApimUser(string apimUserId, UserDetails userDetails)
+        private async Task<UserResponse> CreateApimUser(string apimUserId, UserDetails userDetails)
         {
-            var apimUserResponse = await _azureApimManagementService.Put<CreateUserResponse>(
+            var apimUserResponse = await _azureApimManagementService.Put<UserResponse>(
                 new CreateUserRequest(apimUserId, userDetails));
 
             if (!string.IsNullOrEmpty(apimUserResponse.ErrorContent))
@@ -75,6 +73,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             
             return apimUserResponse.Body;
            
+        }
+
+        public async Task UpdateUserState(string userId)
+        {
+            await _azureApimManagementService.Put<UserResponse>(new UpdateUserStateRequest(userId));
         }
     }
 }

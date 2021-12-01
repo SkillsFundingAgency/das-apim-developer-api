@@ -17,7 +17,9 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
                 {
                     Email = userDetails.EmailAddress,
                     FirstName = userDetails.FirstName,
-                    LastName = userDetails.LastName
+                    LastName = userDetails.LastName,
+                    Password = userDetails.Password,
+                    State = "pending"
                 }
             };
         }
@@ -40,5 +42,10 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
         public string FirstName { get; set; }
         [JsonProperty(PropertyName = "lastName")]
         public string LastName { get; set; }
+
+        [JsonProperty(PropertyName = "state")]
+        public string State { get ; set ; }
+        [JsonProperty(PropertyName = "password")]
+        public string Password { get ; set ; }
     }
 }

@@ -26,7 +26,9 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
                 {
                     Email = userDetails.EmailAddress,
                     FirstName = userDetails.FirstName,
-                    LastName = userDetails.LastName
+                    LastName = userDetails.LastName,
+                    Password = userDetails.Password,
+                    State = "pending"
                 }
             };
             

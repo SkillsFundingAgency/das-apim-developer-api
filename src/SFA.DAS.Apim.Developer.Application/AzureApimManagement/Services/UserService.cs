@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
@@ -13,56 +11,63 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     public class UserService : IUserService
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
-        private readonly IApimUserRepository _apimUserRepository;
+        
 
-        public UserService(IAzureApimManagementService azureApimManagementService, IApimUserRepository apimUserRepository)
+        public UserService(IAzureApimManagementService azureApimManagementService)
         {
             _azureApimManagementService = azureApimManagementService;
-            _apimUserRepository = apimUserRepository;
         }
         
-        public async Task<string> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType)
+        public async Task<UserDetails> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType)
         {
-            var apimUser = await _apimUserRepository.GetByInternalIdAndType(internalUserId, (int)apimUserType);
-            
-            if (apimUser != null)
+            var getUserResponse = await GetUser(userDetails.Email);
+
+            if (getUserResponse != null)
             {
-                return apimUser.ApimUserId;
+                return getUserResponse;
             }
             
             var createApimUserTask = await CreateApimUser(Guid.NewGuid().ToString(), userDetails);
 
-            await _apimUserRepository.Insert(new ApimUser
-            {
-                ApimUserTypeId = (int)apimUserType,
-                InternalUserId = internalUserId,
-                ApimUserId = createApimUserTask 
-            });
                 
-            return createApimUserTask;
+            return new UserDetails
+            {
+                Id = createApimUserTask.Name,
+                Password = null,
+                Email = createApimUserTask.Properties.Email,
+                FirstName = createApimUserTask.Properties.FirstName,
+                LastName = createApimUserTask.Properties.LastName,
+            };;
 
         }
 
-        public async Task<ApimUser> GetUser(string internalUserId, ApimUserType apimUserType)
+        public async Task<UserDetails> GetUser(string emailAddress)
         {
-            return await _apimUserRepository.GetByInternalIdAndType(internalUserId, (int)apimUserType);
+            var result = await _azureApimManagementService.Get<ApimUserResponse>(
+                new GetApimUserRequest(emailAddress));
+
+            if (result.Body.Count == 0)
+            {
+                return null;
+            }
+            
+            return new UserDetails
+            {
+                Id = result.Body.Properties.First().Name,
+                Password = null,
+                Email = result.Body.Properties.First().Email,
+                FirstName = result.Body.Properties.First().FirstName,
+                LastName = result.Body.Properties.First().LastName,
+            };
         }
 
-        private async Task<string> CreateApimUser(string apimUserId, UserDetails userDetails)
+        private async Task<CreateUserResponse> CreateApimUser(string apimUserId, UserDetails userDetails)
         {
             var apimUserResponse = await _azureApimManagementService.Put<CreateUserResponse>(
                 new CreateUserRequest(apimUserId, userDetails));
-
-            if (apimUserResponse.StatusCode != HttpStatusCode.BadRequest)
-            {
-                return apimUserResponse.Body.Name;
-            }
-
-            var getUserResponse = await _azureApimManagementService.Get<ApimUserResponse>(
-                new GetApimUserRequest(userDetails.EmailAddress));
-
-            return getUserResponse.Body.Properties.First().Name;
-
+            
+            return apimUserResponse.Body;
+           
         }
     }
 }

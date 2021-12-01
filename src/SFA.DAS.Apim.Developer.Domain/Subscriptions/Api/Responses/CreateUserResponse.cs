@@ -10,7 +10,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
         [JsonProperty(PropertyName = "properties")]
-        public ApimSubscriptionContract Properties { get; set; }
+        public ApimUserContract Properties { get; set; }
 
         public class ApimUserContract
         {

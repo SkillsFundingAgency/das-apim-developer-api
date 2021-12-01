@@ -1,12 +1,13 @@
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Models;
+using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 
 namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface IUserService
     {
-        Task<string> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType);
-        Task<ApimUser> GetUser(string internalUserId, ApimUserType apimUserType);
+        Task<UserDetails> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType);
+        Task<UserDetails> GetUser(string emailAddress);
     }
 }

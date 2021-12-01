@@ -24,7 +24,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
             {
                 Properties = new ApimCreateUserProperties
                 {
-                    Email = userDetails.EmailAddress,
+                    Email = userDetails.Email,
                     FirstName = userDetails.FirstName,
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,

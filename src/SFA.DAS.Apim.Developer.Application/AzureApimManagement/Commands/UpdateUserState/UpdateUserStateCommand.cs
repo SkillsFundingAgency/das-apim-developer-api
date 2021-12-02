@@ -4,6 +4,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Update
 {
     public class UpdateUserStateCommand : IRequest<Unit>
     {
-        public string UserId { get; set; }
+        public string UserEmail { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -75,9 +76,16 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
            
         }
 
-        public async Task UpdateUserState(string userId)
+        public async Task UpdateUserState(string email)
         {
-            await _azureApimManagementService.Put<UserResponse>(new UpdateUserStateRequest(userId));
+            var user = await GetUser(email);
+
+            if (user == null)
+            {
+                throw new ValidationException("User not found");
+            }
+            
+            await _azureApimManagementService.Put<UserResponse>(new UpdateUserStateRequest(user.Id, user));
         }
     }
 }

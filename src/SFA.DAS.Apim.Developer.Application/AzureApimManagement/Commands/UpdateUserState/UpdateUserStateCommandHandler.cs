@@ -16,7 +16,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Update
         
         public async Task<Unit> Handle(UpdateUserStateCommand request, CancellationToken cancellationToken)
         {
-            await _userService.UpdateUserState(request.UserId);
+            await _userService.UpdateUserState(request.UserEmail);
             
             return Unit.Value;
         }

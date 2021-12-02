@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
         {
             await handler.Handle(command, CancellationToken.None);
             
-            userService.Verify(x=>x.UpdateUserState(command.UserId), Times.Once);
+            userService.Verify(x=>x.UpdateUserState(command.UserEmail), Times.Once);
         }
     }
 }

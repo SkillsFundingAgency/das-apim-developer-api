@@ -53,11 +53,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             
             return new UserDetails
             {
-                Id = result.Body.Properties.First().Name,
+                Id = result.Body.Values.First().Name,
                 Password = null,
-                Email = result.Body.Properties.First().Email,
-                FirstName = result.Body.Properties.First().FirstName,
-                LastName = result.Body.Properties.First().LastName,
+                Email = result.Body.Values.First().Properties.Email,
+                FirstName = result.Body.Values.First().Properties.FirstName,
+                LastName = result.Body.Values.First().Properties.LastName,
             };
         }
 

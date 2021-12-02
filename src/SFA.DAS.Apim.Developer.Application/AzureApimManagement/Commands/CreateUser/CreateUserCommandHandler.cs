@@ -8,7 +8,7 @@ using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Unit>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, string>
     {
         private readonly IUserService _userService;
         private readonly IValidator<CreateUserCommand> _validator;
@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
             _validator = validator;
         }
         
-        public async Task<Unit> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var validationResult = await _validator.ValidateAsync(request);
 
@@ -28,14 +28,14 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
                 throw new ValidationException(validationResult.DataAnnotationResult, null, null);
             }
             
-            await _userService.CreateUser(new UserDetails
+            var actual = await _userService.CreateUser(new UserDetails
             {
                 Email = request.Email,
                 Password = request.Password,
                 FirstName = request.FirstName,
                 LastName = request.LastName
             });
-            return Unit.Value;
+            return actual.Id;
         }
     }
 }

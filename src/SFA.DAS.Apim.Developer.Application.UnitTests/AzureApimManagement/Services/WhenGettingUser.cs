@@ -8,7 +8,6 @@ using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
 using SFA.DAS.Testing.AutoFixture;
 
@@ -30,8 +29,8 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             var actual = await userService.GetUser(email);
             
-            actual.Should().BeEquivalentTo(apimUserResponse.Body.Properties.First(), options=>options.Excluding(c=>c.Name));
-            actual.Id.Should().Be(apimUserResponse.Body.Properties.First().Name);
+            actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties);
+            actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
         }
     }
 }

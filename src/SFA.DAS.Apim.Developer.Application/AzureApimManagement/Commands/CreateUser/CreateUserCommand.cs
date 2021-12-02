@@ -2,7 +2,7 @@ using MediatR;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser
 {
-    public class CreateUserCommand : IRequest<Unit>
+    public class CreateUserCommand : IRequest<string>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

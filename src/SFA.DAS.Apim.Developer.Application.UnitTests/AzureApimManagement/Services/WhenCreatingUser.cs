@@ -21,7 +21,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         [Test, RecursiveMoqAutoData]
         public async Task Then_If_The_User_Does_Not_Exist_It_Is_Created_On_The_Service(
             UserDetails userDetails,
-            ApiResponse<UserResponse> createUserApiResponse,
+            UserResponse createUserApiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
             UserService userService)
         {
@@ -42,14 +42,14 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                         && ((CreateUserRequestBody)c.Data).Properties.Password.Equals(userDetails.Password)
                         && ((CreateUserRequestBody)c.Data).Properties.State.Equals("pending")
                     )))
-                .ReturnsAsync(createUserApiResponse);
+                .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
             var actual = await userService.CreateUser(userDetails);
             
-            actual.Email.Should().Be(createUserApiResponse.Body.Properties.Email);
-            actual.FirstName.Should().Be(createUserApiResponse.Body.Properties.FirstName);
-            actual.LastName.Should().Be(createUserApiResponse.Body.Properties.LastName);
-            actual.Id.Should().Be(createUserApiResponse.Body.Name);
+            actual.Email.Should().Be(createUserApiResponse.Properties.Email);
+            actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
+            actual.LastName.Should().Be(createUserApiResponse.Properties.LastName);
+            actual.Id.Should().Be(createUserApiResponse.Name);
         }
         
         [Test, RecursiveMoqAutoData]
@@ -66,10 +66,10 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             var actual = await userService.CreateUser(userDetails);
             
-            actual.Email.Should().Be(apimUserResponse.Body.Properties.First().Email);
-            actual.FirstName.Should().Be(apimUserResponse.Body.Properties.First().FirstName);
-            actual.LastName.Should().Be(apimUserResponse.Body.Properties.First().LastName);
-            actual.Id.Should().Be(apimUserResponse.Body.Properties.First().Name);
+            actual.Email.Should().Be(apimUserResponse.Body.Values.First().Properties.Email);
+            actual.FirstName.Should().Be(apimUserResponse.Body.Values.First().Properties.FirstName);
+            actual.LastName.Should().Be(apimUserResponse.Body.Values.First().Properties.LastName);
+            actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             azureApimManagementService.Verify(x =>
                 x.Put<UserResponse>(It.IsAny<CreateUserRequest>()), Times.Never);
         }

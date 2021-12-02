@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser;
@@ -17,6 +18,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
     {
         [Test, MoqAutoData]
         public async Task Then_The_Command_Is_Handled_And_Validated_And_UserService_Create_Method_Called_If_Valid(
+            UserDetails userDetails,
             CreateUserCommand command,
             [Frozen] Mock<IValidator<CreateUserCommand>> validator,
             [Frozen] Mock<IUserService> userService,
@@ -26,16 +28,17 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             {
                 ValidationDictionary = {  }
             });
-            
-            await handler.Handle(command, CancellationToken.None);
-            
-            userService.Verify(x=>x.CreateUser( 
-                It.Is<UserDetails>(c=>
+            userService.Setup(x => x.CreateUser(
+                It.Is<UserDetails>(c =>
                     c.Email.Equals(command.Email)
                     && c.Password.Equals(command.Password)
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)
-                    )), Times.Once);
+                ))).ReturnsAsync(userDetails);
+            
+            var actual = await handler.Handle(command, CancellationToken.None);
+            
+            actual.Should().Be(userDetails.Id);
         }
 
         [Test, MoqAutoData]

@@ -14,7 +14,8 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
             var actual = new GetUserAuthenticatedRequest(userName, password);
 
             actual.GetUrl.Should().Be("identity?api-version=2021-04-01-preview");
-            actual.AuthorizationHeaderValue.Should().Be($"Basic {Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{userName}:{password}"))}");
+            actual.AuthorizationHeaderScheme.Should().Be("Basic");
+            actual.AuthorizationHeaderValue.Should().Be($"{Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{userName}:{password}"))}");
         }
     }
 }

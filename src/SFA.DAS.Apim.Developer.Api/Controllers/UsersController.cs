@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NLog;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
+using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.UpdateUserState;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserAuthenticated;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
 {
@@ -67,6 +69,32 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             catch (ValidationException e)
             {
                 return BadRequest(e.ValidationResult.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("authenticate")]
+        public async Task<IActionResult> AuthenticateUser(string email, string password)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetUserAuthenticatedQuery
+                {
+                    Email = email,
+                    Password = password
+                });
+
+                if (result.User == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok((GetUserApiResponse)result);
             }
             catch (Exception e)
             {

@@ -87,5 +87,19 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             
             await _azureApimManagementService.Put<UserResponse>(new UpdateUserStateRequest(user.Id, user));
         }
+
+        public async Task<UserDetails> CheckUserAuthentication(string email, string password)
+        {
+            var authenticated =
+                await _azureApimManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
+                    new GetUserAuthenticatedRequest(email, password));
+
+            if (!string.IsNullOrEmpty(authenticated.ErrorContent))
+            {
+                return null;
+            }
+
+            return await GetUser(email);
+        }
     }
 }

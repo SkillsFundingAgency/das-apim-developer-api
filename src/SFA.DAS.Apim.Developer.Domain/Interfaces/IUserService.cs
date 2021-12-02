@@ -8,5 +8,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
         Task<UserDetails> CreateUser(UserDetails userDetails);
         Task<UserDetails> GetUser(string emailAddress);
         Task UpdateUserState(string email);
+        Task<UserDetails> CheckUserAuthentication(string email, string password);
     }
 }

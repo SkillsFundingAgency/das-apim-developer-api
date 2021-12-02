@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
@@ -27,7 +28,15 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
                     FirstName = userDetails.FirstName,
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,
-                    State = "pending"
+                    State = "pending",
+                    Identities = new List<Identities>
+                    {
+                        new Identities
+                        {
+                            Id = userDetails.Email,
+                            Provider = "Basic"
+                        }
+                    }
                 }
             };
             

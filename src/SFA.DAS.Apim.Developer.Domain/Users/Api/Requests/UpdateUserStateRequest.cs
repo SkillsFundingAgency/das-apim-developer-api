@@ -1,4 +1,5 @@
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
 {
@@ -6,14 +7,17 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
     {
         private readonly string _apimUserId;
 
-        public UpdateUserStateRequest (string apimUserId)
+        public UpdateUserStateRequest (string apimUserId, UserDetails userDetails)
         {
             _apimUserId = apimUserId;
             Data = new CreateUserRequestBody
             {
                 Properties = new ApimCreateUserProperties
                 {
-                    State = "active"
+                    State = "active",
+                    Email = userDetails.Email,
+                    FirstName = userDetails.FirstName,
+                    LastName = userDetails.LastName,
                 }
             };
         }

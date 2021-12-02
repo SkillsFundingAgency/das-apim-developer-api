@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
@@ -21,5 +22,13 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
         public string State { get ; set ; }
         [JsonProperty(PropertyName = "password")]
         public string Password { get ; set ; }
+        [JsonProperty(PropertyName = "identities")]
+        public List<Identities> Identities { get ; set ; }
+    }
+
+    public class Identities
+    {
+        public string Provider { get; set; }
+        public string Id { get; set; }
     }
 }

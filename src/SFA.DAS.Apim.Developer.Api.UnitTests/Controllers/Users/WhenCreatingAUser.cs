@@ -21,22 +21,26 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
     {
         [Test, MoqAutoData]
         public async Task Then_The_Request_Is_Sent_To_The_Mediator_Handler(
+            string response,
             CreateUserApiRequest request,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] UsersController controller)
         {
-            var controllerResult = await controller.CreateUser(request) as CreatedResult;
-
-            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
             mockMediator
-                .Verify(mediator => mediator.Send(
+                .Setup(mediator => mediator.Send(
                     It.Is<CreateUserCommand>(c =>
                         c.Email.Equals(request.Email)
                         && c.Password.Equals(request.Password)
                         && c.FirstName.Equals(request.FirstName)
                         && c.LastName.Equals(request.LastName)
-                        ),
-                    It.IsAny<CancellationToken>()), Times.Once);
+                    ),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(response);
+            
+            var controllerResult = await controller.CreateUser(request) as CreatedResult;
+
+            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
+            controllerResult.Value.Should().BeEquivalentTo(new {id = response});
+            
         }
 
         [Test, MoqAutoData]

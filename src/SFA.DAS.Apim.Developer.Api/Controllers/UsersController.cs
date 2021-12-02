@@ -32,14 +32,14 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new CreateUserCommand
+                var actual = await _mediator.Send(new CreateUserCommand
                 {
                     Email = request.Email,
                     Password = request.Password,
                     FirstName = request.FirstName,
                     LastName = request.LastName
                 });
-                return Created("", null);
+                return Created("", new {id=actual});
             }
             catch (ValidationException e)
             {
@@ -53,16 +53,20 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
-        public async Task<IActionResult> UpdateUserState(string id)
+        [Route("set-active")]
+        public async Task<IActionResult> UpdateUserState(UpdateUserStateApiRequest request)
         {
             try
             {
                 await _mediator.Send(new UpdateUserStateCommand
                 {
-                    UserId = id
+                    UserEmail = request.Email
                 });
                 return NoContent();
+            }
+            catch (ValidationException e)
+            {
+                return BadRequest(e.ValidationResult.ErrorMessage);
             }
             catch (Exception e)
             {

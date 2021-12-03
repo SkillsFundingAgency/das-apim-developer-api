@@ -22,10 +22,11 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             ApiResponse<ApimUserResponse> apimUserResponse,
             GetUserAuthenticatedResponse apimAuthenticatedResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
-            azureApimManagementService.Setup(x =>
+            azureUserAuthenticationManagementService.Setup(x =>
                 x.GetAuthentication<GetUserAuthenticatedResponse>(It.Is<GetUserAuthenticatedRequest>(c =>
                     c.AuthorizationHeaderValue.Equals(expectedAuthenticatedValue.AuthorizationHeaderValue)), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetUserAuthenticatedResponse>(apimAuthenticatedResponse, HttpStatusCode.OK, ""));
@@ -44,11 +45,11 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             string email,
             string password,
             ApiResponse<ApimUserResponse> apimUserResponse,
-            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
-            azureApimManagementService.Setup(x =>
+            azureUserAuthenticationManagementService.Setup(x =>
                     x.GetAuthentication<GetUserAuthenticatedResponse>(It.Is<GetUserAuthenticatedRequest>(c =>
                         c.AuthorizationHeaderValue.Equals(expectedAuthenticatedValue.AuthorizationHeaderValue)), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetUserAuthenticatedResponse>(new GetUserAuthenticatedResponse(), HttpStatusCode.Unauthorized, "unauthorized"));

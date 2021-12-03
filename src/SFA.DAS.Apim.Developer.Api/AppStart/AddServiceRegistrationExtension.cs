@@ -19,6 +19,9 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             services.AddHttpClient<IAzureApimManagementService, AzureApimManagementService>()
                 .AddPolicyHandler(HttpClientRetryPolicy());
 
+            services.AddHttpClient<IAzureUserAuthenticationManagementService, AzureUserAuthenticationManagementService>()
+                .AddPolicyHandler(HttpClientRetryPolicy());
+            
             services.AddTransient<IAzureTokenService, AzureTokenService>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
             services.AddTransient<IUserService, UserService>();

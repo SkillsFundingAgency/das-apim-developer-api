@@ -14,4 +14,13 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
         }
 
     }
+
+    public class AzureUserAuthenticationManagementService : AzureApimHttpClientServiceBase,
+        IAzureUserAuthenticationManagementService
+    {
+        public AzureUserAuthenticationManagementService(IAzureTokenService azureTokenService, HttpClient httpClient, AzureApimManagementConfiguration azureApimManagementConfiguration) 
+            : base(azureTokenService, httpClient, $"{azureApimManagementConfiguration.ApimUserManagementUrl}{azureApimManagementConfiguration.ApimResourceId}/")
+        {
+        }
+    }
 }

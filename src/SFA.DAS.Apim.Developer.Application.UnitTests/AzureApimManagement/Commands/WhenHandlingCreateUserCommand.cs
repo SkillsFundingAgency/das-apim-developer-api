@@ -31,6 +31,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             userService.Setup(x => x.UpsertUser(
                 It.Is<UserDetails>(c =>
                     c.Email.Equals(command.Email)
+                    && c.Id.Equals(command.Id)
                     && c.Password.Equals(command.Password)
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)

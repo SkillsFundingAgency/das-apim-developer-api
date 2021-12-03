@@ -26,7 +26,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         {
             var getUserResponse = await GetUser(userDetails.Email);
 
-            var userId = Guid.NewGuid().ToString();
+            var userId = userDetails.Id;
             
             if (getUserResponse != null)
             {

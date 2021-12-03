@@ -30,6 +30,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
             
             var actual = await _userService.UpsertUser(new UserDetails
             {
+                Id = request.Id,
                 Email = request.Email,
                 Password = request.Password,
                 FirstName = request.FirstName,

@@ -35,7 +35,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     }, HttpStatusCode.NotFound, ""));
             
             azureApimManagementService.Setup(x =>
-                    x.Put<UserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/") 
+                    x.Put<UserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/{userDetails.Id}?") 
                         && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(userDetails.Email)
                         && ((CreateUserRequestBody)c.Data).Properties.FirstName.Equals(userDetails.FirstName)
                         && ((CreateUserRequestBody)c.Data).Properties.LastName.Equals(userDetails.LastName)

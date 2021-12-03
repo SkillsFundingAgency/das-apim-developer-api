@@ -29,13 +29,14 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         }
 
         [HttpPut]
-        [Route("")]
-        public async Task<IActionResult> UpsertUser(UpsertUserApiRequest request)
+        [Route("{id}")]
+        public async Task<IActionResult> UpsertUser([FromRoute]string id, UpsertUserApiRequest request)
         {
             try
             {
                 var actual = await _mediator.Send(new CreateUserCommand
                 {
+                    Id = id,
                     Email = request.Email,
                     Password = request.Password,
                     FirstName = request.FirstName,

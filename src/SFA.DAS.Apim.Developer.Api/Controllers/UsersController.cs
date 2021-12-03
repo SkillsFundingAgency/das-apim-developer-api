@@ -28,9 +28,9 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("")]
-        public async Task<IActionResult> CreateUser(CreateUserApiRequest request)
+        public async Task<IActionResult> UpsertUser(UpsertUserApiRequest request)
         {
             try
             {
@@ -39,7 +39,8 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     Email = request.Email,
                     Password = request.Password,
                     FirstName = request.FirstName,
-                    LastName = request.LastName
+                    LastName = request.LastName,
+                    State = request.State.ToString()
                 });
                 return Created("", new {id=actual});
             }

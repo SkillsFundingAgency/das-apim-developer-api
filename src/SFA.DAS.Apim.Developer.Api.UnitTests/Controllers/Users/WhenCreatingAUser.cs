@@ -22,7 +22,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
         [Test, MoqAutoData]
         public async Task Then_The_Request_Is_Sent_To_The_Mediator_Handler(
             string response,
-            CreateUserApiRequest request,
+            UpsertUserApiRequest request,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] UsersController controller)
         {
@@ -33,10 +33,11 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                         && c.Password.Equals(request.Password)
                         && c.FirstName.Equals(request.FirstName)
                         && c.LastName.Equals(request.LastName)
+                        && c.State.Equals(request.State.ToString())
                     ),
                     It.IsAny<CancellationToken>())).ReturnsAsync(response);
             
-            var controllerResult = await controller.CreateUser(request) as CreatedResult;
+            var controllerResult = await controller.UpsertUser(request) as CreatedResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
             controllerResult.Value.Should().BeEquivalentTo(new {id = response});
@@ -46,7 +47,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
         [Test, MoqAutoData]
         public async Task And_Validation_Exception_Then_Returns_BadRequest(
             string errorKey,
-            CreateUserApiRequest request,
+            UpsertUserApiRequest request,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] UsersController controller)
         {
@@ -57,7 +58,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                     It.IsAny<CancellationToken>()))
                 .Throws(new ValidationException(validationResult.DataAnnotationResult, null, null));
 
-            var controllerResult = await controller.CreateUser(request) as ObjectResult;
+            var controllerResult = await controller.UpsertUser(request) as ObjectResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             controllerResult.Value.ToString().Should().Contain(errorKey);
@@ -65,7 +66,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
 
         [Test, RecursiveMoqAutoData]
         public async Task And_Exception_Then_Returns_Error(
-            CreateUserApiRequest request,
+            UpsertUserApiRequest request,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] UsersController controller)
         {
@@ -75,7 +76,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                     It.IsAny<CancellationToken>()))
                 .Throws<InvalidOperationException>();
 
-            var controllerResult = await controller.CreateUser(request) as StatusCodeResult;
+            var controllerResult = await controller.UpsertUser(request) as StatusCodeResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         }

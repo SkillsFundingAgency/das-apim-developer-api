@@ -91,7 +91,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
 
                 if (result.User == null)
                 {
-                    return NotFound();
+                    return Unauthorized();
                 }
 
                 return Ok((GetUserApiResponse)result);

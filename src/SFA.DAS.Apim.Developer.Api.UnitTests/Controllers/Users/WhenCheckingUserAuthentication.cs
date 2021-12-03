@@ -41,7 +41,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
         }
 
         [Test, MoqAutoData]
-        public async Task Then_If_Null_Then_Not_Found_Returned(
+        public async Task Then_If_Null_Then_Unauthorized_Returned(
             string email,
             string password,
             [Frozen] Mock<IMediator> mockMediator,
@@ -60,7 +60,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
             
             var controllerResult = await controller.AuthenticateUser(email, password) as StatusCodeResult;
 
-            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
         }
         
         [Test, MoqAutoData]

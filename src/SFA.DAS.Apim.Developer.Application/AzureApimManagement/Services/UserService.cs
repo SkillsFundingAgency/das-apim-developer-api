@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
@@ -12,11 +13,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     public class UserService : IUserService
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
-        
+        private readonly IAzureUserAuthenticationManagementService _azureUserAuthenticationManagementService;
 
-        public UserService(IAzureApimManagementService azureApimManagementService)
+
+        public UserService(IAzureApimManagementService azureApimManagementService, IAzureUserAuthenticationManagementService azureUserAuthenticationManagementService)
         {
             _azureApimManagementService = azureApimManagementService;
+            _azureUserAuthenticationManagementService = azureUserAuthenticationManagementService;
         }
         
         public async Task<UserDetails> CreateUser(UserDetails userDetails)
@@ -91,10 +94,10 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task<UserDetails> CheckUserAuthentication(string email, string password)
         {
             var authenticated =
-                await _azureApimManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
+                await _azureUserAuthenticationManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
                     new GetUserAuthenticatedRequest(email, password));
 
-            if (!string.IsNullOrEmpty(authenticated.ErrorContent))
+            if (authenticated.StatusCode != HttpStatusCode.OK)
             {
                 return null;
             }

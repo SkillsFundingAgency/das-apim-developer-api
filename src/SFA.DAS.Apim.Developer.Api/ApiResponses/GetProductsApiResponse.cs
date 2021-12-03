@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -29,12 +29,14 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
 
         public static implicit operator GetProductsApiResponseItem(Product source)
         {
+            var isSandbox = source.Id.EndsWith("sandbox", StringComparison.InvariantCultureIgnoreCase);
+            
             return new GetProductsApiResponseItem
             {
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
-                DisplayName = source.DisplayName
+                DisplayName = source.DisplayName + (isSandbox ? " Sandbox" : default)
             };
         }
     }

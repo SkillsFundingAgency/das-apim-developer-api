@@ -19,6 +19,8 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Responses
             public string FirstName { get; set; }
             [JsonProperty(PropertyName = "lastName")]
             public string LastName { get; set; }
+            [JsonProperty(PropertyName = "state")]
+            public string State { get ; set ; }
         }
     }
 }

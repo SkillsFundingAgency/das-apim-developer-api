@@ -42,7 +42,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             azureApimManagementService
                 .Setup(x => x.Get<GetSubscriptionsResponse>(
-                    It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}"))))
+                    It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}")), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetSubscriptionsResponse>(subscriptionResponse, HttpStatusCode.OK, null));
             azureApimManagementService
                 .Setup(c => c.Post<GetUserSubscriptionSecretsResponse>(
@@ -58,11 +58,11 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                         HttpStatusCode.OK, null));
             azureApimManagementService
                 .Setup(c => c.Get<GetProductItem>(It.Is<GetProductRequest>(x =>
-                    x.GetUrl.Contains(product))))
+                    x.GetUrl.Contains(product)), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductItem>(productItemResponse, HttpStatusCode.OK, null));
             azureApimManagementService
                 .Setup(c => c.Get<GetProductItem>(It.Is<GetProductRequest>(x =>
-                    x.GetUrl.Contains(productSandbox))))
+                    x.GetUrl.Contains(productSandbox)), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductItem>(productItemResponseSandbox, HttpStatusCode.OK, null));
             
             //Act
@@ -101,7 +101,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             };
             azureApimManagementService
                 .Setup(x => x.Get<GetSubscriptionsResponse>(
-                    It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}"))))
+                    It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}")), "application/json"))
                 .ReturnsAsync(new ApiResponse<GetSubscriptionsResponse>(userSubscriptionResponse, HttpStatusCode.OK, null));
             
             //Act

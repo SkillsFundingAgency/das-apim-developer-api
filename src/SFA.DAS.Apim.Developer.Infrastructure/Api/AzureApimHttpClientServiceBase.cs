@@ -52,10 +52,13 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             return await ResponseHandler<T>(response);
         }
 
-        public async Task<ApiResponse<T>> Get<T>(IGetRequest getRequest)
+        public async Task<ApiResponse<T>> Get<T>(IGetRequest getRequest, string requestEncoding = "application/json")
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl);
-
+            var request = new HttpRequestMessage(HttpMethod.Get, getRequest.GetUrl)
+            {
+                Headers = { Accept = { new MediaTypeWithQualityHeaderValue(requestEncoding) }}
+            };
+            
             await AddAuthorization(request);
 
             var response = await _httpClient.SendAsync(request);

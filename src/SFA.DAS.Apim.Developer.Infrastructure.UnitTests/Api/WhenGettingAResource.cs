@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -43,7 +45,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
             var azureApimManagementService = new AzureApimManagementService(client, tokenProvider.Object, azureApimManagementConfiguration);
             
             //Act
-            var actualResult = await azureApimManagementService.Get<TestResponse>(getTestRequest);
+            var actualResult = await azureApimManagementService.Get<TestResponse>(getTestRequest, "application/vnd.oai.openapi+json");
 
             //Assert
             httpMessageHandler.Protected()
@@ -53,7 +55,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
                         c.Method.Equals(HttpMethod.Get)
                         && c.RequestUri.AbsoluteUri.Equals(expectedUrl)
                         && c.Headers.Authorization.Scheme.Equals("Bearer")
-                        && c.Headers.Authorization.Parameter.Equals(authToken)),
+                        && c.Headers.Authorization.Parameter.Equals(authToken)
+                        && c.Headers.Accept.First().MediaType.Equals("application/vnd.oai.openapi+json")),
                     ItExpr.IsAny<CancellationToken>()
                 );
 

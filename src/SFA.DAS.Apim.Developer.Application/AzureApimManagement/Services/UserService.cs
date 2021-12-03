@@ -48,8 +48,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 FirstName = createApimUserTask.Properties.FirstName,
                 LastName = createApimUserTask.Properties.LastName,
                 State = createApimUserTask.Properties.State
-            };;
-
+            };
         }
 
         public async Task<UserDetails> GetUser(string emailAddress)
@@ -80,7 +79,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
             if (!string.IsNullOrEmpty(apimUserResponse.ErrorContent))
             {
-                throw new Exception(apimUserResponse.ErrorContent);
+                throw new ValidationException(apimUserResponse.ErrorContent);
             }
             
             return apimUserResponse.Body;

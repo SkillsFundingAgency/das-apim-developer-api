@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -103,7 +104,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             azureApimManagementService.Setup(x =>
                 x.Put<UserResponse>(It.IsAny<CreateUserRequest>())).ReturnsAsync(new ApiResponse<UserResponse>(null, HttpStatusCode.BadRequest, "Error"));
 
-            Assert.ThrowsAsync<Exception>(() => userService.UpsertUser(userDetails));
+            Assert.ThrowsAsync<ValidationException>(() => userService.UpsertUser(userDetails));
         }
     }
 }

@@ -22,16 +22,22 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _azureUserAuthenticationManagementService = azureUserAuthenticationManagementService;
         }
         
-        public async Task<UserDetails> CreateUser(UserDetails userDetails)
+        public async Task<UserDetails> UpsertUser(UserDetails userDetails)
         {
             var getUserResponse = await GetUser(userDetails.Email);
 
+            var userId = Guid.NewGuid().ToString();
+            
             if (getUserResponse != null)
             {
-                return getUserResponse;
+                userId = getUserResponse.Id;
+            }
+            else
+            {
+                userDetails.State = "pending";
             }
             
-            var createApimUserTask = await CreateApimUser(Guid.NewGuid().ToString(), userDetails);
+            var createApimUserTask = await CreateApimUser(userId, userDetails);
 
                 
             return new UserDetails
@@ -41,6 +47,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 Email = createApimUserTask.Properties.Email,
                 FirstName = createApimUserTask.Properties.FirstName,
                 LastName = createApimUserTask.Properties.LastName,
+                State = createApimUserTask.Properties.State
             };;
 
         }
@@ -62,6 +69,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 Email = result.Body.Values.First().Properties.Email,
                 FirstName = result.Body.Values.First().Properties.FirstName,
                 LastName = result.Body.Values.First().Properties.LastName,
+                State = result.Body.Values.First().Properties.State
             };
         }
 

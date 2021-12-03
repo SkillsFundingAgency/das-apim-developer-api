@@ -5,7 +5,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDetails> CreateUser(UserDetails userDetails);
+        Task<UserDetails> UpsertUser(UserDetails userDetails);
         Task<UserDetails> GetUser(string emailAddress);
         Task UpdateUserState(string email);
         Task<UserDetails> CheckUserAuthentication(string email, string password);

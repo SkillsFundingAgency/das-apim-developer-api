@@ -28,12 +28,13 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             {
                 ValidationDictionary = {  }
             });
-            userService.Setup(x => x.CreateUser(
+            userService.Setup(x => x.UpsertUser(
                 It.Is<UserDetails>(c =>
                     c.Email.Equals(command.Email)
                     && c.Password.Equals(command.Password)
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)
+                    && c.State.Equals(command.State)
                 ))).ReturnsAsync(userDetails);
             
             var actual = await handler.Handle(command, CancellationToken.None);

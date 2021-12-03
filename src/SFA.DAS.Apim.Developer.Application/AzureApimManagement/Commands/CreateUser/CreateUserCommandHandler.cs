@@ -28,12 +28,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
                 throw new ValidationException(validationResult.DataAnnotationResult, null, null);
             }
             
-            var actual = await _userService.CreateUser(new UserDetails
+            var actual = await _userService.UpsertUser(new UserDetails
             {
                 Email = request.Email,
                 Password = request.Password,
                 FirstName = request.FirstName,
-                LastName = request.LastName
+                LastName = request.LastName,
+                State = request.State
             });
             return actual.Id;
         }

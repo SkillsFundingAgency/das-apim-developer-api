@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
                     FirstName = userDetails.FirstName,
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,
-                    State = "pending",
+                    State = userDetails.State,
                     Identities = new List<Identities>
                     {
                         new Identities

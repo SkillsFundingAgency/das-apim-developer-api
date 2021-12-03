@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     public class WhenCreatingUser
     {
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_User_Does_Not_Exist_It_Is_Created_On_The_Service(
+        public async Task Then_If_The_User_Does_Not_Exist_It_Is_Created_On_The_Service_And_Marked_As_Pending(
             UserDetails userDetails,
             UserResponse createUserApiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
@@ -44,7 +44,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     )))
                 .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
-            var actual = await userService.CreateUser(userDetails);
+            var actual = await userService.UpsertUser(userDetails);
             
             actual.Email.Should().Be(createUserApiResponse.Properties.Email);
             actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
@@ -53,8 +53,9 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         }
         
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_User_Is_In_The_Portal_Then_Not_Created_Through_Api(
+        public async Task Then_If_The_User_Is_In_The_Portal_Then_Updated_Through_Api(
             UserDetails userDetails,
+            UserResponse createUserApiResponse,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             ApiResponse<ApimUserResponse> apimUserResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
@@ -63,15 +64,24 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             azureApimManagementService.Setup(x =>
                 x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
                     c.GetUrl.Contains($"'{userDetails.Email}'")), "application/json")).ReturnsAsync(apimUserResponse);
+            azureApimManagementService.Setup(x =>
+                    x.Put<UserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/{apimUserResponse.Body.Values.First().Name}?") 
+                              && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(userDetails.Email)
+                              && ((CreateUserRequestBody)c.Data).Properties.FirstName.Equals(userDetails.FirstName)
+                              && ((CreateUserRequestBody)c.Data).Properties.LastName.Equals(userDetails.LastName)
+                              && ((CreateUserRequestBody)c.Data).Properties.Password.Equals(userDetails.Password)
+                              && ((CreateUserRequestBody)c.Data).Properties.State.Equals(userDetails.State)
+                    )))
+                .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
-            var actual = await userService.CreateUser(userDetails);
             
-            actual.Email.Should().Be(apimUserResponse.Body.Values.First().Properties.Email);
-            actual.FirstName.Should().Be(apimUserResponse.Body.Values.First().Properties.FirstName);
-            actual.LastName.Should().Be(apimUserResponse.Body.Values.First().Properties.LastName);
-            actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
-            azureApimManagementService.Verify(x =>
-                x.Put<UserResponse>(It.IsAny<CreateUserRequest>()), Times.Never);
+            var actual = await userService.UpsertUser(userDetails);
+            
+            actual.Email.Should().Be(createUserApiResponse.Properties.Email);
+            actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
+            actual.LastName.Should().Be(createUserApiResponse.Properties.LastName);
+            actual.Id.Should().Be(createUserApiResponse.Name);
+            actual.State.Should().Be(createUserApiResponse.Properties.State);
         }
 
         [Test, RecursiveMoqAutoData]
@@ -93,7 +103,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             azureApimManagementService.Setup(x =>
                 x.Put<UserResponse>(It.IsAny<CreateUserRequest>())).ReturnsAsync(new ApiResponse<UserResponse>(null, HttpStatusCode.BadRequest, "Error"));
 
-            Assert.ThrowsAsync<Exception>(() => userService.CreateUser(userDetails));
+            Assert.ThrowsAsync<Exception>(() => userService.UpsertUser(userDetails));
         }
     }
 }

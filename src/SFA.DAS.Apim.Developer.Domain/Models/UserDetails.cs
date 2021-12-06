@@ -9,5 +9,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Models
         public string Password { get ; set ; }
         public string State { get; set; }
         public string Note { get ; set ; }
+        public bool Authenticated { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public string LastName { get; set; }
         public string Email { get; set; }
         public string State { get ; set ; }
+        public bool Authenticated { get ; set ; }
 
 
         public static implicit operator GetUserApiResponse(GetUserAuthenticatedQueryResponse source)
@@ -19,7 +20,8 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
                 Email = source.User.Email,
                 FirstName = source.User.FirstName,
                 LastName = source.User.LastName,
-                State = source.User.State
+                State = source.User.State,
+                Authenticated = source.User.Authenticated
             };
         }
     }

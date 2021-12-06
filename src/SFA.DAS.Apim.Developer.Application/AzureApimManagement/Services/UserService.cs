@@ -100,16 +100,22 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
         public async Task<UserDetails> CheckUserAuthentication(string email, string password)
         {
-            var authenticated =
-                await _azureUserAuthenticationManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
+            var authenticatedTask =
+                _azureUserAuthenticationManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
                     new GetUserAuthenticatedRequest(email, password));
 
-            if (authenticated.StatusCode != HttpStatusCode.OK)
+            var userTask = GetUser(email);
+
+            await Task.WhenAll(authenticatedTask, userTask);
+
+            if (userTask.Result == null)
             {
                 return null;
             }
-
-            return await GetUser(email);
+            
+            userTask.Result.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
+            
+            return userTask.Result;
         }
     }
 }

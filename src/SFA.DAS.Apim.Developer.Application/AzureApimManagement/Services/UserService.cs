@@ -68,7 +68,25 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 Email = result.Body.Values.First().Properties.Email,
                 FirstName = result.Body.Values.First().Properties.FirstName,
                 LastName = result.Body.Values.First().Properties.LastName,
-                State = result.Body.Values.First().Properties.State
+                State = result.Body.Values.First().Properties.State,
+                Note = result.Body.Values.First().Properties.Note
+            };
+        }
+
+        public async Task<UserDetails> GetUserById(string id)
+        {
+            var result = await _azureApimManagementService.Get<ApimUserResponseItem>(
+                new GetApimUserByIdRequest(id));
+            
+            return new UserDetails
+            {
+                Id = result.Body.Name,
+                Password = null,
+                Email = result.Body.Properties.Email,
+                FirstName = result.Body.Properties.FirstName,
+                LastName = result.Body.Properties.LastName,
+                State = result.Body.Properties.State,
+                Note = result.Body.Properties.Note
             };
         }
 

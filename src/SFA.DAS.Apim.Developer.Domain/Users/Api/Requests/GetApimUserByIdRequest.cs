@@ -11,6 +11,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
             _id = id;
         }
 
-        public string GetUrl => $"users{_id}?api-version=2021-04-01-preview";
+        public string GetUrl => $"users/{_id}?api-version=2021-04-01-preview";
     }
 }

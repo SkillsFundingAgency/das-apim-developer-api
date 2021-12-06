@@ -7,6 +7,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiRequests
         public string FirstName { get ; set ; }
         public string LastName { get ; set ; }
         public UserState State { get; set; }
+        public string ConfirmEmailLink { get ; set ; }
     }
 
     public enum UserState

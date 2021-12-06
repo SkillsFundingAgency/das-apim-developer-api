@@ -41,7 +41,8 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     Password = request.Password,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
-                    State = request.State.ToString()
+                    State = request.State.ToString(),
+                    Note = request.ConfirmEmailLink
                 });
                 return Created("", new {id=actual});
             }

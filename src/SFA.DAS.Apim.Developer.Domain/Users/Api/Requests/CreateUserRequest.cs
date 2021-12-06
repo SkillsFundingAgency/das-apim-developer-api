@@ -20,6 +20,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,
                     State = userDetails.State,
+                    Note = userDetails.Note,
                     Identities = new List<Identities>
                     {
                         new Identities

@@ -10,5 +10,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
         public string Email { get; set; }
         public string Password { get; set; }
         public string State { get ; set ; }
+        public string Note { get ; set ; }
     }
 }

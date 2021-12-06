@@ -24,6 +24,8 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
         public string Password { get ; set ; }
         [JsonProperty(PropertyName = "identities")]
         public List<Identities> Identities { get ; set ; }
+        [JsonProperty(PropertyName = "note")]
+        public string Note { get ; set ; }
     }
 
     public class Identities

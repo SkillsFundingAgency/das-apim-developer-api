@@ -35,7 +35,8 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
                 Password = request.Password,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                State = request.State
+                State = request.State,
+                Note = request.Note
             });
             return actual.Id;
         }

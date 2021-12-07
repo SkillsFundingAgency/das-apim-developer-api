@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
@@ -16,18 +17,47 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         [Test, MoqAutoData]
         public async Task Then_The_Api_Is_Called_And_User_Returned(
             string id,
-            ApiResponse<ApimUserResponseItem> apimUserResponse,
+            ApimUserResponseItem apimUserResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             UserService userService)
         {
             azureApimManagementService.Setup(x =>
                 x.Get<ApimUserResponseItem>(It.Is<GetApimUserByIdRequest>(c =>
-                    c.GetUrl.Contains($"{id}")), "application/json")).ReturnsAsync(apimUserResponse);
+                    c.GetUrl.Contains($"{id}")), "application/json")).ReturnsAsync(new ApiResponse<ApimUserResponseItem>(apimUserResponse, HttpStatusCode.OK, ""));
             
             var actual = await userService.GetUserById(id);
             
-            actual.Should().BeEquivalentTo(apimUserResponse.Body.Properties);
-            actual.Id.Should().Be(apimUserResponse.Body.Name);
+            actual.Should().BeEquivalentTo(apimUserResponse.Properties);
+            actual.Id.Should().Be(apimUserResponse.Name);
+        }
+        [Test, MoqAutoData]
+        public async Task Then_The_Api_Is_Called_And_Null_Returned_If_Not_Exists(
+            string id,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            UserService userService)
+        {
+            azureApimManagementService.Setup(x =>
+                x.Get<ApimUserResponseItem>(It.Is<GetApimUserByIdRequest>(c =>
+                    c.GetUrl.Contains($"{id}")), "application/json")).ReturnsAsync(new ApiResponse<ApimUserResponseItem>(null, HttpStatusCode.NotFound, ""));
+            
+            var actual = await userService.GetUserById(id);
+
+            actual.Should().BeNull();
+        }
+        
+        [Test, MoqAutoData]
+        public async Task Then_The_Api_Is_Called_And_Null_Returned_If_Error(
+            string id,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            UserService userService)
+        {
+            azureApimManagementService.Setup(x =>
+                x.Get<ApimUserResponseItem>(It.Is<GetApimUserByIdRequest>(c =>
+                    c.GetUrl.Contains($"{id}")), "application/json")).ReturnsAsync(new ApiResponse<ApimUserResponseItem>(null, HttpStatusCode.InternalServerError, ""));
+            
+            var actual = await userService.GetUserById(id);
+
+            actual.Should().BeNull();
         }
     }
 }

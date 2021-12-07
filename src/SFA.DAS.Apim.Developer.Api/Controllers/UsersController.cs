@@ -62,7 +62,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new UpdateUserCommand
+                var result = await _mediator.Send(new UpdateUserCommand
                 {
                     Id = id,
                     Email = request.Email,
@@ -71,6 +71,12 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     State = request.State.ToString(),
                     Note = request.ConfirmEmailLink
                 });
+
+                if (result.UserDetails == null)
+                {
+                    return NotFound();
+                }
+                
                 return NoContent();
             }
             catch (ValidationException e)

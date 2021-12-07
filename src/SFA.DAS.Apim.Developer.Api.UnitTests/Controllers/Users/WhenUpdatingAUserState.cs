@@ -23,14 +23,12 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
         public async Task Then_The_Mediator_Command_Is_Called_And_No_Content_Result_Returned(
             string id,
             UpsertUserApiRequest request,
+            UpdateUserCommandResponse mediatorResponse,
             [Frozen] Mock<IMediator> mockMediator,
             [Greedy] UsersController controller)
         {
-            var controllerResult = await controller.UpsertUser(id, request) as NoContentResult;
-
-            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
             mockMediator
-                .Verify(mediator => mediator.Send(
+                .Setup(mediator => mediator.Send(
                     It.Is<UpdateUserCommand>(c =>
                         c.Email.Equals(request.Email)
                         && c.Id.Equals(id)
@@ -39,7 +37,38 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                         && c.State.Equals(request.State.ToString())
                         && c.Note.Equals(request.ConfirmEmailLink)
                     ),
-                    It.IsAny<CancellationToken>()), Times.Once);
+                    It.IsAny<CancellationToken>())).ReturnsAsync(mediatorResponse);
+            
+            var controllerResult = await controller.UpsertUser(id, request) as NoContentResult;
+
+            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
+        }
+
+        [Test, MoqAutoData]
+        public async Task Then_Returns_Not_Found_If_Null_From_Handler(
+            string id,
+            UpsertUserApiRequest request,
+            [Frozen] Mock<IMediator> mockMediator,
+            [Greedy] UsersController controller)
+        {
+            mockMediator
+                .Setup(mediator => mediator.Send(
+                    It.Is<UpdateUserCommand>(c =>
+                        c.Email.Equals(request.Email)
+                        && c.Id.Equals(id)
+                        && c.FirstName.Equals(request.FirstName)
+                        && c.LastName.Equals(request.LastName)
+                        && c.State.Equals(request.State.ToString())
+                        && c.Note.Equals(request.ConfirmEmailLink)
+                    ),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(new UpdateUserCommandResponse
+                {
+                    UserDetails = null
+                });
+            
+            var controllerResult = await controller.UpsertUser(id, request) as NotFoundResult;
+            
+            controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
         }
 
         [Test, MoqAutoData]

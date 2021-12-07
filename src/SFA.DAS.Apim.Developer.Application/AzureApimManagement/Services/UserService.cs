@@ -112,7 +112,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var result = await _azureApimManagementService.Get<ApimUserResponseItem>(
                 new GetApimUserByIdRequest(id));
 
-            if (result.Body == null)
+            if (result.StatusCode == HttpStatusCode.NotFound || result.Body == null)
             {
                 return null;
             }

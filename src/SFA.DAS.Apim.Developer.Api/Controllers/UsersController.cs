@@ -80,16 +80,16 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("authenticate")]
-        public async Task<IActionResult> AuthenticateUser(string email, string password)
+        public async Task<IActionResult> AuthenticateUser(AuthenticateRequest request)
         {
             try
             {
                 var result = await _mediator.Send(new GetUserAuthenticatedQuery
                 {
-                    Email = email,
-                    Password = password
+                    Email = request.Email,
+                    Password = request.Password
                 });
 
                 if (result.User == null)

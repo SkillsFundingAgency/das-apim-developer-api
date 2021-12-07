@@ -22,13 +22,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
         public async Task<string> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             var validationResult = await _validator.ValidateAsync(request);
-
+            
             if (!validationResult.IsValid())
             {
                 throw new ValidationException(validationResult.DataAnnotationResult, null, null);
             }
             
-            var actual = await _userService.UpsertUser(new UserDetails
+            var actual = await _userService.CreateUser(new UserDetails
             {
                 Id = request.Id,
                 Email = request.Email,

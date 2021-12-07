@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
@@ -45,7 +44,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     )))
                 .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
-            var actual = await userService.UpsertUser(userDetails);
+            var actual = await userService.CreateUser(userDetails);
             
             actual.Email.Should().Be(createUserApiResponse.Properties.Email);
             actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
@@ -76,7 +75,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
             
-            var actual = await userService.UpsertUser(userDetails);
+            var actual = await userService.CreateUser(userDetails);
             
             actual.Email.Should().Be(createUserApiResponse.Properties.Email);
             actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
@@ -84,6 +83,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Id.Should().Be(createUserApiResponse.Name);
             actual.State.Should().Be(createUserApiResponse.Properties.State);
         }
+        
 
         [Test, RecursiveMoqAutoData]
         public void Then_If_Error_From_Api_Then_Exception_Thrown(
@@ -104,7 +104,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             azureApimManagementService.Setup(x =>
                 x.Put<UserResponse>(It.IsAny<CreateUserRequest>())).ReturnsAsync(new ApiResponse<UserResponse>(null, HttpStatusCode.BadRequest, "Error"));
 
-            Assert.ThrowsAsync<ValidationException>(() => userService.UpsertUser(userDetails));
+            Assert.ThrowsAsync<ValidationException>(() => userService.CreateUser(userDetails));
         }
     }
 }

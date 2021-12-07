@@ -21,13 +21,43 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             _azureApimManagementService = azureApimManagementService;
             _azureUserAuthenticationManagementService = azureUserAuthenticationManagementService;
         }
+
+        public async Task<UserDetails> UpdateUser(UserDetails userDetails)
+        {
+            var getUserResponse = await GetUserById(userDetails.Id);
+
+            if (getUserResponse == null)
+            {
+                return null;
+            }
+            
+            userDetails.Email ??= getUserResponse.Email;
+            userDetails.FirstName ??= getUserResponse.FirstName;
+            userDetails.LastName ??= getUserResponse.LastName;
+            userDetails.Note ??= getUserResponse.Note;
+            userDetails.State ??= getUserResponse.State;
         
-        public async Task<UserDetails> UpsertUser(UserDetails userDetails)
+            
+            var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
+
+                
+            return new UserDetails
+            {
+                Id = createApimUserTask.Name,
+                Password = null,
+                Email = createApimUserTask.Properties.Email,
+                FirstName = createApimUserTask.Properties.FirstName,
+                LastName = createApimUserTask.Properties.LastName,
+                State = createApimUserTask.Properties.State
+            };
+        }
+        
+        public async Task<UserDetails> CreateUser(UserDetails userDetails)
         {
             var getUserResponse = await GetUser(userDetails.Email);
 
             var userId = userDetails.Id;
-            
+
             if (getUserResponse != null)
             {
                 userId = getUserResponse.Id;
@@ -37,7 +67,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 userDetails.State = "pending";
             }
             
-            var createApimUserTask = await CreateApimUser(userId, userDetails);
+            var createApimUserTask = await UpsertApimUser(userId, userDetails);
 
                 
             return new UserDetails
@@ -53,6 +83,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
         public async Task<UserDetails> GetUser(string emailAddress)
         {
+            if (string.IsNullOrEmpty(emailAddress))
+            {
+                return null;
+            }
+            
             var result = await _azureApimManagementService.Get<ApimUserResponse>(
                 new GetApimUserRequest(emailAddress));
 
@@ -77,6 +112,11 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         {
             var result = await _azureApimManagementService.Get<ApimUserResponseItem>(
                 new GetApimUserByIdRequest(id));
+
+            if (result.Body == null)
+            {
+                return null;
+            }
             
             return new UserDetails
             {
@@ -90,7 +130,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             };
         }
 
-        private async Task<UserResponse> CreateApimUser(string apimUserId, UserDetails userDetails)
+        private async Task<UserResponse> UpsertApimUser(string apimUserId, UserDetails userDetails)
         {
             var apimUserResponse = await _azureApimManagementService.Put<UserResponse>(
                 new CreateUserRequest(apimUserId, userDetails));

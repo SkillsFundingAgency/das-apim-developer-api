@@ -14,7 +14,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
 
             if (string.IsNullOrEmpty(item.Email))
             {
-                validationResult.AddError(item.Email);
+                validationResult.AddError(nameof(item.Email));
             }
             else
             {

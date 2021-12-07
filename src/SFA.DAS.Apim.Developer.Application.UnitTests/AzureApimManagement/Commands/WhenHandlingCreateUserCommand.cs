@@ -28,7 +28,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             {
                 ValidationDictionary = {  }
             });
-            userService.Setup(x => x.UpsertUser(
+            userService.Setup(x => x.CreateUser(
                 It.Is<UserDetails>(c =>
                     c.Email.Equals(command.Email)
                     && c.Id.Equals(command.Id)

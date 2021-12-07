@@ -40,7 +40,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                     ),
                     It.IsAny<CancellationToken>())).ReturnsAsync(response);
             
-            var controllerResult = await controller.UpsertUser(id, request) as CreatedResult;
+            var controllerResult = await controller.CreateUser(id, request) as CreatedResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.Created);
             controllerResult.Value.Should().BeEquivalentTo(new {id = response});
@@ -62,7 +62,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                     It.IsAny<CancellationToken>()))
                 .Throws(new ValidationException(validationResult.DataAnnotationResult, null, null));
 
-            var controllerResult = await controller.UpsertUser(id, request) as ObjectResult;
+            var controllerResult = await controller.CreateUser(id, request) as ObjectResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             controllerResult.Value.ToString().Should().Contain(errorKey);
@@ -81,7 +81,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                     It.IsAny<CancellationToken>()))
                 .Throws<InvalidOperationException>();
 
-            var controllerResult = await controller.UpsertUser(id, request) as StatusCodeResult;
+            var controllerResult = await controller.CreateUser(id, request) as StatusCodeResult;
 
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NLog;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser;
@@ -28,9 +27,9 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             _logger = logger;
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("{id}")]
-        public async Task<IActionResult> UpsertUser([FromRoute]string id, UpsertUserApiRequest request)
+        public async Task<IActionResult> CreateUser([FromRoute]string id, UpsertUserApiRequest request)
         {
             try
             {
@@ -58,14 +57,19 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         }
 
         [HttpPut]
-        [Route("set-active")]
-        public async Task<IActionResult> UpdateUserState(UpdateUserStateApiRequest request)
+        [Route("{id}")]
+        public async Task<IActionResult> UpsertUser([FromRoute]string id, UpsertUserApiRequest request)
         {
             try
             {
-                await _mediator.Send(new UpdateUserStateCommand
+                await _mediator.Send(new UpdateUserCommand
                 {
-                    UserEmail = request.Email
+                    Id = id,
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    State = request.State.ToString(),
+                    Note = request.ConfirmEmailLink
                 });
                 return NoContent();
             }

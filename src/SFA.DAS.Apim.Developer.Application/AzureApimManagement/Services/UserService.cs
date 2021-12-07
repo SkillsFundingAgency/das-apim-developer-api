@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
@@ -142,18 +141,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             
             return apimUserResponse.Body;
            
-        }
-
-        public async Task UpdateUserState(string email)
-        {
-            var user = await GetUser(email);
-
-            if (user == null)
-            {
-                throw new ValidationException("User not found");
-            }
-            
-            await _azureApimManagementService.Put<UserResponse>(new UpdateUserStateRequest(user.Id, user));
         }
 
         public async Task<UserDetails> CheckUserAuthentication(string email, string password)

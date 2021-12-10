@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
-using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewSubscriptionKeys
 {
@@ -30,7 +29,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewS
             
             await _subscriptionService.RegenerateSubscriptionKeys(
                 request.InternalUserId,
-                Regex.IsMatch(request.InternalUserId, "^[0-9]+$") ? ApimUserType.Provider : ApimUserType.Employer,
+                request.InternalUserId.ApimUserType(),
                 request.ProductName);
 
             return Unit.Value;

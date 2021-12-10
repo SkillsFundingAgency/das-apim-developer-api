@@ -58,6 +58,32 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
         }
         
         [Test, MoqAutoData]
+        public async Task Then_If_The_Request_Is_Valid_The_Service_Is_Called_And_Marked_As_External_If_Guid(
+            string subscriptionId,
+            Guid internalUserId,
+            CreateSubscriptionCommand request,
+            Subscription response,
+            [Frozen]Mock<IValidator<CreateSubscriptionCommand>> validator,
+            [Frozen]Mock<ISubscriptionService> service,
+            CreateSubscriptionCommandHandler handler)
+        {
+            //Arrange
+            request.InternalUserId = internalUserId.ToString();
+            validator
+                .Setup(x => x.ValidateAsync(request))
+                .ReturnsAsync(new ValidationResult( ));
+            service
+                .Setup(x => x.CreateSubscription(request.InternalUserId, ApimUserType.External, request.ProductName))
+                .ReturnsAsync(response);
+
+            //Act
+            var actual = await handler.Handle(request, CancellationToken.None);
+
+            //Assert
+            actual.SubscriptionId.Should().Be(response.Name);
+        }
+        
+        [Test, MoqAutoData]
         public async Task Then_If_The_InternalUserId_Is_Numeric_Then_Marked_As_Provider(
             int id,
             string subscriptionId,

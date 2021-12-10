@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -72,6 +73,30 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
             //Assert
             mockService.Verify(service => 
                     service.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.Provider, request.ProductName), 
+                Times.Once);
+        }
+        
+        [Test, MoqAutoData]
+        public async Task Then_If_The_InternalUserId_Is_Guid_Then_Marked_As_External_And_Service_Called(
+            Guid id,
+            string subscriptionId,
+            RenewSubscriptionKeysCommand request,
+            Subscription response,
+            [Frozen]Mock<IValidator<RenewSubscriptionKeysCommand>> mockValidator,
+            [Frozen]Mock<ISubscriptionService> mockService,
+            RenewSubscriptionKeysCommandHandler handler)
+        {
+            request.InternalUserId = id.ToString();
+            mockValidator
+                .Setup(x => x.ValidateAsync(request))
+                .ReturnsAsync(new ValidationResult( ));
+
+            //Act
+            await handler.Handle(request, CancellationToken.None);
+
+            //Assert
+            mockService.Verify(service => 
+                    service.RegenerateSubscriptionKeys(request.InternalUserId, ApimUserType.External, request.ProductName), 
                 Times.Once);
         }
     }

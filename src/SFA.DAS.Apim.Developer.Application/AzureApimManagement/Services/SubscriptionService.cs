@@ -18,13 +18,16 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
         private readonly ILogger<SubscriptionService> _logger;
+        private readonly IApimSubscriptionAuditRepository _apimSubscriptionAuditRepository;
 
         public SubscriptionService(
             IAzureApimManagementService azureApimManagementService,
+            IApimSubscriptionAuditRepository apimSubscriptionAuditRepository,
             ILogger<SubscriptionService> logger)
         {
             _azureApimManagementService = azureApimManagementService;
             _logger = logger;
+            _apimSubscriptionAuditRepository = apimSubscriptionAuditRepository;
         }
         
         public async Task<Subscription> CreateSubscription(string internalUserId,
@@ -33,7 +36,8 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
-            
+            var auditSunscriptions = _apimSubscriptionAuditRepository.Insert();
+
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
             {
                 _logger.LogError(apiResponse?.ErrorContent);

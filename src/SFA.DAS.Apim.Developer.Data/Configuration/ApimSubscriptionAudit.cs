@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace SFA.DAS.Apim.Developer.Data.Configuration
 {
-    public class ApimSubscriptionAudit : IEntityTypeConfiguration<Domain.Entities.ApimSubscriptionsAudit>
+    public class ApimSubscriptionAudit : IEntityTypeConfiguration<Domain.Entities.ApimSubscriptionAudit>
     {
-        public void Configure(EntityTypeBuilder<Domain.Entities.ApimSubscriptionsAudit> builder)
+        public void Configure(EntityTypeBuilder<Domain.Entities.ApimSubscriptionAudit> builder)
         {
             builder.ToTable("ApimSubscriptionAudit");
             builder.HasKey(x => x.Id);

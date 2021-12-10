@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.Apim.Developer.Domain.Entities
 {
-    public class ApimSubscriptionsAudit
+    public class ApimSubscriptionAudit
     {
         public long Id { get; set; }
         public string UserId { get; set; }

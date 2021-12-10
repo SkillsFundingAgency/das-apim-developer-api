@@ -13,7 +13,7 @@ namespace SFA.DAS.Apim.Developer.Data
     {
         DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
         DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
-        DbSet<Domain.Entities.ApimSubscriptionsAudit> ApimSubscriptionsAudit { get; set; }
+        DbSet<Domain.Entities.ApimSubscriptionAudit> ApimSubscriptionAudit { get; set; }
 
         int SaveChanges();
     }
@@ -27,7 +27,7 @@ namespace SFA.DAS.Apim.Developer.Data
         private readonly EnvironmentConfiguration _environmentConfiguration;
         public DbSet<Domain.Entities.ApimUser> ApimUser { get; set; }
         public DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
-        public DbSet<Domain.Entities.ApimSubscriptionsAudit> ApimSubscriptionsAudit { get; set; }
+        public DbSet<Domain.Entities.ApimSubscriptionAudit> ApimSubscriptionAudit { get; set; }
 
         public ApimDeveloperDataContext()
         {

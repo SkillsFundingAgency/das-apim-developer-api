@@ -6,6 +6,7 @@ using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Products.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Products.Api.Responses;
@@ -36,7 +37,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
-            var auditSunscriptions = _apimSubscriptionAuditRepository.Insert();
+            await _apimSubscriptionAuditRepository.Insert(new ApimSubscriptionAudit());
 
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
             {
@@ -55,6 +56,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType, string productName)
         {
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
+            await _apimSubscriptionAuditRepository.Insert(new ApimSubscriptionAudit());
 
             var requestList = new List<IPostRequest>
             {
@@ -96,6 +98,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var apimSubscriptions =
                 await _azureApimManagementService.Get<GetSubscriptionsResponse>(
                     new GetUserSubscriptionsRequest($"{apimUserType}-{internalUserId}"));
+            await _apimSubscriptionAuditRepository.Insert(new ApimSubscriptionAudit());
 
             var returnList = new List<Subscription>();
             foreach (var userSubscriptionItem in apimSubscriptions.Body.Value.Where(c=>c.Name.Contains($"{apimUserType}-{internalUserId}")))

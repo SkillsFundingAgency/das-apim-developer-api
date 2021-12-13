@@ -53,7 +53,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         }
         
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_User_Is_In_The_Portal_Then_Updated_Through_Api(
+        public void Then_If_The_User_Is_In_The_Portal_Then_Error_Returned_Api(
             UserDetails userDetails,
             UserResponse createUserApiResponse,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
@@ -74,14 +74,8 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     )))
                 .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
+            Assert.ThrowsAsync<ValidationException>(() => userService.CreateUser(userDetails));
             
-            var actual = await userService.CreateUser(userDetails);
-            
-            actual.Email.Should().Be(createUserApiResponse.Properties.Email);
-            actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
-            actual.LastName.Should().Be(createUserApiResponse.Properties.LastName);
-            actual.Id.Should().Be(createUserApiResponse.Name);
-            actual.State.Should().Be(createUserApiResponse.Properties.State);
         }
         
 

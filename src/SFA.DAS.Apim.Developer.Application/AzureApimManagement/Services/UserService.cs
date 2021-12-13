@@ -59,7 +59,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
             if (getUserResponse != null)
             {
-                userId = getUserResponse.Id;
+                throw new ValidationException("User already exists");
             }
             else
             {

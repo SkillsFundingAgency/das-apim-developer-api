@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Web;
 using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
@@ -10,7 +11,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
 
         public GetApimUserRequest(string email)
         {
-            _email = email;
+            _email = HttpUtility.UrlEncode(email);
         }
 
         public string GetUrl => $"users?$filter=email eq '{_email}'&api-version=2021-04-01-preview";

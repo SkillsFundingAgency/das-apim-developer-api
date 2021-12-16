@@ -42,7 +42,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
-                DisplayName = source.DisplayName + (isSandbox ? " (Sandbox)" : " (Live)"),
+                DisplayName = source.DisplayName + (isSandbox ? " sandbox" : ""),
                 Documentation = documentationObject
             };
         }

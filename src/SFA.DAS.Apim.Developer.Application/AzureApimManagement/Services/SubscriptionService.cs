@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using ApimUserType = SFA.DAS.Apim.Developer.Domain.Models.ApimUserType;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Products.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Products.Api.Responses;
@@ -18,13 +20,16 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
         private readonly ILogger<SubscriptionService> _logger;
+        private readonly IApimSubscriptionAuditRepository _apimSubscriptionAuditRepository;
 
         public SubscriptionService(
             IAzureApimManagementService azureApimManagementService,
+            IApimSubscriptionAuditRepository apimSubscriptionAuditRepository,
             ILogger<SubscriptionService> logger)
         {
             _azureApimManagementService = azureApimManagementService;
             _logger = logger;
+            _apimSubscriptionAuditRepository = apimSubscriptionAuditRepository;
         }
         
         public async Task<Subscription> CreateSubscription(string internalUserId,
@@ -33,7 +38,15 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
-            
+            await _apimSubscriptionAuditRepository.Insert(
+                new ApimSubscriptionAudit
+                {
+                    Action = "new subscription",
+                    ProductName = productName,
+                    UserId = internalUserId,
+                    ApimUserType = (short)apimUserType
+                });
+
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
             {
                 _logger.LogError(apiResponse?.ErrorContent);
@@ -51,7 +64,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType, string productName)
         {
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
-
+            
             var requestList = new List<IPostRequest>
             {
                 new RegeneratePrimaryKeyRequest(subscriptionId),
@@ -67,7 +80,15 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var errorList = taskList
                 .Where(task => !task.Result?.StatusCode.IsSuccessStatusCode() ?? false)
                 .ToList();
-
+            
+            await _apimSubscriptionAuditRepository.Insert(
+                new ApimSubscriptionAudit
+                {
+                    Action = "regenerate subscription",
+                    ProductName = productName,
+                    UserId = internalUserId,
+                    ApimUserType = (short)apimUserType
+                });
             if (errorList.Count == 0)
             {
                 return;
@@ -84,6 +105,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                         $"Response from regenerate key for:[{requestList[i].PostUrl}] was:[{apiResponse.StatusCode}]"));
                 }
             }
+            
             throw new AggregateException(exceptionList);
         }
 

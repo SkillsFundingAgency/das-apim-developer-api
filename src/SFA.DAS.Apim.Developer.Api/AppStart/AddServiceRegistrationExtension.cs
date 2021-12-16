@@ -35,6 +35,7 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
 
             services.AddTransient<IApimUserRepository, ApimUserRepository>();
             services.AddTransient<IApimAuditRepository, ApimAuditRepository>();
+            services.AddTransient<IApimSubscriptionAuditRepository, ApimSubscriptionAuditRepository>();
         }
 
         private static IAsyncPolicy<HttpResponseMessage> HttpClientRetryPolicy()

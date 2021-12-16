@@ -23,7 +23,8 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.Repository.ApimSubscriptionAudit
                 UserId = "ABC123",
                 Action = "Created",
                 Timestamp = DateTime.UtcNow,
-                ProductName = "Api Key"
+                ProductName = "Api Key",
+                ApimUserType = 3
             };
 
             _apimDeveloperDataContext = new Mock<IApimDeveloperDataContext>();

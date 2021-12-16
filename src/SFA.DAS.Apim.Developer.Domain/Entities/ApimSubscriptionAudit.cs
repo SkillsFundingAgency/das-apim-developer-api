@@ -9,6 +9,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Entities
         public string ProductName { get; set; }
         public string Action { get; set; }
         public DateTime Timestamp { get; set; }
+        public short ApimUserType { get; set; }
 
     }
 }

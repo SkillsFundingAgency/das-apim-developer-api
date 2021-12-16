@@ -57,6 +57,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     c.Action.Equals("regenerate subscription")
                     && c.ProductName.Equals(productName)
                     && c.UserId.Equals(internalUserId)
+                    && c.ApimUserType == (short)apimUserType
                     )), Times.Once);
         }
         

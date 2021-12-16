@@ -4,5 +4,6 @@ CREATE TABLE [dbo].[ApimSubscriptionAudit]
     [UserId] varchar(250) NOT NULL,
     [ProductName] VARCHAR(250) NOT NULL,
     [Action] VARCHAR(MAX) NOT NULL,
+    [ApimUserType] SMALLINT NOT NULL,
     [Timestamp] DATETIME NOT NULL
 )

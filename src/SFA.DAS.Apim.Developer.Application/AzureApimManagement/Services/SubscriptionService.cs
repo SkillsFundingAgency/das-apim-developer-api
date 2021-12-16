@@ -44,6 +44,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                     Action = "new subscription",
                     ProductName = productName,
                     UserId = internalUserId,
+                    ApimUserType = (short)apimUserType
                 });
 
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
@@ -79,7 +80,15 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var errorList = taskList
                 .Where(task => !task.Result?.StatusCode.IsSuccessStatusCode() ?? false)
                 .ToList();
-
+            
+            await _apimSubscriptionAuditRepository.Insert(
+                new ApimSubscriptionAudit
+                {
+                    Action = "regenerate subscription",
+                    ProductName = productName,
+                    UserId = internalUserId,
+                    ApimUserType = (short)apimUserType
+                });
             if (errorList.Count == 0)
             {
                 return;
@@ -96,13 +105,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                         $"Response from regenerate key for:[{requestList[i].PostUrl}] was:[{apiResponse.StatusCode}]"));
                 }
             }
-            await _apimSubscriptionAuditRepository.Insert(
-                new ApimSubscriptionAudit
-                {
-                    Action = "regenerate subscription",
-                    ProductName = productName,
-                    UserId = internalUserId,
-                });
+            
             throw new AggregateException(exceptionList);
         }
 

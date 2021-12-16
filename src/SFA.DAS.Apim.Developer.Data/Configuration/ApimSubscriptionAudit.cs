@@ -15,6 +15,7 @@ namespace SFA.DAS.Apim.Developer.Data.Configuration
             builder.Property(x => x.ProductName).HasColumnName("ProductName").HasColumnType("varchar").HasMaxLength(250).IsRequired();
             builder.Property(x => x.Action).HasColumnName("Action").HasColumnType("varchar").IsRequired();
             builder.Property(x => x.Timestamp).HasColumnName("Timestamp").HasColumnType("datetime").IsRequired().ValueGeneratedOnAdd();
+            builder.Property(x => x.ApimUserType).HasColumnName("ApimUserType").HasColumnType("smallint").IsRequired();
 
             builder.HasIndex(x => x.Id).IsUnique();
         }

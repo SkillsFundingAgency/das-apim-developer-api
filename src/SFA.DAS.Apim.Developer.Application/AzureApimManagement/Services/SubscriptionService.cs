@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -37,7 +38,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
-            await _apimSubscriptionAuditRepository.Insert(new ApimSubscriptionAudit());
+            await _apimSubscriptionAuditRepository.Insert
+                (new ApimSubscriptionAudit
+            {
+                Action = $"new subscription",
+                ProductName = productName,
+                UserId = internalUserId,
+            });
 
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
             {
@@ -56,7 +63,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType, string productName)
         {
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
-            await _apimSubscriptionAuditRepository.Insert(new ApimSubscriptionAudit());
+            await _apimSubscriptionAuditRepository.Insert
+            (new ApimSubscriptionAudit
+            {
+                Action = $"regenerate subscription",
+                ProductName = productName,
+                UserId = internalUserId,
+            });
 
             var requestList = new List<IPostRequest>
             {
@@ -98,7 +111,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var apimSubscriptions =
                 await _azureApimManagementService.Get<GetSubscriptionsResponse>(
                     new GetUserSubscriptionsRequest($"{apimUserType}-{internalUserId}"));
-            await _apimSubscriptionAuditRepository.Insert(new ApimSubscriptionAudit());
 
             var returnList = new List<Subscription>();
             foreach (var userSubscriptionItem in apimSubscriptions.Body.Value.Where(c=>c.Name.Contains($"{apimUserType}-{internalUserId}")))

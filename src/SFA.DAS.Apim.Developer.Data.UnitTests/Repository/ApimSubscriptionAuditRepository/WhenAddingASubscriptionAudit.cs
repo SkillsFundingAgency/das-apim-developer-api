@@ -20,7 +20,7 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.Repository.ApimSubscriptionAudit
         {
             _apimSubscriptionAudit = new ApimSubscriptionAudit()
             {
-                UserId = Guid.NewGuid(),
+                UserId = "ABC123",
                 Action = "Created",
                 Timestamp = DateTime.UtcNow,
                 ProductName = "Api Key"

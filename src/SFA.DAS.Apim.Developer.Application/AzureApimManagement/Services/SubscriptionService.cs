@@ -38,13 +38,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
             var createSubscriptionRequest = new CreateSubscriptionRequest(subscriptionId, productName);
             var apiResponse = await _azureApimManagementService.Put<CreateSubscriptionResponse>(createSubscriptionRequest);
-            await _apimSubscriptionAuditRepository.Insert
-                (new ApimSubscriptionAudit
-            {
-                Action = $"new subscription",
-                ProductName = productName,
-                UserId = internalUserId,
-            });
+            await _apimSubscriptionAuditRepository.Insert(
+                new ApimSubscriptionAudit
+                {
+                    Action = "new subscription",
+                    ProductName = productName,
+                    UserId = internalUserId,
+                });
 
             if (!apiResponse.StatusCode.IsSuccessStatusCode())
             {
@@ -63,14 +63,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
         public async Task RegenerateSubscriptionKeys(string internalUserId, ApimUserType apimUserType, string productName)
         {
             var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
-            await _apimSubscriptionAuditRepository.Insert
-            (new ApimSubscriptionAudit
-            {
-                Action = $"regenerate subscription",
-                ProductName = productName,
-                UserId = internalUserId,
-            });
-
+            
             var requestList = new List<IPostRequest>
             {
                 new RegeneratePrimaryKeyRequest(subscriptionId),
@@ -103,6 +96,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                         $"Response from regenerate key for:[{requestList[i].PostUrl}] was:[{apiResponse.StatusCode}]"));
                 }
             }
+            await _apimSubscriptionAuditRepository.Insert(
+                new ApimSubscriptionAudit
+                {
+                    Action = "regenerate subscription",
+                    ProductName = productName,
+                    UserId = internalUserId,
+                });
             throw new AggregateException(exceptionList);
         }
 

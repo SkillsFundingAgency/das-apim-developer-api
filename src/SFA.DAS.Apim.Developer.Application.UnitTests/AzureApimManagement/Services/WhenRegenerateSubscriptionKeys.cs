@@ -6,6 +6,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
+using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
@@ -16,10 +17,11 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     public class WhenRegenerateSubscriptionKeys
     {
         [Test, MoqAutoData]
-        public async Task Then_The_Subscription_Keys_Are_Regenerated(
+        public async Task Then_The_Subscription_Keys_Are_Regenerated_And_Audited(
             string internalUserId,
             ApimUserType apimUserType,
             string productName,
+            [Frozen] Mock<IApimSubscriptionAuditRepository> apimSubscriptionAuditRepository,
             [Frozen] Mock<IAzureApimManagementService> mockAzureApimManagementService,
             [Frozen] Mock<IUserService> mockUserService,
             SubscriptionService subscriptionService)
@@ -50,6 +52,12 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             mockAzureApimManagementService.Verify(service => service.Post<string>(
                 It.Is<RegenerateSecondaryKeyRequest>(c =>
                     c.PostUrl.Contains($"subscriptions/{expectedSubscriptionId}/regenerateSecondaryKey?"))), Times.Once);
+            apimSubscriptionAuditRepository.Verify(x=>x.Insert(
+                It.Is<ApimSubscriptionAudit>(c=>
+                    c.Action.Equals("regenerate subscription")
+                    && c.ProductName.Equals(productName)
+                    && c.UserId.Equals(internalUserId)
+                    )), Times.Once);
         }
         
         [Test, MoqAutoData]

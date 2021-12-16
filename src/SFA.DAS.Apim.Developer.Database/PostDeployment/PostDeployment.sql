@@ -17,5 +17,6 @@ IF DATABASE_PRINCIPAL_ID('Reporter') IS NULL
 BEGIN
     CREATE ROLE [Reporter]
 END
+GO
 
 GRANT SELECT ON [DashboardReporting].ApimSubscriptionAuditView TO Reporter

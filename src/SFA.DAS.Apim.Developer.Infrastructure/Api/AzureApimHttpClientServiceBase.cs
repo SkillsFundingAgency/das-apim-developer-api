@@ -66,6 +66,22 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             return await ResponseHandler<T>(response);
         }
 
+        public async Task<ApiResponse<T>> GetAuthentication<T>(IGetUserAuthenticationRequest getUserAuthenticationRequest, string requestEncoding = "application/json")
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, getUserAuthenticationRequest.GetUrl)
+            {
+                Headers =
+                {
+                    Accept = { new MediaTypeWithQualityHeaderValue(requestEncoding) },
+                    Authorization = new AuthenticationHeaderValue(getUserAuthenticationRequest.AuthorizationHeaderScheme, getUserAuthenticationRequest.AuthorizationHeaderValue)
+                }
+            };
+            
+            var response = await _httpClient.SendAsync(request);
+
+            return await ResponseHandler<T>(response);
+        }
+
         private async Task<ApiResponse<T>> ResponseHandler<T>(HttpResponseMessage response)
         {
             var responseBody = (T)default;

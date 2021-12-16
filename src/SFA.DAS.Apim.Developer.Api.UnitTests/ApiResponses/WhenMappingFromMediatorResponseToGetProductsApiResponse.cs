@@ -15,9 +15,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             var actual = (GetProductsApiResponse)source;
             
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
-                options.Excluding(product => product.DisplayName));
-            actual.Products.Select(item => item.DisplayName).Should().BeEquivalentTo(
-                source.Products.Select(product => product.DisplayName + " (Live)"));
+                options.Excluding(product => product.Documentation));
         }
         
         [Test, AutoData]
@@ -32,7 +30,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
                 options.Excluding(product => product.DisplayName));
             actual.Products.Select(item => item.DisplayName).Should().BeEquivalentTo(
-                source.Products.Select(product => product.DisplayName + " (Sandbox)"));
+                source.Products.Select(product => product.DisplayName + " sandbox"));
         }
     }
 }

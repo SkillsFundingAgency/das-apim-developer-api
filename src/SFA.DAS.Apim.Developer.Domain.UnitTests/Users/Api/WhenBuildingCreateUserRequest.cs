@@ -1,11 +1,11 @@
+using System.Collections.Generic;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
 
-namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
+namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
 {
     public class WhenBuildingCreateUserRequest
     {
@@ -24,9 +24,20 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
             {
                 Properties = new ApimCreateUserProperties
                 {
-                    Email = userDetails.EmailAddress,
+                    Email = userDetails.Email,
                     FirstName = userDetails.FirstName,
-                    LastName = userDetails.LastName
+                    LastName = userDetails.LastName,
+                    Password = userDetails.Password,
+                    State = userDetails.State,
+                    Note = userDetails.Note,
+                    Identities = new List<Identities>
+                    {
+                        new Identities
+                        {
+                            Id = userDetails.Email,
+                            Provider = "Basic"
+                        }
+                    }
                 }
             };
             

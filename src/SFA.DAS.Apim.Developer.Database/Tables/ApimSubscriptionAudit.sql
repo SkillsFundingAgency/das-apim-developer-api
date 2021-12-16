@@ -5,5 +5,5 @@ CREATE TABLE [dbo].[ApimSubscriptionAudit]
     [ProductName] VARCHAR(250) NOT NULL,
     [Action] VARCHAR(MAX) NOT NULL,
     [ApimUserType] SMALLINT NOT NULL,
-    [Timestamp] DATETIME NOT NULL
+    [Timestamp] DATETIME NOT NULL DEFAULT GETDATE()
 )

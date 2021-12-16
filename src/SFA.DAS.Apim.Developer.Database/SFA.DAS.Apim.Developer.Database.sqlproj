@@ -63,7 +63,7 @@
     <Build Include="Tables\ApimUser.sql" />
     <Build Include="Views\ApimSubscriptionAuditView.sql" />
     <Build Include="Tables\ApimSubscriptionAudit.sql" />
-    <Build Include="PostDeployment\PostDeployment.sql" />
+    <PostDeploy Include="PostDeployment\PostDeployment.sql" />
     <Build Include="Schemas\DashboardReporting.sql" />
   </ItemGroup>
 </Project>

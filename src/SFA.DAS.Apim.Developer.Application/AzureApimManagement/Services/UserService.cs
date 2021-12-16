@@ -1,68 +1,166 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Responses;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 {
     public class UserService : IUserService
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
-        private readonly IApimUserRepository _apimUserRepository;
+        private readonly IAzureUserAuthenticationManagementService _azureUserAuthenticationManagementService;
 
-        public UserService(IAzureApimManagementService azureApimManagementService, IApimUserRepository apimUserRepository)
+
+        public UserService(IAzureApimManagementService azureApimManagementService, IAzureUserAuthenticationManagementService azureUserAuthenticationManagementService)
         {
             _azureApimManagementService = azureApimManagementService;
-            _apimUserRepository = apimUserRepository;
+            _azureUserAuthenticationManagementService = azureUserAuthenticationManagementService;
+        }
+
+        public async Task<UserDetails> UpdateUser(UserDetails userDetails)
+        {
+            var getUserResponse = await GetUserById(userDetails.Id);
+
+            if (getUserResponse == null)
+            {
+                return null;
+            }
+            
+            userDetails.Email ??= getUserResponse.Email;
+            userDetails.FirstName ??= getUserResponse.FirstName;
+            userDetails.LastName ??= getUserResponse.LastName;
+            userDetails.Note ??= getUserResponse.Note;
+            userDetails.State ??= getUserResponse.State;
+        
+            
+            var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
+
+                
+            return new UserDetails
+            {
+                Id = createApimUserTask.Name,
+                Password = null,
+                Email = createApimUserTask.Properties.Email,
+                FirstName = createApimUserTask.Properties.FirstName,
+                LastName = createApimUserTask.Properties.LastName,
+                State = createApimUserTask.Properties.State
+            };
         }
         
-        public async Task<string> CreateUser(string internalUserId, UserDetails userDetails, ApimUserType apimUserType)
+        public async Task<UserDetails> CreateUser(UserDetails userDetails)
         {
-            var apimUser = await _apimUserRepository.GetByInternalIdAndType(internalUserId, (int)apimUserType);
-            
-            if (apimUser != null)
+            var getUserResponse = await GetUser(userDetails.Email);
+
+            var userId = userDetails.Id;
+
+            if (getUserResponse != null)
             {
-                return apimUser.ApimUserId;
+                throw new ValidationException("User already exists");
+            }
+            else
+            {
+                userDetails.State = "pending";
             }
             
-            var createApimUserTask = await CreateApimUser(Guid.NewGuid().ToString(), userDetails);
+            var createApimUserTask = await UpsertApimUser(userId, userDetails);
 
-            await _apimUserRepository.Insert(new ApimUser
-            {
-                ApimUserTypeId = (int)apimUserType,
-                InternalUserId = internalUserId,
-                ApimUserId = createApimUserTask 
-            });
                 
-            return createApimUserTask;
-
+            return new UserDetails
+            {
+                Id = createApimUserTask.Name,
+                Password = null,
+                Email = createApimUserTask.Properties.Email,
+                FirstName = createApimUserTask.Properties.FirstName,
+                LastName = createApimUserTask.Properties.LastName,
+                State = createApimUserTask.Properties.State
+            };
         }
 
-        public async Task<ApimUser> GetUser(string internalUserId, ApimUserType apimUserType)
+        public async Task<UserDetails> GetUser(string emailAddress)
         {
-            return await _apimUserRepository.GetByInternalIdAndType(internalUserId, (int)apimUserType);
+            if (string.IsNullOrEmpty(emailAddress))
+            {
+                return null;
+            }
+            
+            var result = await _azureApimManagementService.Get<ApimUserResponse>(
+                new GetApimUserRequest(emailAddress));
+
+            if (result.Body.Count == 0)
+            {
+                return null;
+            }
+            
+            return new UserDetails
+            {
+                Id = result.Body.Values.First().Name,
+                Password = null,
+                Email = result.Body.Values.First().Properties.Email,
+                FirstName = result.Body.Values.First().Properties.FirstName,
+                LastName = result.Body.Values.First().Properties.LastName,
+                State = result.Body.Values.First().Properties.State,
+                Note = result.Body.Values.First().Properties.Note
+            };
         }
 
-        private async Task<string> CreateApimUser(string apimUserId, UserDetails userDetails)
+        public async Task<UserDetails> GetUserById(string id)
         {
-            var apimUserResponse = await _azureApimManagementService.Put<CreateUserResponse>(
+            var result = await _azureApimManagementService.Get<ApimUserResponseItem>(
+                new GetApimUserByIdRequest(id));
+
+            if (result.StatusCode == HttpStatusCode.NotFound || result.Body == null)
+            {
+                return null;
+            }
+            
+            return new UserDetails
+            {
+                Id = result.Body.Name,
+                Password = null,
+                Email = result.Body.Properties.Email,
+                FirstName = result.Body.Properties.FirstName,
+                LastName = result.Body.Properties.LastName,
+                State = result.Body.Properties.State,
+                Note = result.Body.Properties.Note
+            };
+        }
+
+        private async Task<UserResponse> UpsertApimUser(string apimUserId, UserDetails userDetails)
+        {
+            var apimUserResponse = await _azureApimManagementService.Put<UserResponse>(
                 new CreateUserRequest(apimUserId, userDetails));
 
-            if (apimUserResponse.StatusCode != HttpStatusCode.BadRequest)
+            if (!string.IsNullOrEmpty(apimUserResponse.ErrorContent))
             {
-                return apimUserResponse.Body.Name;
+                throw new ValidationException(apimUserResponse.ErrorContent);
             }
+            
+            return apimUserResponse.Body;
+           
+        }
 
-            var getUserResponse = await _azureApimManagementService.Get<ApimUserResponse>(
-                new GetApimUserRequest(userDetails.EmailAddress));
+        public async Task<UserDetails> CheckUserAuthentication(string email, string password)
+        {
+            var authenticatedTask =
+                _azureUserAuthenticationManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
+                    new GetUserAuthenticatedRequest(email, password));
 
-            return getUserResponse.Body.Properties.First().Name;
+            var userTask = GetUser(email);
 
+            await Task.WhenAll(authenticatedTask, userTask);
+
+            if (userTask.Result == null)
+            {
+                return null;
+            }
+            
+            userTask.Result.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
+            
+            return userTask.Result;
         }
     }
 }

@@ -18,6 +18,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
     {
 
         [TestCase(typeof(IAzureApimManagementService))]
+        [TestCase(typeof(IAzureUserAuthenticationManagementService))]
         [TestCase(typeof(IAzureTokenService))]
         [TestCase(typeof(ISubscriptionService))]
         [TestCase(typeof(IUserService))]
@@ -55,6 +56,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
                 {
                     new KeyValuePair<string, string>("ApimDeveloperApi:ConnectionString", "test"),
                     new KeyValuePair<string, string>("AzureApimManagement:ApimServiceName", "test"),
+                    new KeyValuePair<string, string>("AzureApimManagement:ApimUserManagementUrl", "https://test/"),
                     new KeyValuePair<string, string>("Environment", "test"),
                 }
             };

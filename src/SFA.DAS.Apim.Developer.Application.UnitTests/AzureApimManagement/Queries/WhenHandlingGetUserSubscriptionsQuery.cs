@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +39,22 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Queri
         {
             query.InternalUserId = providerId.ToString();
             service.Setup(x => x.GetUserSubscriptions(query.InternalUserId, ApimUserType.Provider)).ReturnsAsync(serviceResponse);
+
+            var actual = await handler.Handle(query, CancellationToken.None);
+
+            actual.UserSubscriptions.Should().BeEquivalentTo(serviceResponse);
+        }
+        
+        [Test, MoqAutoData]
+        public async Task Then_The_Service_Is_Called_And_Data_Returned_For_External(
+            GetUserSubscriptionsQuery query,
+            Guid externalId,
+            List<Subscription> serviceResponse,
+            [Frozen] Mock<ISubscriptionService> service,
+            GetUserSubscriptionsQueryHandler handler)
+        {
+            query.InternalUserId = externalId.ToString();
+            service.Setup(x => x.GetUserSubscriptions(query.InternalUserId, ApimUserType.External)).ReturnsAsync(serviceResponse);
 
             var actual = await handler.Handle(query, CancellationToken.None);
 

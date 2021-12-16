@@ -1,4 +1,4 @@
-using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,12 +7,11 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
-using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Services
@@ -20,73 +19,86 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     public class WhenCreatingUser
     {
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_User_Does_Not_Exist_It_Is_Created_In_The_Database_And_On_Service(
-            string internalUserId, 
-            ApimUserType apimUserType, 
-            string productName, 
-            Guid apimUserId,
-            ApimUser apimUser,
+        public async Task Then_If_The_User_Does_Not_Exist_It_Is_Created_On_The_Service_And_Marked_As_Pending(
             UserDetails userDetails,
-            ApiResponse<CreateUserResponse> createUserApiResponse,
-            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
+            UserResponse createUserApiResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
-            [Frozen] Mock<IApimUserRepository> apimUserRepository, 
             UserService userService)
         {
-            createUserApiResponse.Body.Name = apimUserId.ToString();
-            apimUserRepository.Setup(x => x.GetByInternalIdAndType(internalUserId, (int) apimUserType)).ReturnsAsync((ApimUser)null);
             azureApimManagementService.Setup(x =>
-                    x.Put<CreateUserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/") 
-                        && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(userDetails.EmailAddress)
+                x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
+                    c.GetUrl.Contains($"'{userDetails.Email}'")), "application/json")).ReturnsAsync(
+                new ApiResponse<ApimUserResponse>(
+                    new ApimUserResponse
+                    {
+                        Count = 0
+                    }, HttpStatusCode.NotFound, ""));
+            
+            azureApimManagementService.Setup(x =>
+                    x.Put<UserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/{userDetails.Id}?") 
+                        && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(userDetails.Email)
                         && ((CreateUserRequestBody)c.Data).Properties.FirstName.Equals(userDetails.FirstName)
                         && ((CreateUserRequestBody)c.Data).Properties.LastName.Equals(userDetails.LastName)
+                        && ((CreateUserRequestBody)c.Data).Properties.Password.Equals(userDetails.Password)
+                        && ((CreateUserRequestBody)c.Data).Properties.State.Equals("pending")
                     )))
-                .ReturnsAsync(createUserApiResponse);
-            apimUserRepository.Setup(x=>x.Insert(It.Is<ApimUser>(c=>
-                c.ApimUserTypeId.Equals((int) apimUserType)
-                && c.InternalUserId.Equals(internalUserId)
-            ))).ReturnsAsync(apimUser);
+                .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
-
-            var actual = await userService.CreateUser(internalUserId, userDetails, apimUserType);
+            var actual = await userService.CreateUser(userDetails);
             
-            actual.Should().Be(createUserApiResponse.Body.Name);
+            actual.Email.Should().Be(createUserApiResponse.Properties.Email);
+            actual.FirstName.Should().Be(createUserApiResponse.Properties.FirstName);
+            actual.LastName.Should().Be(createUserApiResponse.Properties.LastName);
+            actual.Id.Should().Be(createUserApiResponse.Name);
         }
         
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_User_Is_In_The_Portal_But_Not_Database_Then_Not_Created_Through_Api(
-            string internalUserId, 
-            ApimUserType apimUserType, 
-            Guid apimUserId,
-            ApimUser apimUser,
+        public void Then_If_The_User_Is_In_The_Portal_Then_Error_Returned_Api(
             UserDetails userDetails,
-            CreateUserResponse createUserResponse,
+            UserResponse createUserApiResponse,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             ApiResponse<ApimUserResponse> apimUserResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
-            [Frozen] Mock<IApimUserRepository> apimUserRepository,  
             UserService userService)
         {
-            createUserResponse.Name = apimUserId.ToString();
-            var createUserApiResponse =
-                new ApiResponse<CreateUserResponse>(createUserResponse, HttpStatusCode.BadRequest, "");
-            apimUserRepository.Setup(x => x.GetByInternalIdAndType(internalUserId, (int) apimUserType)).ReturnsAsync((ApimUser)null);
-            azureApimManagementService.Setup(x =>
-                    x.Put<CreateUserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/"))))
-                .ReturnsAsync(createUserApiResponse);
             azureApimManagementService.Setup(x =>
                 x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
-                    c.GetUrl.Contains($"'{userDetails.EmailAddress}'")), "application/json")).ReturnsAsync(apimUserResponse);
+                    c.GetUrl.Contains($"'{userDetails.Email}'")), "application/json")).ReturnsAsync(apimUserResponse);
+            azureApimManagementService.Setup(x =>
+                    x.Put<UserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/{apimUserResponse.Body.Values.First().Name}?") 
+                              && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(userDetails.Email)
+                              && ((CreateUserRequestBody)c.Data).Properties.FirstName.Equals(userDetails.FirstName)
+                              && ((CreateUserRequestBody)c.Data).Properties.LastName.Equals(userDetails.LastName)
+                              && ((CreateUserRequestBody)c.Data).Properties.Password.Equals(userDetails.Password)
+                              && ((CreateUserRequestBody)c.Data).Properties.State.Equals(userDetails.State)
+                    )))
+                .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
             
-            apimUserRepository.Setup(x=>x.Insert(It.Is<ApimUser>(c=>
-                c.ApimUserTypeId.Equals((int) apimUserType)
-                && c.InternalUserId!=Guid.Empty.ToString()
-            ))).ReturnsAsync(apimUser);
+            Assert.ThrowsAsync<ValidationException>(() => userService.CreateUser(userDetails));
             
+        }
         
-            var actual = await userService.CreateUser(internalUserId, userDetails, apimUserType);
-            
-            actual.Should().Be(apimUserResponse.Body.Properties.First().Name);
+
+        [Test, RecursiveMoqAutoData]
+        public void Then_If_Error_From_Api_Then_Exception_Thrown(
+            UserDetails userDetails,
+            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
+            ApiResponse<ApimUserResponse> apimUserResponse,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
+            UserService userService)
+        {
+            azureApimManagementService.Setup(x =>
+                x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
+                    c.GetUrl.Contains($"'{userDetails.Email}'")), "application/json")).ReturnsAsync(
+                new ApiResponse<ApimUserResponse>(
+                    new ApimUserResponse
+                    {
+                        Count = 0
+                    }, HttpStatusCode.NotFound, ""));
+            azureApimManagementService.Setup(x =>
+                x.Put<UserResponse>(It.IsAny<CreateUserRequest>())).ReturnsAsync(new ApiResponse<UserResponse>(null, HttpStatusCode.BadRequest, "Error"));
+
+            Assert.ThrowsAsync<ValidationException>(() => userService.CreateUser(userDetails));
         }
     }
 }

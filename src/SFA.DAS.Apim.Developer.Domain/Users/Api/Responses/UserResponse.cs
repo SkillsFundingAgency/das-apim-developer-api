@@ -1,16 +1,15 @@
 using Newtonsoft.Json;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests;
 
-namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
+namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Responses
 {
-    public class CreateUserResponse
+    public class UserResponse
     {
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
         [JsonProperty(PropertyName = "properties")]
-        public ApimSubscriptionContract Properties { get; set; }
+        public ApimUserContract Properties { get; set; }
 
         public class ApimUserContract
         {
@@ -20,6 +19,8 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses
             public string FirstName { get; set; }
             [JsonProperty(PropertyName = "lastName")]
             public string LastName { get; set; }
+            [JsonProperty(PropertyName = "state")]
+            public string State { get ; set ; }
         }
     }
 }

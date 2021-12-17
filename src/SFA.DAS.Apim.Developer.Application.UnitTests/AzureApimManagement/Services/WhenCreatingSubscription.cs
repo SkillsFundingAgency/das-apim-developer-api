@@ -20,12 +20,13 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     public class WhenCreatingSubscription
     {
         [Test, RecursiveMoqAutoData]
-        public async Task Then_The_Subscription_Is_Created_And_Subscription_Returned(
+        public async Task Then_The_Subscription_Is_Created_And_Subscription_Returned_And_Audited(
             string internalUserId,
             ApimUserType apimUserType,
             string productName,
             CreateSubscriptionResponse createSubscriptionResponseBody,
             CreateSubscriptionResponse createSandboxSubscriptionResponseBody,
+            [Frozen] Mock<IApimSubscriptionAuditRepository> apimSubscriptionAuditRepository,
             [Frozen] Mock<IAzureApimManagementService> mockAzureApimManagementService,
             [Frozen] Mock<IUserService> mockUserService,
             SubscriptionService subscriptionService)
@@ -47,6 +48,14 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Id.Should().Be(createSubscriptionResponseBody.Id);
             actual.Name.Should().Be(createSubscriptionResponseBody.Name);
             actual.PrimaryKey.Should().Be(createSubscriptionResponseBody.Properties.PrimaryKey);
+
+            apimSubscriptionAuditRepository.Verify(x => x.Insert(
+                It.Is<ApimSubscriptionAudit>(c =>
+                    c.Action.Equals("new subscription")
+                    && c.ProductName.Equals(productName)
+                    && c.UserId.Equals(internalUserId)
+                    && c.ApimUserType == (short)apimUserType
+                )), Times.Once);
         }
         
         [Test, RecursiveMoqAutoData]

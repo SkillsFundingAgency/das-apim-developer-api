@@ -8,6 +8,8 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Api.Controllers;
@@ -23,9 +25,14 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Products
         public async Task Then_The_Query_Is_Sent_And_Data_Returned(
             List<string> groups,
             GetProductsQueryResponse mediatorResponse,
+            JObject documentation,
             [Frozen] Mock<IMediator> mediator,
             [Greedy] ProductsController controller)
         {
+            foreach (var sourceProduct in mediatorResponse.Products)
+            {
+                sourceProduct.Documentation = JsonConvert.SerializeObject(documentation);
+            }
             mediator.Setup(x => x.Send(It.Is<GetProductsQuery>(c => c.Groups.Equals(groups)), CancellationToken.None))
                 .ReturnsAsync(mediatorResponse);
 

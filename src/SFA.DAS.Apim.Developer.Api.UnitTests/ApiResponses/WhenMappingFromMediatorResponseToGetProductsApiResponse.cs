@@ -112,7 +112,39 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             actualObject["components"]["securitySchemes"].Children().Values()
                 .Any(c => c["name"].Value<string>() == "subscription-key").Should().BeFalse();
         }
+
+        [Test, AutoData]
+        public void Then_The_Servers_Url_Section_Is_Updated(Product product)
+        {
+            product.Documentation = testDocumentation;
+            product.Id = product + "-Sandbox";
+            var source = new GetProductsQueryResponse
+            {
+                Products = new List<Product> { product }
+            };
+            
+            var actual = (GetProductsApiResponse)source;
+
+            var actualObject = JObject.Parse(actual.Products.First().Documentation);
+            Assert.IsNotNull(actualObject);
+            actualObject["servers"].First()["url"].Value<string>().Should().Be("https://something-api.apprenticeships.education.gov.uk/something");
+        }
         
+        [Test, AutoData]
+        public void Then_The_Servers_Url_Section_Is_Updated_For_Sandbox(Product product)
+        {
+            product.Documentation = testDocumentation;
+            var source = new GetProductsQueryResponse
+            {
+                Products = new List<Product> { product }
+            };
+            
+            var actual = (GetProductsApiResponse)source;
+
+            var actualObject = JObject.Parse(actual.Products.First().Documentation);
+            Assert.IsNotNull(actualObject);
+            actualObject["servers"].First()["url"].Value<string>().Should().Be("https://something-api-sandbox.apprenticeships.education.gov.uk/something");
+        }
         
         private string testDocumentation = @"{
                                                 ""openapi"": ""3.0.1"",
@@ -123,7 +155,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                                                 },
                                                 ""servers"": [
                                                     {
-                                                        ""url"": ""https://test/managevacancies""
+                                                        ""url"": ""https://something-gateway.apprenticeships.education.gov.uk/something""
                                                     }
                                                 ],
                                                 ""paths"": {

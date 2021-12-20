@@ -117,7 +117,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Servers_Url_Section_Is_Updated(Product product)
         {
             product.Documentation = testDocumentation;
-            product.Id = product + "-Sandbox";
+            
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -134,6 +134,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Servers_Url_Section_Is_Updated_For_Sandbox(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Id = product + "-Sandbox";
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }

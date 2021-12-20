@@ -56,12 +56,18 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             var documentationObject = JObject.Parse(source.Documentation);
             documentationObject["security"]?.FirstOrDefault(c => c["apiKeyQuery"] != null)?.Remove();
             
-            var url = documentationObject["servers"].First()["url"].Value<string>();
+            
 
             var replacementUrl = isSandbox ? "api-sandbox.apprenticeships.education.gov.uk" : "api.apprenticeships.education.gov.uk";
-            url = url.Replace("gateway.apprenticeships.education.gov.uk",replacementUrl);
-            documentationObject["servers"]?.FirstOrDefault()?.AddAfterSelf(JObject.Parse(JsonConvert.SerializeObject(new {url})));
-            documentationObject["servers"]?.FirstOrDefault()?.Remove();
+            
+            var url = documentationObject["servers"]?.FirstOrDefault()?["url"]?.Value<string>();
+            if (!string.IsNullOrEmpty(url))
+            {
+                url = url.Replace("gateway.apprenticeships.education.gov.uk",replacementUrl);
+                documentationObject["servers"]?.FirstOrDefault()?.AddAfterSelf(JObject.Parse(JsonConvert.SerializeObject(new {url})));
+                documentationObject["servers"]?.FirstOrDefault()?.Remove();    
+            }
+            
             
             documentationObject["components"]?["securitySchemes"]?.Children().Values().FirstOrDefault(c => (c["name"] ?? "").Value<string>() == "subscription-key")?.Parent?.Remove();
             if (documentationObject["paths"] == null)

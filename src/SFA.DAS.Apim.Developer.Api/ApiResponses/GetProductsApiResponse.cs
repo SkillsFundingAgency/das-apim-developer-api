@@ -59,7 +59,8 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             var url = documentationObject["servers"]?.FirstOrDefault()?["url"]?.Value<string>();
             if (!string.IsNullOrEmpty(url))
             {
-                url = url.Replace("gateway.apprenticeships.education.gov.uk",isSandbox ? "api-sandbox.apprenticeships.education.gov.uk" : "api.apprenticeships.education.gov.uk");
+                url = url.Replace(isSandbox ?"gateway.apprenticeships.education.gov.uk/sandbox":"gateway.apprenticeships.education.gov.uk",
+                    isSandbox ? "api-sandbox.apprenticeships.education.gov.uk" : "api.apprenticeships.education.gov.uk");
                 documentationObject["servers"]?.FirstOrDefault()?.AddAfterSelf(JObject.Parse(JsonConvert.SerializeObject(new {url})));
                 documentationObject["servers"]?.FirstOrDefault()?.Remove();    
             }

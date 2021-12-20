@@ -131,6 +131,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         [Test, AutoData]
         public void Then_The_Servers_Url_Section_Is_Updated_For_Sandbox(Product product)
         {
+            testDocumentation = testDocumentation.Replace("https://something-gateway.apprenticeships.education.gov.uk/something", "https://something-gateway.apprenticeships.education.gov.uk/sandbox/something");
             product.Documentation = testDocumentation;
             product.Id = product + "-Sandbox";
             var source = new GetProductsQueryResponse

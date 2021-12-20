@@ -40,9 +40,9 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             return new GetProductsApiResponseItem
             {
                 Id = source.Id,
-                Name = source.Name + (isSandbox ? "-sandbox" : ""),
+                Name = source.Name,
                 Description = source.Description,
-                DisplayName = source.DisplayName + (isSandbox ? " sandbox" : ""),
+                DisplayName = source.DisplayName,
                 Documentation = documentationObject
             };
         }
@@ -55,15 +55,11 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
 
             var documentationObject = JObject.Parse(source.Documentation);
             documentationObject["security"]?.FirstOrDefault(c => c["apiKeyQuery"] != null)?.Remove();
-            
-            
 
-            var replacementUrl = isSandbox ? "api-sandbox.apprenticeships.education.gov.uk" : "api.apprenticeships.education.gov.uk";
-            
             var url = documentationObject["servers"]?.FirstOrDefault()?["url"]?.Value<string>();
             if (!string.IsNullOrEmpty(url))
             {
-                url = url.Replace("gateway.apprenticeships.education.gov.uk",replacementUrl);
+                url = url.Replace("gateway.apprenticeships.education.gov.uk",isSandbox ? "api-sandbox.apprenticeships.education.gov.uk" : "api.apprenticeships.education.gov.uk");
                 documentationObject["servers"]?.FirstOrDefault()?.AddAfterSelf(JObject.Parse(JsonConvert.SerializeObject(new {url})));
                 documentationObject["servers"]?.FirstOrDefault()?.Remove();    
             }

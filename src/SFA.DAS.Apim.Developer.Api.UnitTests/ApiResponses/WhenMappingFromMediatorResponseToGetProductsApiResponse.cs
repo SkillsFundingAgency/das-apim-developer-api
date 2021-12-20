@@ -27,7 +27,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         }
         
         [Test, AutoData]
-        public void Then_Adds_Sandbox_To_DisplayName_If_In_Id(GetProductsQueryResponse source, JObject documentation)
+        public void Then_Does_Not_Add_Sandbox_To_DisplayName_If_In_Id(GetProductsQueryResponse source, JObject documentation)
         {
             foreach (var product in source.Products)
             {
@@ -37,11 +37,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             var actual = (GetProductsApiResponse)source;
             
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
-                options.Excluding(product => product.DisplayName).Excluding(product => product.Documentation).Excluding(c=>c.Name));
-            actual.Products.Select(item => item.DisplayName).Should().BeEquivalentTo(
-                source.Products.Select(product => product.DisplayName + " sandbox"));
-            actual.Products.Select(item => item.Name).Should().BeEquivalentTo(
-                source.Products.Select(product => product.Name + "-sandbox"));
+                options.Excluding(product => product.DisplayName));
         }
         
         [Test, AutoData]

@@ -1,3 +1,4 @@
+using System.Web;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Domain.Products.Api.Requests
@@ -8,7 +9,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Products.Api.Requests
 
         public GetProductApiRequest (string name)
         {
-            _name = name;
+            _name = HttpUtility.UrlEncode(name);
         }
 
         public string GetUrl => $"products/{_name}/Apis?api-version=2020-12-01";

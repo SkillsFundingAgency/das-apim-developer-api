@@ -1,3 +1,4 @@
+using System.Web;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,9 +12,12 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
         public void Then_The_Url_Is_Correctly_Built_And_Model_Added_To_Request(
             string subscriptionId)
         {
+            subscriptionId += "+more things";
+            var encodedSubscriptionId = HttpUtility.UrlEncode(subscriptionId);
+            
             var actual = new RegenerateSecondaryKeyRequest(subscriptionId);
 
-            actual.PostUrl.Should().Be($"subscriptions/{subscriptionId}/regenerateSecondaryKey?api-version=2021-04-01-preview");
+            actual.PostUrl.Should().Be($"subscriptions/{encodedSubscriptionId}/regenerateSecondaryKey?api-version=2021-04-01-preview");
             actual.Data.Should().NotBeNull();
         }
     }

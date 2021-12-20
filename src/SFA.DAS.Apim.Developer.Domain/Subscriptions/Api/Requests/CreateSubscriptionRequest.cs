@@ -1,3 +1,4 @@
+using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -22,7 +23,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
             };
         }
 
-        public string PutUrl => $"subscriptions/{_subscriptionId}?api-version=2021-04-01-preview";
+        public string PutUrl => $"subscriptions/{HttpUtility.UrlEncode(_subscriptionId)}?api-version=2021-04-01-preview";
         public object Data { get; set; }
     }
 

@@ -37,9 +37,11 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             var actual = (GetProductsApiResponse)source;
             
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
-                options.Excluding(product => product.DisplayName).Excluding(product => product.Documentation));
+                options.Excluding(product => product.DisplayName).Excluding(product => product.Documentation).Excluding(c=>c.Name));
             actual.Products.Select(item => item.DisplayName).Should().BeEquivalentTo(
                 source.Products.Select(product => product.DisplayName + " sandbox"));
+            actual.Products.Select(item => item.Name).Should().BeEquivalentTo(
+                source.Products.Select(product => product.Name + "-sandbox"));
         }
         
         [Test, AutoData]

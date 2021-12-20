@@ -40,7 +40,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             return new GetProductsApiResponseItem
             {
                 Id = source.Id,
-                Name = source.Name,
+                Name = source.Name + (isSandbox ? "-sandbox" : ""),
                 Description = source.Description,
                 DisplayName = source.DisplayName + (isSandbox ? " sandbox" : ""),
                 Documentation = documentationObject

@@ -35,19 +35,19 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         {
             var isSandbox = source.Id.EndsWith("sandbox", StringComparison.InvariantCultureIgnoreCase);
 
-            var documentationObject = PrepareOpenApiDocumentation(source);
+            var documentationObject = PrepareOpenApiDocumentation(source, isSandbox);
 
             return new GetProductsApiResponseItem
             {
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
-                DisplayName = source.DisplayName + (isSandbox ? " sandbox" : ""),
+                DisplayName = source.DisplayName,
                 Documentation = documentationObject
             };
         }
 
-        private static string PrepareOpenApiDocumentation(Product source)
+        private static string PrepareOpenApiDocumentation(Product source, bool isSandbox)
         {
             var notRequiredSecurityHeaders = new List<string>
                 { "x-request-context-subscription-name", "x-request-context-subscription-is-sandbox" };
@@ -55,6 +55,17 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
 
             var documentationObject = JObject.Parse(source.Documentation);
             documentationObject["security"]?.FirstOrDefault(c => c["apiKeyQuery"] != null)?.Remove();
+
+            var url = documentationObject["servers"]?.FirstOrDefault()?["url"]?.Value<string>();
+            if (!string.IsNullOrEmpty(url))
+            {
+                url = url.Replace(isSandbox ?"gateway.apprenticeships.education.gov.uk/sandbox":"gateway.apprenticeships.education.gov.uk",
+                    isSandbox ? "api-sandbox.apprenticeships.education.gov.uk" : "api.apprenticeships.education.gov.uk");
+                documentationObject["servers"]?.FirstOrDefault()?.AddAfterSelf(JObject.Parse(JsonConvert.SerializeObject(new {url})));
+                documentationObject["servers"]?.FirstOrDefault()?.Remove();    
+            }
+            
+            
             documentationObject["components"]?["securitySchemes"]?.Children().Values().FirstOrDefault(c => (c["name"] ?? "").Value<string>() == "subscription-key")?.Parent?.Remove();
             if (documentationObject["paths"] == null)
             {

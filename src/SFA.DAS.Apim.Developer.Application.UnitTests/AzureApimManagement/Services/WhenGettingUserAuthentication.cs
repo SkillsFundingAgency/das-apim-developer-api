@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
+using SFA.DAS.Apim.Developer.Domain.Users.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Services
@@ -25,6 +27,8 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
+            apimUserResponse.Body.Values.First().Properties.Note =
+                JsonConvert.SerializeObject(new UserNote {ConfirmEmailLink = apimUserResponse.Body.Values.First().Properties.Note});
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
             azureUserAuthenticationManagementService.Setup(x =>
                 x.GetAuthentication<GetUserAuthenticatedResponse>(It.Is<GetUserAuthenticatedRequest>(c =>
@@ -36,7 +40,9 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
 
             var actual = await userService.CheckUserAuthentication(email, password);
             
-            actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties);
+            actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties, options => 
+                options.Excluding(properties => properties.Note));
+            actual.Note.Should().BeEquivalentTo(JsonConvert.DeserializeObject<UserNote>(apimUserResponse.Body.Values.First().Properties.Note));
             actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeTrue();
         }
@@ -50,6 +56,8 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
+            apimUserResponse.Body.Values.First().Properties.Note =
+                JsonConvert.SerializeObject(new UserNote {ConfirmEmailLink = apimUserResponse.Body.Values.First().Properties.Note});
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
             azureUserAuthenticationManagementService.Setup(x =>
                     x.GetAuthentication<GetUserAuthenticatedResponse>(It.Is<GetUserAuthenticatedRequest>(c =>
@@ -61,7 +69,9 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             var actual = await userService.CheckUserAuthentication(email, password);
 
-            actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties);
+            actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties, options => 
+                options.Excluding(properties => properties.Note));
+            actual.Note.Should().BeEquivalentTo(JsonConvert.DeserializeObject<UserNote>(apimUserResponse.Body.Values.First().Properties.Note));
             actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeFalse();
         }

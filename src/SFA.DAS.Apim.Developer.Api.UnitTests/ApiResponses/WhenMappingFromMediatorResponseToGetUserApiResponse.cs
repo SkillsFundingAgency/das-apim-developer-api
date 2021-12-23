@@ -13,7 +13,9 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         {
             var actual = (GetUserApiResponse)source;
             
-            actual.Should().BeEquivalentTo(source.User, options=> options.Excluding(c=>c.Password).Excluding(c=>c.Note));
+            actual.Should().BeEquivalentTo(source.User, options=> options
+                .Excluding(c=>c.Password)
+                .Excluding(c=>c.Note));
         }
         
     }

@@ -36,7 +36,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 State = request.State,
-                Note = request.Note
+                Note = new UserNote{ConfirmEmailLink = request.ConfirmEmailLink}
             });
             return actual.Id;
         }

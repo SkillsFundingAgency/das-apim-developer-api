@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -19,7 +20,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
     {
         
         [Test, RecursiveMoqAutoData]
-        public async Task Then_If_The_User_Is_In_The_Portal_And_No_Email_Then_Updated_Through_Api_And_Non_Supplied_Values_Are_Not_Updated(
+        public async Task Then_If_The_User_Is_In_The_Portal_And_No_Email_Then_Updated_Through_Api_And_Non_Supplied_Values_Are_Not_Updated_Except_Note_To_Json(
             Guid userId,
             UserResponse createUserApiResponse,
             ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
@@ -40,13 +41,14 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             apimUserResponse.Name = userDetails.Id;
             azureApimManagementService.Setup(x =>
                 x.Get<ApimUserResponseItem>(It.Is<GetApimUserByIdRequest>(c =>
-                    c.GetUrl.Contains($"{userDetails.Id}")), "application/json")).ReturnsAsync(new ApiResponse<ApimUserResponseItem>(apimUserResponse, HttpStatusCode.OK, ""));
+                    c.GetUrl.Contains($"{userDetails.Id}")), "application/json"))
+                .ReturnsAsync(new ApiResponse<ApimUserResponseItem>(apimUserResponse, HttpStatusCode.OK, ""));
             azureApimManagementService.Setup(x =>
                     x.Put<UserResponse>(It.Is<CreateUserRequest>(c => c.PutUrl.Contains($"users/{apimUserResponse.Name}?") 
                                                                       && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(apimUserResponse.Properties.Email)
                                                                       && ((CreateUserRequestBody)c.Data).Properties.FirstName.Equals(apimUserResponse.Properties.FirstName)
                                                                       && ((CreateUserRequestBody)c.Data).Properties.LastName.Equals(apimUserResponse.Properties.LastName)
-                                                                      && ((CreateUserRequestBody)c.Data).Properties.Note.Equals(apimUserResponse.Properties.Note)
+                                                                      && ((CreateUserRequestBody)c.Data).Properties.Note.Equals(JsonConvert.SerializeObject(new UserNote{ConfirmEmailLink = apimUserResponse.Properties.Note}) )
                                                                       && ((CreateUserRequestBody)c.Data).Properties.State.Equals(userDetails.State)
                     )))
                 .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));

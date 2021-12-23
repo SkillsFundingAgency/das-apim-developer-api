@@ -24,7 +24,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Update
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 State = request.State,
-                Note = request.Note
+                Note = string.IsNullOrEmpty(request.ConfirmEmailLink) ? null : new UserNote{ConfirmEmailLink = request.ConfirmEmailLink}
             });
 
             return new UpdateUserCommandResponse

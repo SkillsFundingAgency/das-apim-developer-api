@@ -41,7 +41,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     FirstName = request.FirstName,
                     LastName = request.LastName,
                     State = request.State.ToString(),
-                    Note = request.ConfirmEmailLink
+                    ConfirmEmailLink = request.ConfirmEmailLink
                 });
                 return Created("", new {id=actual});
             }
@@ -68,8 +68,8 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     Email = request.Email,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
-                    State = request.State.ToString(),
-                    Note = request.ConfirmEmailLink
+                    State = request.State?.ToString(),
+                    ConfirmEmailLink = request.ConfirmEmailLink
                 });
 
                 if (result.UserDetails == null)

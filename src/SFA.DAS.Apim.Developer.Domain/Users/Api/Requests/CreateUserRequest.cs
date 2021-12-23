@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -20,7 +21,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,
                     State = userDetails.State,
-                    Note = userDetails.Note,
+                    Note = JsonConvert.SerializeObject(userDetails.Note),
                     Identities = new List<Identities>
                     {
                         new Identities
@@ -36,5 +37,4 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
         public string PutUrl => $"users/{_apimUserId}?api-version=2021-04-01-preview";
         public object Data { get; set; }
     }
-
 }

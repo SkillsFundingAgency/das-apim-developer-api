@@ -27,7 +27,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         }
         
         [Test, AutoData]
-        public void Then_Adds_Sandbox_To_DisplayName_If_In_Id(GetProductsQueryResponse source, JObject documentation)
+        public void Then_Does_Not_Add_Sandbox_To_DisplayName_If_In_Id(GetProductsQueryResponse source, JObject documentation)
         {
             foreach (var product in source.Products)
             {
@@ -37,9 +37,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             var actual = (GetProductsApiResponse)source;
             
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
-                options.Excluding(product => product.DisplayName).Excluding(product => product.Documentation));
-            actual.Products.Select(item => item.DisplayName).Should().BeEquivalentTo(
-                source.Products.Select(product => product.DisplayName + " sandbox"));
+                options.Excluding(product => product.DisplayName));
         }
         
         [Test, AutoData]
@@ -112,7 +110,41 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             actualObject["components"]["securitySchemes"].Children().Values()
                 .Any(c => c["name"].Value<string>() == "subscription-key").Should().BeFalse();
         }
+
+        [Test, AutoData]
+        public void Then_The_Servers_Url_Section_Is_Updated(Product product)
+        {
+            product.Documentation = testDocumentation;
+            
+            var source = new GetProductsQueryResponse
+            {
+                Products = new List<Product> { product }
+            };
+            
+            var actual = (GetProductsApiResponse)source;
+
+            var actualObject = JObject.Parse(actual.Products.First().Documentation);
+            Assert.IsNotNull(actualObject);
+            actualObject["servers"].First()["url"].Value<string>().Should().Be("https://something-api.apprenticeships.education.gov.uk/something");
+        }
         
+        [Test, AutoData]
+        public void Then_The_Servers_Url_Section_Is_Updated_For_Sandbox(Product product)
+        {
+            testDocumentation = testDocumentation.Replace("https://something-gateway.apprenticeships.education.gov.uk/something", "https://something-gateway.apprenticeships.education.gov.uk/sandbox/something");
+            product.Documentation = testDocumentation;
+            product.Id = product + "-Sandbox";
+            var source = new GetProductsQueryResponse
+            {
+                Products = new List<Product> { product }
+            };
+            
+            var actual = (GetProductsApiResponse)source;
+
+            var actualObject = JObject.Parse(actual.Products.First().Documentation);
+            Assert.IsNotNull(actualObject);
+            actualObject["servers"].First()["url"].Value<string>().Should().Be("https://something-api-sandbox.apprenticeships.education.gov.uk/something");
+        }
         
         private string testDocumentation = @"{
                                                 ""openapi"": ""3.0.1"",
@@ -123,7 +155,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                                                 },
                                                 ""servers"": [
                                                     {
-                                                        ""url"": ""https://test/managevacancies""
+                                                        ""url"": ""https://something-gateway.apprenticeships.education.gov.uk/something""
                                                     }
                                                 ],
                                                 ""paths"": {

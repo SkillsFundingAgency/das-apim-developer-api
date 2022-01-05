@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
@@ -166,17 +167,24 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             }
 
             var user = userTask.Result;
-            
             user.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
 
-            if (!user.Authenticated)
+            if (user.Note.ThirdFailedAuthDateTime.HasValue && DateTime.Now.AddMinutes(-10) > user.Note.ThirdFailedAuthDateTime)
+            {
+                user.Note.FailedAuthCount = 0;
+            }
+
+            if (!user.Authenticated && !user.Note.ThirdFailedAuthDateTime.HasValue)
             {
                 user.Note.FailedAuthCount += 1;
+                if (user.Note.FailedAuthCount >= 3)
+                {
+                    user.Note.ThirdFailedAuthDateTime = DateTime.Now;
+                    user.State = "blocked";
+                }
                 await UpsertApimUser(user.Id, user);
             }
             
-            //todo: if not auth'd, then log
-            //todo: if not auth'd x3 then block
             //todo: if blocked >10min remove block and reset count
 
             return user;

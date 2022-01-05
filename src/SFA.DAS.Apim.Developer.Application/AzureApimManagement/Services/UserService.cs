@@ -164,10 +164,22 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             {
                 return null;
             }
-            
-            userTask.Result.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
 
-            return userTask.Result;
+            var user = userTask.Result;
+            
+            user.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
+
+            if (!user.Authenticated)
+            {
+                user.Note.FailedAuthCount += 1;
+                await UpsertApimUser(user.Id, user);
+            }
+            
+            //todo: if not auth'd, then log
+            //todo: if not auth'd x3 then block
+            //todo: if blocked >10min remove block and reset count
+
+            return user;
         }
     }
 }

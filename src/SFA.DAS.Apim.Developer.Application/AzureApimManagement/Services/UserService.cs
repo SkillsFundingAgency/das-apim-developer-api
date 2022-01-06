@@ -156,19 +156,15 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             var authenticatedTask =
                 _azureUserAuthenticationManagementService.GetAuthentication<GetUserAuthenticatedResponse>(
                     new GetUserAuthenticatedRequest(email, password));
-
             var userTask = GetUser(email);
-
             await Task.WhenAll(authenticatedTask, userTask);
 
             if (userTask.Result == null)
             {
                 return null;
             }
-
             var user = userTask.Result;
             
-
             if (user.Note.ThirdFailedAuthDateTime.HasValue && DateTime.Now.AddMinutes(-10) > user.Note.ThirdFailedAuthDateTime)
             {
                 user.Note.FailedAuthCount = 0;
@@ -187,6 +183,12 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                     user.Note.ThirdFailedAuthDateTime = DateTime.Now;
                     user.State = "blocked";
                 }
+                await UpsertApimUser(user.Id, user);
+            }
+
+            if (user.Authenticated && user.Note.FailedAuthCount > 0)
+            {
+                user.Note.FailedAuthCount = 0;
                 await UpsertApimUser(user.Id, user);
             }
 

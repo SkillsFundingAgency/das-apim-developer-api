@@ -72,7 +72,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeTrue();
         }
-
+        
         [Test, MoqAutoData]
         public async Task Then_If_Not_Authenticated_User_Returned_And_Authenticated_False_And_FailCount_Incremented(
             string email,
@@ -109,6 +109,44 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Authenticated.Should().BeFalse();
             azureApimManagementService.Verify(service => service.Put<UserResponse>(It.Is<CreateUserRequest>(request => 
                 ((CreateUserRequestBody)request.Data).Properties.Note.Contains(@"""FailedAuthCount"":1"))), Times.Once);
+        }
+
+        [Test, MoqAutoData]
+        public async Task And_Successful_Auth_After_Failed_Auth_Then_Resets_Count(
+            string email,
+            string password,
+            ApiResponse<ApimUserResponse> apimUserResponse,
+            UserResponse putUserResponse,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
+            UserService userService)
+        {
+            apimUserResponse.Body.Values.First().Properties.Note =
+                JsonConvert.SerializeObject(new UserNote {ConfirmEmailLink = apimUserResponse.Body.Values.First().Properties.Note, FailedAuthCount = 2});
+            var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
+            azureUserAuthenticationManagementService.Setup(x =>
+                x.GetAuthentication<GetUserAuthenticatedResponse>(It.Is<GetUserAuthenticatedRequest>(c =>
+                    c.AuthorizationHeaderValue.Equals(expectedAuthenticatedValue.AuthorizationHeaderValue)), "application/json"))
+                .ReturnsAsync(new ApiResponse<GetUserAuthenticatedResponse>(new GetUserAuthenticatedResponse(), HttpStatusCode.OK, ""));
+            azureApimManagementService.Setup(x =>
+                x.Get<ApimUserResponse>(It.Is<GetApimUserRequest>(c =>
+                    c.GetUrl.Contains($"'{email}'")), "application/json"))
+                .ReturnsAsync(apimUserResponse);
+            azureApimManagementService.Setup(x =>
+                x.Put<UserResponse>(It.Is<CreateUserRequest>(c =>
+                    c.PutUrl.Contains($"{apimUserResponse.Body.Values[0].Name}"))))
+                .ReturnsAsync(new ApiResponse<UserResponse>(putUserResponse, HttpStatusCode.OK, ""));
+            
+            var actual = await userService.CheckUserAuthentication(email, password);
+
+            actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties, options => 
+                options.Excluding(properties => properties.Note));
+            actual.Note.FailedAuthCount.Should().Be(0);
+            actual.Note.ThirdFailedAuthDateTime.Should().BeNull();
+            actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
+            actual.Authenticated.Should().BeTrue();
+            azureApimManagementService.Verify(service => service.Put<UserResponse>(It.Is<CreateUserRequest>(request => 
+                ((CreateUserRequestBody)request.Data).Properties.Note.Contains(@"""FailedAuthCount"":0"))), Times.Once);
         }
 
         [Test, MoqAutoData]
@@ -238,10 +276,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Id.Should().Be(secondApimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeTrue();
             actual.State.Should().Be("active");
-            
-            azureApimManagementService.Verify(service => service.Put<UserResponse>(It.Is<CreateUserRequest>(request => 
-                ((CreateUserRequestBody)request.Data).Properties.Note.Contains(@$"""FailedAuthCount"":1")))
-                , Times.Never);
         }
     }
 }

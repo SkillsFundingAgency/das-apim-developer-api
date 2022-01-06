@@ -167,13 +167,18 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             }
 
             var user = userTask.Result;
-            user.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
+            
 
             if (user.Note.ThirdFailedAuthDateTime.HasValue && DateTime.Now.AddMinutes(-10) > user.Note.ThirdFailedAuthDateTime)
             {
                 user.Note.FailedAuthCount = 0;
+                user.Note.ThirdFailedAuthDateTime = null;
+                user.State = "active";
+                await UpsertApimUser(user.Id, user);
+                return await CheckUserAuthentication(email, password);
             }
 
+            user.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
             if (!user.Authenticated && !user.Note.ThirdFailedAuthDateTime.HasValue)
             {
                 user.Note.FailedAuthCount += 1;
@@ -184,8 +189,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 }
                 await UpsertApimUser(user.Id, user);
             }
-            
-            //todo: if blocked >10min remove block and reset count
 
             return user;
         }

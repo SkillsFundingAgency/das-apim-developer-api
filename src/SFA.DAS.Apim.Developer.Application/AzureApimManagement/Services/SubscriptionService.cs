@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
@@ -116,6 +117,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                     new GetUserSubscriptionsRequest($"{apimUserType}-{internalUserId}"));
 
             var returnList = new List<Subscription>();
+
+            if (apimSubscriptions.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.LogWarning($"Unable to get subscriptions for {internalUserId} - error: {apimSubscriptions.ErrorContent}");
+                return returnList;
+            }
+            
             foreach (var userSubscriptionItem in apimSubscriptions.Body.Value.Where(c=>c.Name.Contains($"{apimUserType}-{internalUserId}")))
             { 
                 var subscriptionSecretsTask =

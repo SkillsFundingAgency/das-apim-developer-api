@@ -3,7 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
@@ -17,11 +19,16 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
     {
         private readonly IAzureApimManagementService _azureApimManagementService;
         private readonly IAzureUserAuthenticationManagementService _azureUserAuthenticationManagementService;
+        private readonly ApimDeveloperApiConfiguration _config;
 
-        public UserService(IAzureApimManagementService azureApimManagementService, IAzureUserAuthenticationManagementService azureUserAuthenticationManagementService)
+        public UserService(
+            IAzureApimManagementService azureApimManagementService, 
+            IAzureUserAuthenticationManagementService azureUserAuthenticationManagementService,
+            IOptions<ApimDeveloperApiConfiguration> configOptions)
         {
             _azureApimManagementService = azureApimManagementService;
             _azureUserAuthenticationManagementService = azureUserAuthenticationManagementService;
+            _config = configOptions.Value;
         }
 
         public async Task<UserDetails> UpdateUser(UserDetails userDetails)
@@ -165,22 +172,22 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             }
             var user = userTask.Result;
             
-            if (user.Note.ThirdFailedAuthDateTime.HasValue && DateTime.Now.AddMinutes(-10) > user.Note.ThirdFailedAuthDateTime)
+            if (user.Note.AccountLockedDateTime.HasValue && DateTime.Now.AddMinutes(-_config.AccountLockedDurationMinutes) > user.Note.AccountLockedDateTime)
             {
                 user.Note.FailedAuthCount = 0;
-                user.Note.ThirdFailedAuthDateTime = null;
+                user.Note.AccountLockedDateTime = null;
                 user.State = "active";
                 await UpsertApimUser(user.Id, user);
                 return await CheckUserAuthentication(email, password);
             }
 
             user.Authenticated = authenticatedTask.Result.StatusCode == HttpStatusCode.OK;
-            if (!user.Authenticated && !user.Note.ThirdFailedAuthDateTime.HasValue)
+            if (!user.Authenticated && !user.Note.AccountLockedDateTime.HasValue)
             {
                 user.Note.FailedAuthCount += 1;
-                if (user.Note.FailedAuthCount >= 3)
+                if (user.Note.FailedAuthCount >= _config.NumberOfAuthFailuresToLockAccount)
                 {
-                    user.Note.ThirdFailedAuthDateTime = DateTime.Now;
+                    user.Note.AccountLockedDateTime = DateTime.Now;
                     user.State = "blocked";
                 }
                 await UpsertApimUser(user.Id, user);

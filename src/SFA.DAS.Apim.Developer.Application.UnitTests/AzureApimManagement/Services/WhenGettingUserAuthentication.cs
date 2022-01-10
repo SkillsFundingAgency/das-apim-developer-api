@@ -8,6 +8,7 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
+using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
@@ -104,7 +105,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties, options => 
                 options.Excluding(properties => properties.Note));
             actual.Note.FailedAuthCount.Should().Be(1);
-            actual.Note.ThirdFailedAuthDateTime.Should().BeNull();
+            actual.Note.AccountLockedDateTime.Should().BeNull();
             actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeFalse();
             azureApimManagementService.Verify(service => service.Put<UserResponse>(It.Is<CreateUserRequest>(request => 
@@ -142,7 +143,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             actual.Should().BeEquivalentTo(apimUserResponse.Body.Values.First().Properties, options => 
                 options.Excluding(properties => properties.Note));
             actual.Note.FailedAuthCount.Should().Be(0);
-            actual.Note.ThirdFailedAuthDateTime.Should().BeNull();
+            actual.Note.AccountLockedDateTime.Should().BeNull();
             actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeTrue();
             azureApimManagementService.Verify(service => service.Put<UserResponse>(It.Is<CreateUserRequest>(request => 
@@ -155,10 +156,12 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             string password,
             ApiResponse<ApimUserResponse> apimUserResponse,
             UserResponse putUserResponse,
+            [Frozen] ApimDeveloperApiConfiguration config,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
+            config.NumberOfAuthFailuresToLockAccount = 3;
             apimUserResponse.Body.Values.First().Properties.Note =
                 JsonConvert.SerializeObject(new UserNote {ConfirmEmailLink = apimUserResponse.Body.Values.First().Properties.Note, FailedAuthCount = 2});
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
@@ -181,12 +184,12 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 .Excluding(properties => properties.Note)
                 .Excluding(properties => properties.State));
             actual.Note.FailedAuthCount.Should().Be(3);
-            actual.Note.ThirdFailedAuthDateTime.Should().HaveValue().And.BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
+            actual.Note.AccountLockedDateTime.Should().HaveValue().And.BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
             actual.Id.Should().Be(apimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeFalse();
             actual.State.Should().Be("blocked");
             azureApimManagementService.Verify(service => service.Put<UserResponse>(It.Is<CreateUserRequest>(request => 
-                ((CreateUserRequestBody)request.Data).Properties.Note.Contains(@$"""FailedAuthCount"":3,""ThirdFailedAuthDateTime"":""{DateTime.Now:yyyy-MM-dd}T")
+                ((CreateUserRequestBody)request.Data).Properties.Note.Contains(@$"""FailedAuthCount"":3,""AccountLockedDateTime"":""{DateTime.Now:yyyy-MM-dd}T")
                 && ((CreateUserRequestBody)request.Data).Properties.State.Equals("blocked")))
                 , Times.Once);
         }
@@ -202,7 +205,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
-            userNote.ThirdFailedAuthDateTime = DateTime.Now.AddMinutes(-5);
+            userNote.AccountLockedDateTime = DateTime.Now.AddMinutes(-5);
             apimUserResponse.Body.Values.First().Properties.Note = JsonConvert.SerializeObject(userNote);
             apimUserResponse.Body.Values.First().Properties.State = "blocked";
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
@@ -241,11 +244,12 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             ApiResponse<ApimUserResponse> secondApimUserResponse,
             UserResponse putUserResponse,
             GetUserAuthenticatedResponse apimAuthenticatedResponse,
+            [Frozen] ApimDeveloperApiConfiguration config,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             [Frozen] Mock<IAzureUserAuthenticationManagementService> azureUserAuthenticationManagementService,
             UserService userService)
         {
-            userNote.ThirdFailedAuthDateTime = DateTime.Now.AddMinutes(-15);
+            userNote.AccountLockedDateTime = DateTime.Now.AddMinutes(-(config.AccountLockedDurationMinutes+1));
             firstApimUserResponse.Body.Values.First().Properties.Note = JsonConvert.SerializeObject(userNote);
             firstApimUserResponse.Body.Values.First().Properties.State = "blocked";
             secondApimUserResponse.Body.Values.First().Properties.Note = JsonConvert.SerializeObject(new UserNote());
@@ -272,7 +276,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 .Excluding(properties => properties.Note)
                 .Excluding(properties => properties.State));
             actual.Note.FailedAuthCount.Should().Be(0);
-            actual.Note.ThirdFailedAuthDateTime.Should().NotHaveValue();
+            actual.Note.AccountLockedDateTime.Should().NotHaveValue();
             actual.Id.Should().Be(secondApimUserResponse.Body.Values.First().Name);
             actual.Authenticated.Should().BeTrue();
             actual.State.Should().Be("active");

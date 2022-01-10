@@ -18,6 +18,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Models
     {
         public string ConfirmEmailLink { get; set; }
         public int FailedAuthCount { get; set; }
-        public DateTime? ThirdFailedAuthDateTime { get; set; }
+        public DateTime? AccountLockedDateTime { get; set; }
     }
 }

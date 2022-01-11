@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -40,16 +39,13 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 return null;
             }
             
+            // apim mgmt api required fields: https://docs.microsoft.com/en-us/rest/api/apimanagement/current-ga/user/create-or-update#request-body
             userDetails.Email ??= getUserResponse.Email;
             userDetails.FirstName ??= getUserResponse.FirstName;
             userDetails.LastName ??= getUserResponse.LastName;
-            userDetails.Note ??= getUserResponse.Note;
-            userDetails.State ??= getUserResponse.State;
-        
-            
-            var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
 
-                
+            var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
+            
             return new UserDetails
             {
                 Id = createApimUserTask.Name,

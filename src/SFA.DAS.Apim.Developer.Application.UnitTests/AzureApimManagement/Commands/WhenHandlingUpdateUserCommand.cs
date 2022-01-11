@@ -27,6 +27,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)
                     && c.State.Equals(command.State)
+                    && c.Password.Equals(command.Password)
                     && c.Note.ConfirmEmailLink.Equals(command.ConfirmEmailLink)
                 ))).ReturnsAsync(userDetails);
             
@@ -50,6 +51,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)
                     && c.State.Equals(command.State)
+                    && c.Password.Equals(command.Password)
                     && c.Note == null
                 ))).ReturnsAsync(userDetails);
             

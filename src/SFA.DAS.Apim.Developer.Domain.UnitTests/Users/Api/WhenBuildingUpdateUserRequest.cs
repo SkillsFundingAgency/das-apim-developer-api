@@ -1,3 +1,4 @@
+using System.Web;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,6 +12,8 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
         [Test, AutoData]
         public void Then_The_Url_Is_Correctly_Set_And_State(string userId, UserDetails userDetails)
         {
+            userId += "+more things";
+            var encodedUserId = HttpUtility.UrlEncode(userId);
             var expected = new CreateUserRequestBody
             {
                 Properties = new ApimCreateUserProperties
@@ -24,7 +27,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
 
             var actual = new UpdateUserStateRequest(userId, userDetails);
 
-            actual.PutUrl.Should().Be($"users/{userId}?api-version=2021-04-01-preview");
+            actual.PutUrl.Should().Be($"users/{encodedUserId}?api-version=2021-04-01-preview");
             ((CreateUserRequestBody)actual.Data).Should().BeEquivalentTo(expected);
         }
     }

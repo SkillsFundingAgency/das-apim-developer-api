@@ -1,3 +1,4 @@
+using System.Web;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
 
@@ -9,7 +10,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
 
         public UpdateUserStateRequest (string apimUserId, UserDetails userDetails)
         {
-            _apimUserId = apimUserId;
+            _apimUserId = HttpUtility.UrlEncode(apimUserId);
             Data = new CreateUserRequestBody
             {
                 Properties = new ApimCreateUserProperties

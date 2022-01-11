@@ -1,3 +1,4 @@
+using System.Web;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
@@ -8,7 +9,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
 
         public GetUserSubscriptionsRequest (string name)
         {
-            _name = name;
+            _name = HttpUtility.UrlEncode(name);
         }
 
         public string GetUrl => $"subscriptions?$filter=startswith(name,'{_name}')&api-version=2021-08-01";

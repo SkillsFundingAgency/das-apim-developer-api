@@ -1,3 +1,4 @@
+using System.Web;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
@@ -10,9 +11,12 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
         [Test, AutoData]
         public void Then_The_Url_Is_Correctly_Constructed(string subscriptionId)
         {
+            subscriptionId += "+more things";
+            var encodedSubscriptionId = HttpUtility.UrlEncode(subscriptionId);
+            
             var actual = new GetUserSubscriptionSecretsRequest(subscriptionId);
 
-            actual.PostUrl.Should().Be($"subscriptions/{subscriptionId}/listSecrets?api-version=2021-04-01-preview");
+            actual.PostUrl.Should().Be($"subscriptions/{encodedSubscriptionId}/listSecrets?api-version=2021-04-01-preview");
         }
     }
 }

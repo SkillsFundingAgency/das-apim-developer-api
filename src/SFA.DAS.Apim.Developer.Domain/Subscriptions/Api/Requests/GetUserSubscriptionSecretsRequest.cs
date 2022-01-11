@@ -1,3 +1,4 @@
+using System.Web;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
@@ -8,7 +9,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
 
         public GetUserSubscriptionSecretsRequest (string subscriptionId)
         {
-            _subscriptionId = subscriptionId;
+            _subscriptionId = HttpUtility.UrlEncode(subscriptionId);
             Data = new object();
         }
 

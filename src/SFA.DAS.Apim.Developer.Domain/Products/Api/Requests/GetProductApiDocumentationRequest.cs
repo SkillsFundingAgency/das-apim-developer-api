@@ -1,3 +1,4 @@
+using System.Web;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
 namespace SFA.DAS.Apim.Developer.Domain.Products.Api.Requests
@@ -8,7 +9,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Products.Api.Requests
 
         public GetProductApiDocumentationRequest(string apiName)
         {
-            _apiName = apiName;
+            _apiName = HttpUtility.UrlEncode(apiName);
         }
 
         public string GetUrl => $"apis/{_apiName}?api-version=2021-04-01-preview";

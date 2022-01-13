@@ -37,7 +37,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
 
             controllerResult.Should().NotBeNull();
             var actualModel = controllerResult.Value as GetUserApiResponse;
-            actualModel.Should().NotBeNull();
+            actualModel.Should().BeEquivalentTo((GetUserApiResponse)response.User);
         }
 
         [Test, MoqAutoData]

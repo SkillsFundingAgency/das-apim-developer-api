@@ -1,4 +1,4 @@
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserAuthenticated;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Api.ApiResponses
 {
@@ -12,16 +12,16 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public bool Authenticated { get ; set ; }
 
 
-        public static implicit operator GetUserApiResponse(GetUserAuthenticatedQueryResponse source)
+        public static implicit operator GetUserApiResponse(UserDetails source)
         {
             return new GetUserApiResponse
             {
-                Id = source.User.Id,
-                Email = source.User.Email,
-                FirstName = source.User.FirstName,
-                LastName = source.User.LastName,
-                State = source.User.State,
-                Authenticated = source.User.Authenticated
+                Id = source.Id,
+                Email = source.Email,
+                FirstName = source.FirstName,
+                LastName = source.LastName,
+                State = source.State,
+                Authenticated = source.Authenticated
             };
         }
     }

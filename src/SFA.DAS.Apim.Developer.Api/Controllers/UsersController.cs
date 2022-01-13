@@ -69,6 +69,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     FirstName = request.FirstName,
                     LastName = request.LastName,
                     State = request.State?.ToString(),
+                    Password = request.Password,
                     ConfirmEmailLink = request.ConfirmEmailLink
                 });
 

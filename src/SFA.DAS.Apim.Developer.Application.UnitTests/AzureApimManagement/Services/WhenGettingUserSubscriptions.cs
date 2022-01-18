@@ -110,5 +110,25 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             //Assert
             actual.Should().BeEmpty();
         }
+
+        [Test, RecursiveMoqAutoData]
+        public async Task Then_If_Request_Causes_A_Bad_Request_Then_Empty_List_Returned(
+            string internalUserId,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            SubscriptionService service)
+        {
+            //Arrange
+            var userType = ApimUserType.Provider;
+            azureApimManagementService
+                .Setup(x => x.Get<GetSubscriptionsResponse>(
+                    It.Is<GetUserSubscriptionsRequest>(c => c.GetUrl.Contains($"{userType}-{internalUserId}")), "application/json"))
+                .ReturnsAsync(new ApiResponse<GetSubscriptionsResponse>(null, HttpStatusCode.BadRequest, "Error"));
+            
+            //Act
+            var actual = await service.GetUserSubscriptions(internalUserId, userType);
+            
+            //Assert
+            actual.Should().BeEmpty();
+        }
     }
 }

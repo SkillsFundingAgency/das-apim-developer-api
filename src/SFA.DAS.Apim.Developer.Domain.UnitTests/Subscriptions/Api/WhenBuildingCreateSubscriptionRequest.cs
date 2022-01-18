@@ -1,3 +1,4 @@
+using System.Web;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
@@ -14,9 +15,12 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
             string internalUserRef,
             string productId)
         {
+            subscriptionId += "+more things";
+            var encodedSubscriptionId = HttpUtility.UrlEncode(subscriptionId);
+            
             var actual = new CreateSubscriptionRequest(subscriptionId, productId);
 
-            actual.PutUrl.Should().Be($"subscriptions/{subscriptionId}?api-version=2021-04-01-preview");
+            actual.PutUrl.Should().Be($"subscriptions/{encodedSubscriptionId}?api-version=2021-04-01-preview");
             var actualData = (CreateSubscriptionRequestBody)actual.Data;
             actualData.Properties.DisplayName.Should().Be(subscriptionId);
             actualData.Properties.Scope.Should().Be($"/products/{productId}");

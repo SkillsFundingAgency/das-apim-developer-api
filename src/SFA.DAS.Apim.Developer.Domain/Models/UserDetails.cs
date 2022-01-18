@@ -1,3 +1,5 @@
+using System;
+
 namespace SFA.DAS.Apim.Developer.Domain.Models
 {
     public class UserDetails
@@ -8,7 +10,14 @@ namespace SFA.DAS.Apim.Developer.Domain.Models
         public string Email { get; set; }
         public string Password { get ; set ; }
         public string State { get; set; }
-        public string Note { get ; set ; }
+        public UserNote Note { get ; set ; }
         public bool Authenticated { get; set; }
+    }
+    
+    public class UserNote
+    {
+        public string ConfirmEmailLink { get; set; }
+        public int FailedAuthCount { get; set; }
+        public DateTime? AccountLockedDateTime { get; set; }
     }
 }

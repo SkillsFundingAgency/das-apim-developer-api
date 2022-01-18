@@ -36,7 +36,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)
                     && c.State.Equals(command.State)
-                    && c.Note.Equals(command.Note)
+                    && c.Note.ConfirmEmailLink.Equals(command.ConfirmEmailLink)
                 ))).ReturnsAsync(userDetails);
             
             var actual = await handler.Handle(command, CancellationToken.None);

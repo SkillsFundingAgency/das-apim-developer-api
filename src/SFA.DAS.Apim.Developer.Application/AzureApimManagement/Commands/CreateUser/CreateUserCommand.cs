@@ -1,4 +1,5 @@
 using MediatR;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser
 {
@@ -10,6 +11,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Create
         public string Email { get; set; }
         public string Password { get; set; }
         public string State { get ; set ; }
-        public string Note { get ; set ; }
+        public string ConfirmEmailLink { get ; set ; }
     }
 }

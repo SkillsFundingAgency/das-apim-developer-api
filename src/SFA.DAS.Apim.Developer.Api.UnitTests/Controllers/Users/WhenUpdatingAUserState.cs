@@ -35,7 +35,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                         && c.FirstName.Equals(request.FirstName)
                         && c.LastName.Equals(request.LastName)
                         && c.State.Equals(request.State.ToString())
-                        && c.Note.Equals(request.ConfirmEmailLink)
+                        && c.ConfirmEmailLink.Equals(request.ConfirmEmailLink)
                     ),
                     It.IsAny<CancellationToken>())).ReturnsAsync(mediatorResponse);
             
@@ -59,7 +59,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                         && c.FirstName.Equals(request.FirstName)
                         && c.LastName.Equals(request.LastName)
                         && c.State.Equals(request.State.ToString())
-                        && c.Note.Equals(request.ConfirmEmailLink)
+                        && c.ConfirmEmailLink.Equals(request.ConfirmEmailLink)
                     ),
                     It.IsAny<CancellationToken>())).ReturnsAsync(new UpdateUserCommandResponse
                 {

@@ -1,4 +1,5 @@
 using MediatR;
+using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.UpdateUserState
 {
@@ -9,6 +10,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Update
         public string LastName { get; set; }
         public string Email { get; set; }
         public string State { get ; set ; }
-        public string Note { get ; set ; }
+        public string ConfirmEmailLink { get ; set ; }
     }
 }

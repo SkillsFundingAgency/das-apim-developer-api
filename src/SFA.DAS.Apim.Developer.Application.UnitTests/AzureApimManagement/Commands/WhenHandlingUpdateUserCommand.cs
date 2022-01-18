@@ -27,7 +27,30 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Comma
                     && c.FirstName.Equals(command.FirstName)
                     && c.LastName.Equals(command.LastName)
                     && c.State.Equals(command.State)
-                    && c.Note.Equals(command.Note)
+                    && c.Note.ConfirmEmailLink.Equals(command.ConfirmEmailLink)
+                ))).ReturnsAsync(userDetails);
+            
+            var actual = await handler.Handle(command, CancellationToken.None);
+            
+            actual.UserDetails.Should().Be(userDetails);
+        }
+        
+        [Test, MoqAutoData]
+        public async Task Then_The_Command_Is_Handled_And_Service_Called_With_Null_UserNote(
+            UpdateUserCommand command,
+            UserDetails userDetails,
+            [Frozen] Mock<IUserService> userService,
+            UpdateUserCommandHandler handler)
+        {
+            command.ConfirmEmailLink = null;
+            userService.Setup(x => x.UpdateUser(
+                It.Is<UserDetails>(c =>
+                    c.Email.Equals(command.Email)
+                    && c.Id.Equals(command.Id)
+                    && c.FirstName.Equals(command.FirstName)
+                    && c.LastName.Equals(command.LastName)
+                    && c.State.Equals(command.State)
+                    && c.Note == null
                 ))).ReturnsAsync(userDetails);
             
             var actual = await handler.Handle(command, CancellationToken.None);

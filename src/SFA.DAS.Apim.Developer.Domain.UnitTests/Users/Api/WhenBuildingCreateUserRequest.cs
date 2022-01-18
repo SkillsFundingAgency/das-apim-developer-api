@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Web;
 using AutoFixture.NUnit3;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Domain.Models;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
@@ -33,7 +34,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,
                     State = userDetails.State,
-                    Note = userDetails.Note,
+                    Note = JsonConvert.SerializeObject(userDetails.Note),
                     Identities = new List<Identities>
                     {
                         new Identities

@@ -43,6 +43,8 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             userDetails.Email ??= getUserResponse.Email;
             userDetails.FirstName ??= getUserResponse.FirstName;
             userDetails.LastName ??= getUserResponse.LastName;
+            // note cleared if not set due to json serialisation to "null"
+            userDetails.Note ??= getUserResponse.Note;
 
             var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
             

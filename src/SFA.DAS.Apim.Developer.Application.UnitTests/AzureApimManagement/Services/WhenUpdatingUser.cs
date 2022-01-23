@@ -22,7 +22,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         public async Task Then_Updates_User_With_Values_Provided(
             UserDetails userDetails,
             UserResponse createUserApiResponse,
-            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             ApimUserResponseItem apimUserResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
             UserService userService)
@@ -58,7 +57,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         public async Task Then_If_The_User_Is_In_The_Portal_And_No_Email_Then_Updated_Through_Api_And_Non_Supplied_Values_Are_Not_Updated(
             Guid userId,
             UserResponse createUserApiResponse,
-            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
+            UserNote userNote,
             ApimUserResponseItem apimUserResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
             UserService userService)
@@ -74,6 +73,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 State = "Active"
             };
             apimUserResponse.Name = userDetails.Id;
+            apimUserResponse.Properties.Note = JsonConvert.SerializeObject(userNote);
             azureApimManagementService.Setup(x =>
                 x.Get<ApimUserResponseItem>(It.Is<GetApimUserByIdRequest>(c =>
                     c.GetUrl.Contains($"{userDetails.Id}")), "application/json"))
@@ -83,6 +83,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                                                                       && ((CreateUserRequestBody)c.Data).Properties.Email.Equals(apimUserResponse.Properties.Email)
                                                                       && ((CreateUserRequestBody)c.Data).Properties.FirstName.Equals(apimUserResponse.Properties.FirstName)
                                                                       && ((CreateUserRequestBody)c.Data).Properties.LastName.Equals(apimUserResponse.Properties.LastName)
+                                                                      && ((CreateUserRequestBody)c.Data).Properties.Note.Equals(apimUserResponse.Properties.Note)
                                                                       && ((CreateUserRequestBody)c.Data).Properties.State.Equals(userDetails.State)
                     )))
                 .ReturnsAsync(new ApiResponse<UserResponse>(createUserApiResponse, HttpStatusCode.Created, ""));
@@ -100,7 +101,6 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
         public async Task Then_If_The_User_Does_Not_Exist_Then_Null_Is_Returned(
             UserDetails userDetails,
             UserResponse createUserApiResponse,
-            ApiResponse<CreateSubscriptionResponse> createSubscriptionApiResponse,
             ApimUserResponseItem apimUserResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService, 
             UserService userService)

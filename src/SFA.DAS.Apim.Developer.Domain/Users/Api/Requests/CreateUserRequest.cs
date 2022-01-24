@@ -22,7 +22,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
                     LastName = userDetails.LastName,
                     Password = userDetails.Password,
                     State = userDetails.State,
-                    Note = JsonConvert.SerializeObject(userDetails.Note),
+                    Note = userDetails.Note == null ? null : JsonConvert.SerializeObject(userDetails.Note),
                     Identities = new List<Identities>
                     {
                         new Identities

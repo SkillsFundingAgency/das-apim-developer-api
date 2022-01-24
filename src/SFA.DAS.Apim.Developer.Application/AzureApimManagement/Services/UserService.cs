@@ -43,7 +43,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             userDetails.Email ??= getUserResponse.Email;
             userDetails.FirstName ??= getUserResponse.FirstName;
             userDetails.LastName ??= getUserResponse.LastName;
-            // note cleared if not set due to json serialisation to "null"
+            // note cleared if not set
             userDetails.Note ??= getUserResponse.Note;
 
             var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
@@ -125,8 +125,9 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             {
                 return null;
             }
-            
-            if (!result.Body.Properties.Note.TryParseJson(out UserNote userNote))
+
+            UserNote userNote = null;
+            if (result.Body.Properties.Note != null && !result.Body.Properties.Note.TryParseJson(out userNote))
             {
                 userNote =  new UserNote {ConfirmEmailLink = result.Body.Properties.Note};
             }

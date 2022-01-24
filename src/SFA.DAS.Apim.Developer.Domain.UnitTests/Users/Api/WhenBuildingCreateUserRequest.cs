@@ -50,5 +50,35 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
             
             ((CreateUserRequestBody)actual.Data).Should().BeEquivalentTo(expected);
         }
+        
+        [Test, AutoData]
+        public void And_Note_Null_Then_Not_Set(string userId, UserDetails userDetails)
+        {
+            userDetails.Note = null;
+            var expected = new CreateUserRequestBody
+            {
+                Properties = new ApimCreateUserProperties
+                {
+                    Email = userDetails.Email,
+                    FirstName = userDetails.FirstName,
+                    LastName = userDetails.LastName,
+                    Password = userDetails.Password,
+                    State = userDetails.State,
+                    Note = null,
+                    Identities = new List<Identities>
+                    {
+                        new Identities
+                        {
+                            Id = userDetails.Email,
+                            Provider = "Basic"
+                        }
+                    }
+                }
+            };
+            
+            var actual = new CreateUserRequest(userId, userDetails);
+            
+            ((CreateUserRequestBody)actual.Data).Should().BeEquivalentTo(expected);
+        }
     }
 }

@@ -99,21 +99,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 return null;
             }
 
-            if (!result.Body.Values.First().Properties.Note.TryParseJson(out UserNote userNote))
-            {
-                userNote =  new UserNote {ConfirmEmailLink = result.Body.Values.First().Properties.Note};
-            }
-            
-            return new UserDetails
-            {
-                Id = result.Body.Values.First().Name,
-                Password = null,
-                Email = result.Body.Values.First().Properties.Email,
-                FirstName = result.Body.Values.First().Properties.FirstName,
-                LastName = result.Body.Values.First().Properties.LastName,
-                State = result.Body.Values.First().Properties.State,
-                Note = userNote
-            };
+            return ConvertApimUserResponseItemToUserDetails(result.Body.Values.First());
         }
 
         public async Task<UserDetails> GetUserById(string id)
@@ -126,20 +112,25 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 return null;
             }
 
-            UserNote userNote = null;
-            if (result.Body.Properties.Note != null && !result.Body.Properties.Note.TryParseJson(out userNote))
-            {
-                userNote =  new UserNote {ConfirmEmailLink = result.Body.Properties.Note};
-            }
+            return ConvertApimUserResponseItemToUserDetails(result.Body);
+        }
 
+        private UserDetails ConvertApimUserResponseItemToUserDetails(ApimUserResponseItem source)
+        {
+            UserNote userNote = null;
+            if (source.Properties.Note != null && !source.Properties.Note.TryParseJson(out userNote))
+            {
+                userNote =  new UserNote {ConfirmEmailLink = source.Properties.Note};
+            }
+            
             return new UserDetails
             {
-                Id = result.Body.Name,
+                Id = source.Name,
                 Password = null,
-                Email = result.Body.Properties.Email,
-                FirstName = result.Body.Properties.FirstName,
-                LastName = result.Body.Properties.LastName,
-                State = result.Body.Properties.State,
+                Email = source.Properties.Email,
+                FirstName = source.Properties.FirstName,
+                LastName = source.Properties.LastName,
+                State = source.Properties.State,
                 Note = userNote
             };
         }

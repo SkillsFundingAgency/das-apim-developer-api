@@ -186,6 +186,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             if (user.Authenticated && user.Note.FailedAuthCount > 0)
             {
                 user.Note.FailedAuthCount = 0;
+                user.Note.AccountLockedDateTime = null;
                 await UpsertApimUser(user.Id, user);
             }
 

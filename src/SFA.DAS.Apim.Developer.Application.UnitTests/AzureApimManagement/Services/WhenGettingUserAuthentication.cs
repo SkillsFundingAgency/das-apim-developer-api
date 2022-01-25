@@ -123,7 +123,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             UserService userService)
         {
             apimUserResponse.Body.Values.First().Properties.Note =
-                JsonConvert.SerializeObject(new UserNote {ConfirmEmailLink = apimUserResponse.Body.Values.First().Properties.Note, FailedAuthCount = 2});
+                JsonConvert.SerializeObject(new UserNote {ConfirmEmailLink = apimUserResponse.Body.Values.First().Properties.Note, FailedAuthCount = 2, AccountLockedDateTime = DateTime.Now.AddMinutes(5)});
             var expectedAuthenticatedValue = new GetUserAuthenticatedRequest(email, password);
             azureUserAuthenticationManagementService.Setup(x =>
                 x.GetAuthentication<GetUserAuthenticatedResponse>(It.Is<GetUserAuthenticatedRequest>(c =>

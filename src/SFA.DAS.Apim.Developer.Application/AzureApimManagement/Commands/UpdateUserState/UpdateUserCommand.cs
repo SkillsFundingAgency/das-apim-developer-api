@@ -11,5 +11,6 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.Update
         public string Email { get; set; }
         public string State { get ; set ; }
         public string ConfirmEmailLink { get ; set ; }
+        public string Password { get; set; }
     }
 }

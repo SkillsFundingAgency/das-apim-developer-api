@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -40,16 +39,15 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 return null;
             }
             
+            // apim mgmt api required fields: https://docs.microsoft.com/en-us/rest/api/apimanagement/current-ga/user/create-or-update#request-body
             userDetails.Email ??= getUserResponse.Email;
             userDetails.FirstName ??= getUserResponse.FirstName;
             userDetails.LastName ??= getUserResponse.LastName;
+            // note cleared if not set
             userDetails.Note ??= getUserResponse.Note;
-            userDetails.State ??= getUserResponse.State;
-        
-            
-            var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
 
-                
+            var createApimUserTask = await UpsertApimUser(userDetails.Id, userDetails);
+            
             return new UserDetails
             {
                 Id = createApimUserTask.Name,
@@ -101,21 +99,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                 return null;
             }
 
-            if (!result.Body.Values.First().Properties.Note.TryParseJson(out UserNote userNote))
-            {
-                userNote =  new UserNote {ConfirmEmailLink = result.Body.Values.First().Properties.Note};
-            }
-            
-            return new UserDetails
-            {
-                Id = result.Body.Values.First().Name,
-                Password = null,
-                Email = result.Body.Values.First().Properties.Email,
-                FirstName = result.Body.Values.First().Properties.FirstName,
-                LastName = result.Body.Values.First().Properties.LastName,
-                State = result.Body.Values.First().Properties.State,
-                Note = userNote
-            };
+            return ConvertApimUserResponseItemToUserDetails(result.Body.Values.First());
         }
 
         public async Task<UserDetails> GetUserById(string id)
@@ -127,20 +111,26 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             {
                 return null;
             }
-            
-            if (!result.Body.Properties.Note.TryParseJson(out UserNote userNote))
-            {
-                userNote =  new UserNote {ConfirmEmailLink = result.Body.Properties.Note};
-            }
 
+            return ConvertApimUserResponseItemToUserDetails(result.Body);
+        }
+
+        private UserDetails ConvertApimUserResponseItemToUserDetails(ApimUserResponseItem source)
+        {
+            UserNote userNote = null;
+            if (source.Properties.Note != null && !source.Properties.Note.TryParseJson(out userNote))
+            {
+                userNote =  new UserNote {ConfirmEmailLink = source.Properties.Note};
+            }
+            
             return new UserDetails
             {
-                Id = result.Body.Name,
+                Id = source.Name,
                 Password = null,
-                Email = result.Body.Properties.Email,
-                FirstName = result.Body.Properties.FirstName,
-                LastName = result.Body.Properties.LastName,
-                State = result.Body.Properties.State,
+                Email = source.Properties.Email,
+                FirstName = source.Properties.FirstName,
+                LastName = source.Properties.LastName,
+                State = source.Properties.State,
                 Note = userNote
             };
         }
@@ -196,6 +186,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
             if (user.Authenticated && user.Note.FailedAuthCount > 0)
             {
                 user.Note.FailedAuthCount = 0;
+                user.Note.AccountLockedDateTime = null;
                 await UpsertApimUser(user.Id, user);
             }
 

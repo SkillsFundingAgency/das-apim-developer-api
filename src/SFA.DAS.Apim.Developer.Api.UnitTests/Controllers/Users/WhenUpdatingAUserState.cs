@@ -35,6 +35,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                         && c.FirstName.Equals(request.FirstName)
                         && c.LastName.Equals(request.LastName)
                         && c.State.Equals(request.State.ToString())
+                        && c.Password.Equals(request.Password)
                         && c.ConfirmEmailLink.Equals(request.ConfirmEmailLink)
                     ),
                     It.IsAny<CancellationToken>())).ReturnsAsync(mediatorResponse);
@@ -59,6 +60,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
                         && c.FirstName.Equals(request.FirstName)
                         && c.LastName.Equals(request.LastName)
                         && c.State.Equals(request.State.ToString())
+                        && c.Password.Equals(request.Password)
                         && c.ConfirmEmailLink.Equals(request.ConfirmEmailLink)
                     ),
                     It.IsAny<CancellationToken>())).ReturnsAsync(new UpdateUserCommandResponse
@@ -93,6 +95,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Users
             controllerResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             controllerResult.Value.ToString().Should().Contain(errorKey);
         }
+        
         [Test, MoqAutoData]
         public async Task Then_If_Error_An_Internal_Server_Error_Is_Returned(
             string id,

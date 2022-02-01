@@ -10,6 +10,7 @@ using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateUser;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.UpdateUserState;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserAuthenticated;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserByEmail;
 
 namespace SFA.DAS.Apim.Developer.Api.Controllers
 {
@@ -69,6 +70,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     FirstName = request.FirstName,
                     LastName = request.LastName,
                     State = request.State?.ToString(),
+                    Password = request.Password,
                     ConfirmEmailLink = request.ConfirmEmailLink
                 });
 
@@ -107,7 +109,32 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                     return Unauthorized();
                 }
 
-                return Ok((GetUserApiResponse)result);
+                return Ok((GetUserApiResponse)result.User);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
+            }
+        }
+        
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetUser([FromQuery]string email)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetUserByEmailQuery
+                {
+                    Email = email
+                });
+
+                if (result.User == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok((GetUserApiResponse)result.User);
             }
             catch (Exception e)
             {

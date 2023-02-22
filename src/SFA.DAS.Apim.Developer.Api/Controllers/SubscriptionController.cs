@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.Apim.Developer.Api.ApiRequests;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
+using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.DeleteSubscription;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.RenewSubscriptionKeys;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserSubscriptions;
 
@@ -91,6 +92,31 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
                 });
             
                 return Ok((GetUserSubscriptionsApiResponse)result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}/delete/{productId}")]
+        public async Task<IActionResult> DeleteSubscription([FromRoute] string id, [FromRoute] string productId)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteSubscriptionCommand
+                {
+                    ProductName = productId,
+                    InternalUserId = id
+                });
+
+                return NoContent();
+            }
+            catch (ValidationException e)
+            {
+                return BadRequest(e.ValidationResult.ErrorMessage);
             }
             catch (Exception e)
             {

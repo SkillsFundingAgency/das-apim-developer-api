@@ -146,5 +146,28 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
 
             return returnList;
         }
+
+        public async Task DeleteSubscription(string internalUserId,
+            ApimUserType apimUserType, string productName)
+        {
+            var subscriptionId = $"{apimUserType}-{internalUserId}-{productName}";
+            var deleteSubscriptionRequest = new DeleteSubscriptionRequest(subscriptionId);
+            var apiResponse = await _azureApimManagementService.Delete<string>(deleteSubscriptionRequest);
+            
+            await _apimSubscriptionAuditRepository.Insert(
+                new ApimSubscriptionAudit
+                {
+                    Action = "deleted subscription",
+                    ProductName = productName,
+                    UserId = internalUserId,
+                    ApimUserType = (short)apimUserType
+                });
+
+            if (!apiResponse.StatusCode.IsSuccessStatusCode())
+            {
+                _logger.LogError(apiResponse?.ErrorContent);
+                throw new InvalidOperationException($"Response from delete subscription for:[{subscriptionId}] was:[{apiResponse.StatusCode}]");
+            }
+        }
     }
 }

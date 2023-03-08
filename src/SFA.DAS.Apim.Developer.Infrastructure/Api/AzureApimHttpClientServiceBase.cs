@@ -66,6 +66,20 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
             return await ResponseHandler<T>(response);
         }
 
+        public async Task<ApiResponse<T>> Delete<T>(IDeleteRequest deleteRequest)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, deleteRequest.DeleteUrl)
+            {
+                Headers = { Accept = { new MediaTypeWithQualityHeaderValue("application/json") } }
+            };
+
+            await AddAuthorization(request);
+
+            var response = await _httpClient.SendAsync(request);
+
+            return await ResponseHandler<T>(response);
+        }
+
         public async Task<ApiResponse<T>> GetAuthentication<T>(IGetUserAuthenticationRequest getUserAuthenticationRequest, string requestEncoding = "application/json")
         {
             var request = new HttpRequestMessage(HttpMethod.Get, getUserAuthenticationRequest.GetUrl)

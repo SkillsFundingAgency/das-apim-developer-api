@@ -86,7 +86,6 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
         {
             try
             {
-                _logger.LogError("New exception triggered");
                 var result = await _mediator.Send(new GetUserSubscriptionsQuery
                 {
                     InternalUserId = id

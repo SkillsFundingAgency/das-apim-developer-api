@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Data.Repository
         public async Task Insert(ApimAudit apimAudit)
         {
             await _apimDeveloperDataContext.ApimAudit.AddAsync(apimAudit);
-            _apimDeveloperDataContext.SaveChanges();
+            await _apimDeveloperDataContext.SaveChangesAsync();
         }
     }
 }

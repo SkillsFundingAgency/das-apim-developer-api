@@ -86,7 +86,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             Func<Task> act = async () => await subscriptionService.CreateSubscription(internalUserId, apimUserType, productName); 
             
-            act.Should().Throw<InvalidOperationException>();
+            act.Should().ThrowAsync<InvalidOperationException>();
         }
     }
 }

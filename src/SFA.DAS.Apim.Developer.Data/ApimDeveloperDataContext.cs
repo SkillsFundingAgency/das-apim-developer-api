@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.Data.SqlClient;
@@ -15,7 +17,7 @@ namespace SFA.DAS.Apim.Developer.Data
         DbSet<Domain.Entities.ApimAudit> ApimAudit { get; set; }
         DbSet<Domain.Entities.ApimSubscriptionAudit> ApimSubscriptionAudit { get; set; }
 
-        int SaveChanges();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 
     public partial class ApimDeveloperDataContext : DbContext, IApimDeveloperDataContext

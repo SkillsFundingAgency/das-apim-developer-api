@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace SFA.DAS.Apim.Developer.Data.UnitTests.DatabaseMock
 {
-    public class TestAsyncEnumerableEfCore<T>: TestQueryProvider<T>, IAsyncEnumerable<T>, IAsyncQueryProvider
+    public class TestAsyncEnumerableEfCore<T> : TestQueryProvider<T>, IAsyncEnumerable<T>, IAsyncQueryProvider
     {
         public TestAsyncEnumerableEfCore(Expression expression) : base(expression)
         {
@@ -37,5 +36,4 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.DatabaseMock
             return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
         }
     }
-
 }

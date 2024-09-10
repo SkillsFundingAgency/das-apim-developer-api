@@ -81,7 +81,7 @@ namespace SFA.DAS.Apim.Developer.Api
                     .AddDbContextCheck<ApimDeveloperDataContext>();
             }
 
-            services.AddMediatR(typeof(CreateSubscriptionCommand).Assembly);
+            services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(CreateSubscriptionCommand).Assembly));
             services.AddMediatorValidators();
             services.AddServiceRegistration();
             services.AddConfigurationOptions(_configuration);

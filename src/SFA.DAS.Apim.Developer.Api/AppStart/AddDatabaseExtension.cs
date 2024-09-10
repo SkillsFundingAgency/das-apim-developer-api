@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.Apim.Developer.Data;

@@ -90,7 +90,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             Func<Task> act = async () => await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType, productName);
 
-            act.Should().Throw<AggregateException>()
+            act.Should().ThrowAsync<AggregateException>().Result
                 .WithInnerException<ApplicationException>()
                 .WithMessage($"*subscriptions/{expectedSubscriptionId}/regeneratePrimaryKey?*");
         }
@@ -124,7 +124,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             
             Func<Task> act = async () => await subscriptionService.RegenerateSubscriptionKeys(internalUserId, apimUserType, productName);
 
-            act.Should().Throw<AggregateException>()
+            act.Should().ThrowAsync<AggregateException>().Result
                 .Which.InnerExceptions.Count.Should().Be(2);
         }
     }

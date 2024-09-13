@@ -17,7 +17,11 @@ The APIM Developer API connects to the Azure APIM API to allow the following ope
 
 * Get API Products
 * Get Subscriptions
+* Add Subscriptions
+* Renew Subscriptions
+* Delete Subscriptions
 * Create User
+* Update User
 * Authenticate User
 
 #### Get Products
@@ -58,8 +62,9 @@ There is an internal audit process that runs, this stores a record in the databa
 * A code editor that supports Azure functions and .NetCore 3.1
 * An Azure Active Directory account with the appropriate roles as per the [config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apim-developer-api)
 * SQL server - Publish the `SFA.DAS.APIM.Developer.Database` project to create the SQL database
+* Azure Storage Emulator
 
-### Config
+### Local running
 
 The APIM developer api uses the standard Apprenticeship Service configuration. All configuration can be found in the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config).
 
@@ -77,10 +82,12 @@ The APIM developer api uses the standard Apprenticeship Service configuration. A
   "ConfigNames": "SFA.DAS.Apim.Developer.Api",
   "Environment": "LOCAL",
   "Version": "1.0",
-  "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+  "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
   "AllowedHosts": "*"
 }
 ```
+
+You must have the Azure Storage emulator running, and in that a table created called `Configuration` in that table add the following:
 
 Azure Table Storage config
 
@@ -97,7 +104,9 @@ Data:
     "ApimResourceId": "/subscriptions/{SUBSCRIPTION-ID}}/resourceGroups/{RESOURCE-GROUP-NAME}/providers/Microsoft.ApiManagement/service/{APIM-NAME}"
   },
   "ApimDeveloperApi": {
-    "ConnectionString": "Data Source=.;Initial Catalog=SFA.DAS.Apim.Developer;Integrated Security=True;Pooling=False;Connect Timeout=30"
+    "ConnectionString": "Data Source=.;Initial Catalog=SFA.DAS.Apim.Developer;Integrated Security=True;Pooling=False;Connect Timeout=30",
+    "NumberOfAuthFailuresToLockAccount": 3,
+    "AccountLockedDurationMinutes": 10
   },
   "AzureAd": {
     "Identifier": "https://{TENANT-NAME}/{IDENTIFIER}",
@@ -111,7 +120,7 @@ Data:
 * .NetCore 3.1
 * Azure APIM API access with Azure APIM
 * SQL
-* NLog
+* Azure App Insights
 * Azure Table Storage
 * NUnit
 * Moq

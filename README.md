@@ -62,11 +62,11 @@ There is an internal audit process that runs, this stores a record in the databa
 * A code editor that supports Azure functions and .NetCore 3.1
 * An Azure Active Directory account with the appropriate roles as per the [config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apim-developer-api)
 * SQL server - Publish the `SFA.DAS.APIM.Developer.Database` project to create the SQL database
-* Azure Storage Emulator
+* Azure Storage Emulator(https://learn.microsoft.com/en-us/azure/storage/common/storage-use-emulator)
 
 ### Local running
 
-The APIM developer api uses the standard Apprenticeship Service configuration. All configuration can be found in the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config).
+The APIM developer api uses the standard Apprenticeship Service configuration. All configuration can be found in the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apim-developer-api).
 
 * appsettings.json file
 ```json
@@ -126,6 +126,48 @@ Data:
 * Moq
 * FluentAssertions
 
+## How It Works
+
+### Running
+
+* Open command prompt and change directory to _**/src/SFA.DAS.Apim.Developer.Api/**_
+* Run the web project _**/src/SFA.DAS.Apim.Developer.Api.csproj**_
+
+MacOS
+```
+ASPNETCORE_ENVIRONMENT=Development dotnet run
+```
+Windows cmd
+```
+set ASPNETCORE_ENVIRONMENT=Development
+dotnet run
+```
+
+### Application logs
+Application logs are logged to [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) and can be viewed using [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/overview) at https://portal.azure.com
+
+
+## Useful URLs
+
+### Products
+https://localhost:5001/api/products - Endpoint to get API products are retrieved by UserType
+
+### Subscription
+
+https://localhost:5001/api/subscription/{id} - Endpoint to get user's subscription by Id
+
+### User
+
+https://localhost:5001/api/users - Endpoint to get all users
+
+https://localhost:5001/api/users/authenticate - Endpoint to validate user credentials
+
+https://localhost:5001/api/users/{id} - Endpoint to create/update user information
+
 ## 🐛 Known Issues
 
 Do not run using IISExpress
+
+## License
+
+Licensed under the [MIT license](LICENSE)

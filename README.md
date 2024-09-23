@@ -17,7 +17,11 @@ The APIM Developer API connects to the Azure APIM API to allow the following ope
 
 * Get API Products
 * Get Subscriptions
+* Add Subscriptions
+* Renew Subscriptions
+* Delete Subscriptions
 * Create User
+* Update User
 * Authenticate User
 
 #### Get Products
@@ -58,10 +62,11 @@ There is an internal audit process that runs, this stores a record in the databa
 * A code editor that supports Azure functions and .NetCore 3.1
 * An Azure Active Directory account with the appropriate roles as per the [config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apim-developer-api)
 * SQL server - Publish the `SFA.DAS.APIM.Developer.Database` project to create the SQL database
+* Azure Storage Emulator(https://learn.microsoft.com/en-us/azure/storage/common/storage-use-emulator)
 
-### Config
+### Local running
 
-The APIM developer api uses the standard Apprenticeship Service configuration. All configuration can be found in the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config).
+The APIM developer api uses the standard Apprenticeship Service configuration. All configuration can be found in the [das-employer-config repository](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apim-developer-api).
 
 * appsettings.json file
 ```json
@@ -77,10 +82,12 @@ The APIM developer api uses the standard Apprenticeship Service configuration. A
   "ConfigNames": "SFA.DAS.Apim.Developer.Api",
   "Environment": "LOCAL",
   "Version": "1.0",
-  "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+  "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
   "AllowedHosts": "*"
 }
 ```
+
+You must have the Azure Storage emulator running, and in that a table created called `Configuration` in that table add the following:
 
 Azure Table Storage config
 
@@ -97,7 +104,9 @@ Data:
     "ApimResourceId": "/subscriptions/{SUBSCRIPTION-ID}}/resourceGroups/{RESOURCE-GROUP-NAME}/providers/Microsoft.ApiManagement/service/{APIM-NAME}"
   },
   "ApimDeveloperApi": {
-    "ConnectionString": "Data Source=.;Initial Catalog=SFA.DAS.Apim.Developer;Integrated Security=True;Pooling=False;Connect Timeout=30"
+    "ConnectionString": "Data Source=.;Initial Catalog=SFA.DAS.Apim.Developer;Integrated Security=True;Pooling=False;Connect Timeout=30",
+    "NumberOfAuthFailuresToLockAccount": 3,
+    "AccountLockedDurationMinutes": 10
   },
   "AzureAd": {
     "Identifier": "https://{TENANT-NAME}/{IDENTIFIER}",
@@ -111,12 +120,54 @@ Data:
 * .NetCore 3.1
 * Azure APIM API access with Azure APIM
 * SQL
-* NLog
+* Azure App Insights
 * Azure Table Storage
 * NUnit
 * Moq
 * FluentAssertions
 
+## How It Works
+
+### Running
+
+* Open command prompt and change directory to _**/src/SFA.DAS.Apim.Developer.Api/**_
+* Run the web project _**/src/SFA.DAS.Apim.Developer.Api.csproj**_
+
+MacOS
+```
+ASPNETCORE_ENVIRONMENT=Development dotnet run
+```
+Windows cmd
+```
+set ASPNETCORE_ENVIRONMENT=Development
+dotnet run
+```
+
+### Application logs
+Application logs are logged to [Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) and can be viewed using [Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/overview) at https://portal.azure.com
+
+
+## Useful URLs
+
+### Products
+https://localhost:5001/api/products - Endpoint to get API products are retrieved by UserType
+
+### Subscription
+
+https://localhost:5001/api/subscription/{id} - Endpoint to get user's subscription by Id
+
+### User
+
+https://localhost:5001/api/users - Endpoint to get all users
+
+https://localhost:5001/api/users/authenticate - Endpoint to validate user credentials
+
+https://localhost:5001/api/users/{id} - Endpoint to create/update user information
+
 ## 🐛 Known Issues
 
 Do not run using IISExpress
+
+## License
+
+Licensed under the [MIT license](LICENSE)

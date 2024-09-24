@@ -148,8 +148,8 @@ namespace SFA.DAS.Apim.Developer.Api
 
         private bool ConfigurationIsLocalOrDev()
         {
-            return _configuration["Environment"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) ||
-                   _configuration["Environment"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase);
+            return _configuration["Environment"]!.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) ||
+                   _configuration["Environment"]!.Equals("DEV", StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

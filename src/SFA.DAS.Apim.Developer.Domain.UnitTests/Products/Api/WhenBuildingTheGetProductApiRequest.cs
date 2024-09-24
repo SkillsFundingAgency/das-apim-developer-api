@@ -16,7 +16,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Products.Api
             
             var actual = new GetProductApiRequest(name);
 
-            actual.GetUrl.Should().Be($"products/{encodedName}/Apis?api-version=2020-12-01");
+            actual.GetUrl.Should().Be($"products/{encodedName}/Apis?api-version=2023-09-01-preview");
         }
     }
 }

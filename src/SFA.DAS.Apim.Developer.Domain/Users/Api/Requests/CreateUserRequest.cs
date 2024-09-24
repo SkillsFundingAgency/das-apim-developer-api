@@ -35,7 +35,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
             };
         }
 
-        public string PutUrl => $"users/{_apimUserId}?api-version=2021-04-01-preview";
+        public string PutUrl => $"users/{_apimUserId}?api-version=2023-09-01-preview";
         public object Data { get; set; }
     }
 }

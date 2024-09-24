@@ -16,7 +16,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
             
             var actual = new GetUserSubscriptionSecretsRequest(subscriptionId);
 
-            actual.PostUrl.Should().Be($"subscriptions/{encodedSubscriptionId}/listSecrets?api-version=2021-04-01-preview");
+            actual.PostUrl.Should().Be($"subscriptions/{encodedSubscriptionId}/listSecrets?api-version=2023-09-01-preview");
         }
     }
 }

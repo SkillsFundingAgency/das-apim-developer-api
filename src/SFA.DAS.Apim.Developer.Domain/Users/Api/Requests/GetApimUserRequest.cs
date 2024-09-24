@@ -14,7 +14,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
             _email = HttpUtility.UrlEncode(email);
         }
 
-        public string GetUrl => $"users?$filter=email eq '{_email}'&api-version=2021-04-01-preview";
+        public string GetUrl => $"users?$filter=email eq '{_email}'&api-version=2023-09-01-preview";
     }
     
     public class ApimUserResponse

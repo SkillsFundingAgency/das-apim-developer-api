@@ -14,7 +14,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Users.Api.Requests
 
         public string AuthorizationHeaderScheme { get ;}
 
-        public string GetUrl => "identity?api-version=2021-04-01-preview";
+        public string GetUrl => "identity?api-version=2023-09-01-preview";
         public string AuthorizationHeaderValue { get; }
     }
 }

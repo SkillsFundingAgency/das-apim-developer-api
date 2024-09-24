@@ -48,7 +48,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.Last().Name}/Apis")),"application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductTwo, HttpStatusCode.OK, ""));
             azureApimManagementService
-                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwo.Value.First().Name}?api-version=2021-04-01-preview")),"application/vnd.oai.openapi+json"))
+                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwo.Value.First().Name}?api-version=2023-09-01-preview")),"application/vnd.oai.openapi+json"))
                 .ReturnsAsync(new ApiResponse<object>(documentationResponse, HttpStatusCode.OK, ""));
             
             //Act

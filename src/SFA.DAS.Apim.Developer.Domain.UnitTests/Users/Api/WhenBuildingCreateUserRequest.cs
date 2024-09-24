@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
             
             var actual = new CreateUserRequest(userId, userDetails);
 
-            actual.PutUrl.Should().Be($"users/{encodedUserId}?api-version=2021-04-01-preview");
+            actual.PutUrl.Should().Be($"users/{encodedUserId}?api-version=2023-09-01-preview");
         }
 
         [Test, AutoData]

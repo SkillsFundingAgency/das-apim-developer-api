@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +31,7 @@ namespace SFA.DAS.Apim.Developer.Api
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables();
 
-            if (!configuration["Environment"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            if (!configuration!["Environment"]!.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
 #if DEBUG
                 config
@@ -43,7 +41,7 @@ namespace SFA.DAS.Apim.Developer.Api
 
                 config.AddAzureTableStorage(options =>
                     {
-                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                        options.ConfigurationKeys = configuration!["ConfigNames"]!.Split(",");
                         options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
                         options.EnvironmentName = configuration["Environment"];
                         options.PreFixConfigurationKeys = false;
@@ -92,7 +90,7 @@ namespace SFA.DAS.Apim.Developer.Api
                 {
                     if (!ConfigurationIsLocalOrDev())
                     {
-                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string> { }));
+                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string>()));
                     }
                     o.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
                 });

@@ -1,7 +1,6 @@
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 
 namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api

@@ -1,5 +1,4 @@
 using MediatR;
-using SFA.DAS.Apim.Developer.Domain.Models;
 
 namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription
 {

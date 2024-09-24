@@ -4,7 +4,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetUserSubscriptions;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 
 namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
 {

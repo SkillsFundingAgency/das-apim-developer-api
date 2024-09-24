@@ -6,7 +6,6 @@ using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Data.Repository;
-using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Infrastructure.Api;
 

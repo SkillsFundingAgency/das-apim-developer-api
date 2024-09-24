@@ -13,7 +13,7 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
             Data = new { };
         }
         
-        public string PostUrl => $"subscriptions/{_subscriptionId}/regeneratePrimaryKey?api-version=2021-04-01-preview";
+        public string PostUrl => $"subscriptions/{_subscriptionId}/regeneratePrimaryKey?api-version=2023-09-01-preview";
         public object Data { get; set; }
     }
 }

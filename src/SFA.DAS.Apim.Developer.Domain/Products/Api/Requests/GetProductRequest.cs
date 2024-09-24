@@ -12,6 +12,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Products.Api.Requests
             _id = HttpUtility.UrlEncode(id);
         }
 
-        public string GetUrl => $"products/{_id}?api-version=2021-08-01";
+        public string GetUrl => $"products/{_id}?api-version=2023-09-01-preview";
     }
 }

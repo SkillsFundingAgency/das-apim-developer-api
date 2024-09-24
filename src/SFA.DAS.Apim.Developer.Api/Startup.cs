@@ -97,7 +97,7 @@ namespace SFA.DAS.Apim.Developer.Api
                     o.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddOpenTelemetryRegistration(_configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
+            services.AddApplicationInsightsTelemetry();
 
 			services.AddSwaggerGen(c =>
             {

@@ -57,8 +57,6 @@ namespace SFA.DAS.Apim.Developer.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
-
             var apimDeveloperApiConfiguration = _configuration
                 .GetSection("ApimDeveloperApi")
                 .Get<ApimDeveloperApiConfiguration>();
@@ -99,9 +97,9 @@ namespace SFA.DAS.Apim.Developer.Api
                     o.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddApplicationInsightsTelemetry();
+            services.AddOpenTelemetryRegistration(_configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
 
-            services.AddSwaggerGen(c =>
+			services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApimDeveloperApi", Version = "v1" });
                 c.OperationFilter<SwaggerVersionHeaderFilter>();

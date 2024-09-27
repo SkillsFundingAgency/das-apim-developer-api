@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MediatR;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +31,7 @@ namespace SFA.DAS.Apim.Developer.Api
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables();
 
-            if (!configuration["Environment"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
+            if (!configuration!["Environment"]!.Equals("DEV", StringComparison.CurrentCultureIgnoreCase))
             {
 #if DEBUG
                 config
@@ -43,7 +41,7 @@ namespace SFA.DAS.Apim.Developer.Api
 
                 config.AddAzureTableStorage(options =>
                     {
-                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                        options.ConfigurationKeys = configuration!["ConfigNames"]!.Split(",");
                         options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
                         options.EnvironmentName = configuration["Environment"];
                         options.PreFixConfigurationKeys = false;
@@ -81,7 +79,7 @@ namespace SFA.DAS.Apim.Developer.Api
                     .AddDbContextCheck<ApimDeveloperDataContext>();
             }
 
-            services.AddMediatR(typeof(CreateSubscriptionCommand).Assembly);
+            services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(CreateSubscriptionCommand).Assembly));
             services.AddMediatorValidators();
             services.AddServiceRegistration();
             services.AddConfigurationOptions(_configuration);
@@ -92,10 +90,10 @@ namespace SFA.DAS.Apim.Developer.Api
                 {
                     if (!ConfigurationIsLocalOrDev())
                     {
-                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string> { }));
+                        o.Conventions.Add(new AuthorizeControllerModelConvention(new List<string>()));
                     }
                     o.Conventions.Add(new ApiExplorerGroupPerVersionConvention());
-                }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
 
             services.AddOpenTelemetryRegistration(_configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
 
@@ -148,8 +146,8 @@ namespace SFA.DAS.Apim.Developer.Api
 
         private bool ConfigurationIsLocalOrDev()
         {
-            return _configuration["Environment"].Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) ||
-                   _configuration["Environment"].Equals("DEV", StringComparison.CurrentCultureIgnoreCase);
+            return _configuration["Environment"]!.Equals("LOCAL", StringComparison.CurrentCultureIgnoreCase) ||
+                   _configuration["Environment"]!.Equals("DEV", StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Users.Api
             var actual = new GetApimUserByIdRequest(id);
             
             //assert
-            actual.GetUrl.Should().Be($"users/{encodedId}?api-version=2021-04-01-preview");
+            actual.GetUrl.Should().Be($"users/{encodedId}?api-version=2023-09-01-preview");
         }
     }
 }

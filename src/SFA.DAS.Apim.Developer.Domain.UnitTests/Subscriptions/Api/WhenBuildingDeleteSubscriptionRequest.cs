@@ -19,7 +19,7 @@ namespace SFA.DAS.Apim.Developer.Domain.UnitTests.Subscriptions.Api
             
             var actual = new DeleteSubscriptionRequest(subscriptionId);
 
-            actual.DeleteUrl.Should().Be($"subscriptions/{encodedSubscriptionId}?api-version=2021-04-01-preview");
+            actual.DeleteUrl.Should().Be($"subscriptions/{encodedSubscriptionId}?api-version=2023-09-01-preview");
         }
     }
 }

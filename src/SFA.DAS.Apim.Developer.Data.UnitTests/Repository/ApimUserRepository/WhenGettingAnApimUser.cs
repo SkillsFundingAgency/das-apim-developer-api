@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Data.UnitTests.DatabaseMock;

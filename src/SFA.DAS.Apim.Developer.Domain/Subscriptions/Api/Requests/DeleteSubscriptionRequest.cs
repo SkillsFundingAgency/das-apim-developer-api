@@ -12,6 +12,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Requests
             _subscriptionId = subscriptionId;
         }
 
-        public string DeleteUrl => $"subscriptions/{HttpUtility.UrlEncode(_subscriptionId)}?api-version=2021-04-01-preview";
+        public string DeleteUrl => $"subscriptions/{HttpUtility.UrlEncode(_subscriptionId)}?api-version=2023-09-01-preview";
     }
 }

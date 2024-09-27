@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 
@@ -19,7 +16,7 @@ namespace SFA.DAS.Apim.Developer.Data.Repository
         public async Task Insert(ApimSubscriptionAudit apimSubscriptionAudit)
         {
             await _apimDeveloperDataContext.ApimSubscriptionAudit.AddAsync(apimSubscriptionAudit);
-            _apimDeveloperDataContext.SaveChanges();
+            await _apimDeveloperDataContext.SaveChangesAsync();
         }
     }
 }

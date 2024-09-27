@@ -40,7 +40,7 @@ namespace SFA.DAS.Apim.Developer.Data.UnitTests.Repository.ApimSubscriptionAudit
 
             //Assert
             _apimDeveloperDataContext.Verify(x => x.ApimSubscriptionAudit.AddAsync(_apimSubscriptionAudit, It.IsAny<CancellationToken>()), Times.Once);
-            _apimDeveloperDataContext.Verify(x => x.SaveChanges(), Times.Once);
+            _apimDeveloperDataContext.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

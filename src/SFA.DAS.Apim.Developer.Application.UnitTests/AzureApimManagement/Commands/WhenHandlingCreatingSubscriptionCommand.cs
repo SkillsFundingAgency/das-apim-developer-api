@@ -7,10 +7,8 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;
-using SFA.DAS.Apim.Developer.Domain.Entities;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api;
 using SFA.DAS.Testing.AutoFixture;
 using ValidationResult = SFA.DAS.Apim.Developer.Domain.Validation.ValidationResult;
 

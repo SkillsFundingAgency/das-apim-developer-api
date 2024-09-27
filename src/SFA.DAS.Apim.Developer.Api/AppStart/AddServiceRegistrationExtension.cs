@@ -6,7 +6,6 @@ using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Data.Repository;
-using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Infrastructure.Api;
 
@@ -14,6 +13,9 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
 {
     public static class AddServiceRegistrationExtension
     {
+        private const int MaxRetries = 2;
+        private static readonly TimeSpan NetworkTimeout = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan Delay = TimeSpan.FromMilliseconds(100);
         public static void AddServiceRegistration(this IServiceCollection services)
         {
             services.AddHttpClient<IAzureApimManagementService, AzureApimManagementService>()
@@ -27,10 +29,22 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddSingleton(new ChainedTokenCredential(
-                new ManagedIdentityCredential(),
-                new AzureCliCredential(),
-                new VisualStudioCodeCredential(),
-                new VisualStudioCredential())
+                new ManagedIdentityCredential(options: new TokenCredentialOptions
+                {
+                    Retry = { NetworkTimeout = NetworkTimeout, MaxRetries = MaxRetries, Delay = Delay }
+                }),
+                new AzureCliCredential(options: new AzureCliCredentialOptions
+                {
+                    Retry = { NetworkTimeout = NetworkTimeout, MaxRetries = MaxRetries, Delay = Delay }
+                }),
+                new VisualStudioCredential(options: new VisualStudioCredentialOptions
+                {
+                    Retry = { NetworkTimeout = NetworkTimeout, MaxRetries = MaxRetries, Delay = Delay }
+                }),
+                new VisualStudioCodeCredential(options: new VisualStudioCodeCredentialOptions()
+                {
+                    Retry = { NetworkTimeout = NetworkTimeout, MaxRetries = MaxRetries, Delay = Delay }
+                }))
             );
 
             services.AddTransient<IApimUserRepository, ApimUserRepository>();

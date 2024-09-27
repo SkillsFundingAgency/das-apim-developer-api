@@ -9,7 +9,6 @@ using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
-using SFA.DAS.Apim.Developer.Domain.Subscriptions.Api.Responses;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Requests;
 using SFA.DAS.Apim.Developer.Domain.Users.Api.Responses;
 using SFA.DAS.Testing.AutoFixture;

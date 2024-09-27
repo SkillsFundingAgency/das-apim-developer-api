@@ -13,7 +13,6 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Api.ApiResponses;
 using SFA.DAS.Apim.Developer.Api.Controllers;
-using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Queries.GetProducts;
 using SFA.DAS.Testing.AutoFixture;
 

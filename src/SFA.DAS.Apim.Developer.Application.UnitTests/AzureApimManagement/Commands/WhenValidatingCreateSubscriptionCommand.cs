@@ -1,6 +1,4 @@
-using System;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Commands.CreateSubscription;

@@ -150,7 +150,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                                                 ""openapi"": ""3.0.1"",
                                                 ""info"": {
                                                     ""title"": ""Recruitment API"",
-                                                    ""description"": ""Create an advert on Find an apprenticeship using your existing systems."",
+                                                    ""description"": ""Create adverts for Find an apprenticeship using your own system."",
                                                     ""version"": ""1""
                                                 },
                                                 ""servers"": [

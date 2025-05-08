@@ -76,9 +76,10 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         }
         
         [Test, AutoData]
-        public void Then_The_Version_Header_Is_Added_To_The_Documentation(Product product)
+        public void Then_The_Version_Header_Is_Added_To_The_Documentation_And_Version_Set_As_Last_Char_Of_Product(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Name = "Some-Awesome-Api-Name-v8";
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -92,6 +93,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                 .Any(c => c["name"].Value<string>() == "X-Version").Should().BeTrue();
             actualObject["paths"].Last().Last().Last().Children()["parameters"].Values()
                 .Any(c => c["name"].Value<string>() == "X-Version").Should().BeTrue();
+            actualObject["paths"].First().First().First().Children()["parameters"].Values()["example"].Values<string>()
+                .First().Should().Be("8");
         }
 
         [Test, AutoData]

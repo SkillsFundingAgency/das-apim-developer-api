@@ -34,8 +34,9 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public static implicit operator GetProductsApiResponseItem(Product source)
         {
             var isSandbox = source.Id.EndsWith("sandbox", StringComparison.InvariantCultureIgnoreCase);
+            var xVersionNumber = source.Name.ToArray().Last().ToString();
 
-            var documentationObject = PrepareOpenApiDocumentation(source, isSandbox);
+            var documentationObject = PrepareOpenApiDocumentation(source, isSandbox, xVersionNumber);
 
             return new GetProductsApiResponseItem
             {
@@ -47,11 +48,11 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             };
         }
 
-        private static string PrepareOpenApiDocumentation(Product source, bool isSandbox)
+        private static string PrepareOpenApiDocumentation(Product source, bool isSandbox, string xVersionNumber)
         {
             var notRequiredSecurityHeaders = new List<string>
                 { "x-request-context-subscription-name", "x-request-context-subscription-is-sandbox" };
-            var headerVersion = JObject.Parse(JsonConvert.SerializeObject(new HeaderVersion()));
+            var headerVersion = JObject.Parse(JsonConvert.SerializeObject(new HeaderVersion(xVersionNumber)));
 
             var documentationObject = JObject.Parse(source.Documentation);
             documentationObject["security"]?.FirstOrDefault(c => c["apiKeyQuery"] != null)?.Remove();
@@ -100,7 +101,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
                         else
                         {
                             thirdPath.Children().Values().FirstOrDefault().AddAfterSelf(new JProperty("parameters",
-                                JArray.Parse(JsonConvert.SerializeObject(new List<HeaderVersion> { new HeaderVersion() }))));
+                                JArray.Parse(JsonConvert.SerializeObject(new List<HeaderVersion> { new HeaderVersion(xVersionNumber) }))));
                             break;
                         }
                     }
@@ -112,6 +113,10 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         }
         private class HeaderVersion
         {
+            public HeaderVersion(string version)
+            {
+                Example = version;
+            }
             [JsonProperty("name")]
             public string Name = "X-Version";
             [JsonProperty("in")]
@@ -121,7 +126,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             [JsonProperty("required")] 
             public bool Required = true;
             [JsonProperty("example")] 
-            public string Example = "1";
+            public string Example;
             public class SchemaVersion
             {
                 [JsonProperty("type")]

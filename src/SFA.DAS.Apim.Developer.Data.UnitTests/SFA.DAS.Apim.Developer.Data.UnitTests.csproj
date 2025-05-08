@@ -5,7 +5,7 @@
     <ProjectGuid>0CA16441-4C8B-4FC3-BD23-08F25F491336</ProjectGuid>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.13.2" />
+    <PackageReference Include="Azure.Identity" Version="1.12.0" />
     <PackageReference Include="FluentAssertions" Version="6.12.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -14,7 +14,7 @@
     <PackageReference Include="NUnit.Analyzers" Version="4.3.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="SFA.DAS.Testing.AutoFixture" Version="17.1.103" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>

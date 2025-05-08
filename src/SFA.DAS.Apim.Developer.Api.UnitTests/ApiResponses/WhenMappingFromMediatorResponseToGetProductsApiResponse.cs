@@ -112,7 +112,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         }
 
         [Test, AutoData]
-        public void Then_The_Servers_Url_Section_Is_Updated(Product product)
+        public void Then_The_Servers_Url_Section_Is_Updated_And_Secure_EndPoint_Removed(Product product)
         {
             product.Documentation = testDocumentation;
             
@@ -156,6 +156,9 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                                                 ""servers"": [
                                                     {
                                                         ""url"": ""https://something-gateway.apprenticeships.education.gov.uk/something""
+                                                    },
+                                                    {
+                                                        ""url"": ""https://secure-something-gateway.apprenticeships.education.gov.uk/something""
                                                     }
                                                 ],
                                                 ""paths"": {

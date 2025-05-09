@@ -84,9 +84,9 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 new()
                 {
                     Id = product.Name,
-                    Name = apiProductTwoItem.Name,
-                    DisplayName = apiProductTwoItem.Properties.DisplayName,
-                    Description = apiProductTwoItem.Properties.Description,
+                    Name = apiProductTwoItem2.Name,
+                    DisplayName = apiProductTwoItem2.Properties.DisplayName,
+                    Description = apiProductTwoItem2.Properties.Description,
                     Documentation = documentationResponse2,
                     Documents = new Dictionary<string, string>
                     {

@@ -54,9 +54,9 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                     returnList.Add(new Product
                     {
                         Id = value.Name,
-                        Name = apiDetail.Body.Value.First().Name,
-                        DisplayName = apiDetail.Body.Value.First().Properties.DisplayName,
-                        Description = apiDetail.Body.Value.First().Properties.Description,
+                        Name = apiDetail.Body.Value.Last().Name,
+                        DisplayName = apiDetail.Body.Value.Last().Properties.DisplayName,
+                        Description = apiDetail.Body.Value.Last().Properties.Description,
                         Documentation = documents.Last().Value,
                         Documents = documents
                     });

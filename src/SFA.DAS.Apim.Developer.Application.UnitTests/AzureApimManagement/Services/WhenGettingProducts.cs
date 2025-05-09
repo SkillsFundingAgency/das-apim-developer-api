@@ -37,7 +37,8 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     Name = apiProductTwoItem.Name,
                     DisplayName = apiProductTwoItem.Properties.DisplayName,
                     Description = apiProductTwoItem.Properties.Description,
-                    Documentation = documentationResponse
+                    Documentation = documentationResponse,
+                    Documents = new Dictionary<string, string>{{apiProductTwoItem.Name, documentationResponse}}
                 }
             };
             apiProductOne.Count = 0;
@@ -80,21 +81,18 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             apiProductTwo.Value = [apiProductTwoItem,apiProductTwoItem2];
             var expectedResponse = new List<Product>
             {
-                new Product
+                new()
                 {
                     Id = product.Name,
                     Name = apiProductTwoItem.Name,
                     DisplayName = apiProductTwoItem.Properties.DisplayName,
                     Description = apiProductTwoItem.Properties.Description,
-                    Documentation = documentationResponse
-                },
-                new Product
-                {
-                    Id = product.Name,
-                    Name = apiProductTwoItem2.Name,
-                    DisplayName = apiProductTwoItem2.Properties.DisplayName,
-                    Description = apiProductTwoItem2.Properties.Description,
-                    Documentation = documentationResponse2
+                    Documentation = documentationResponse2,
+                    Documents = new Dictionary<string, string>
+                    {
+                        {apiProductTwoItem.Name, documentationResponse},
+                        {apiProductTwoItem2.Name, documentationResponse2}
+                    }
                 }
             };
             apiResponse.Value = [product];

@@ -29,22 +29,29 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
         public string DisplayName { get ; set ; }
         public string Description { get ; set ; }
         public string Documentation { get ; set ; }
+        public Dictionary<string,string> Documents { get; set; }
 
 
         public static implicit operator GetProductsApiResponseItem(Product source)
         {
             var isSandbox = source.Id.EndsWith("sandbox", StringComparison.InvariantCultureIgnoreCase);
-            var xVersionNumber = source.Name.ToArray().Last().ToString();
-
-            var documentationObject = PrepareOpenApiDocumentation(source, isSandbox, xVersionNumber);
-
+            var documents = new Dictionary<string, string>();
+            foreach (var sourceDocument in source.Documents)
+            {
+                var xVersionNumber = sourceDocument.Key.ToArray().Last().ToString();
+                var documentationObject = PrepareOpenApiDocumentation(source, isSandbox, xVersionNumber);    
+                documents.Add(sourceDocument.Key, documentationObject);
+            }
+            
+            
             return new GetProductsApiResponseItem
             {
                 Id = source.Id,
                 Name = source.Name,
                 Description = source.Description,
                 DisplayName = source.DisplayName,
-                Documentation = documentationObject
+                Documentation = documents.Last().Value,
+                Documents = documents
             };
         }
 

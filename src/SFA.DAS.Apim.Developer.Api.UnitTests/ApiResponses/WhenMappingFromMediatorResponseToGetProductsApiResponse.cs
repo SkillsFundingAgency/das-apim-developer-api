@@ -23,7 +23,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             var actual = (GetProductsApiResponse)source;
             
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
-                options.Excluding(product => product.Documentation));
+                options.Excluding(product => product.Documentation)
+                .Excluding(product => product.Documents));
         }
         
         [Test, AutoData]
@@ -33,6 +34,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             {
                 product.Id = product + "-Sandbox";
                 product.Documentation = JsonConvert.SerializeObject(documentation);
+                product.Documents = new Dictionary<string, string>
+                    { { product.Name, JsonConvert.SerializeObject(documentation) } };
             }
             var actual = (GetProductsApiResponse)source;
             
@@ -60,6 +63,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Non_Required_Headers_Are_Removed_From_The_Documentation(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Documents = new Dictionary<string, string> { { "Some-Awesome-Api-Name-v8", testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -80,6 +84,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         {
             product.Documentation = testDocumentation;
             product.Name = "Some-Awesome-Api-Name-v8";
+            product.Documents = new Dictionary<string, string> { { "Some-Awesome-Api-Name-v8", testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }

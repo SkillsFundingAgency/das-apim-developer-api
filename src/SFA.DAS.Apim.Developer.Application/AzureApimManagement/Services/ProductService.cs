@@ -48,7 +48,7 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                             await _azureApimManagementService.Get<object>(
                                 new GetProductApiDocumentationRequest(getProductApiItem.Name), "application/vnd.oai.openapi+json");
                     
-                        documents.Add(getProductApiItem.Name,documentation.Body.ToString());
+                        documents.Add(getProductApiItem.Name.ToLower(),documentation.Body.ToString());
                     }
                     
                     returnList.Add(new Product

@@ -38,7 +38,7 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     DisplayName = apiProductTwoItem.Properties.DisplayName,
                     Description = apiProductTwoItem.Properties.Description,
                     Documentation = documentationResponse,
-                    Documents = new Dictionary<string, string>{{apiProductTwoItem.Name, documentationResponse}}
+                    Documents = new Dictionary<string, string>{{apiProductTwoItem.Name.ToLower(), documentationResponse}}
                 }
             };
             apiProductOne.Count = 0;
@@ -90,8 +90,8 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                     Documentation = documentationResponse2,
                     Documents = new Dictionary<string, string>
                     {
-                        {apiProductTwoItem.Name, documentationResponse},
-                        {apiProductTwoItem2.Name, documentationResponse2}
+                        {apiProductTwoItem.Name.ToLower(), documentationResponse},
+                        {apiProductTwoItem2.Name.ToLower(), documentationResponse2}
                     }
                 }
             };

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace SFA.DAS.Apim.Developer.Domain.Models
 {
     public class Product
@@ -7,5 +9,6 @@ namespace SFA.DAS.Apim.Developer.Domain.Models
         public string Description { get ; set ; }
         public string Id { get ; set ; }
         public string Documentation { get ; set ; }
+        public Dictionary<string,string> Documents { get ; set ; }
     }
 }

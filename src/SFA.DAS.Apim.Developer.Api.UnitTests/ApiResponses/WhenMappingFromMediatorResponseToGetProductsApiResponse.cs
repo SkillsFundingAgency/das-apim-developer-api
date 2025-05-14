@@ -19,11 +19,14 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             foreach (var sourceProduct in source.Products)
             {
                 sourceProduct.Documentation = JsonConvert.SerializeObject(documentation);
+                sourceProduct.Documents = new Dictionary<string, string>
+                    { { sourceProduct.Name, JsonConvert.SerializeObject(documentation) } };
             }
             var actual = (GetProductsApiResponse)source;
             
             actual.Products.Should().BeEquivalentTo(source.Products, options => 
-                options.Excluding(product => product.Documentation));
+                options.Excluding(product => product.Documentation)
+                .Excluding(product => product.Documents));
         }
         
         [Test, AutoData]
@@ -33,6 +36,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             {
                 product.Id = product + "-Sandbox";
                 product.Documentation = JsonConvert.SerializeObject(documentation);
+                product.Documents = new Dictionary<string, string>
+                    { { product.Name, JsonConvert.SerializeObject(documentation) } };
             }
             var actual = (GetProductsApiResponse)source;
             
@@ -44,6 +49,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Non_Required_Security_Query_Options_Is_Removed_From_The_Documentation(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -60,6 +67,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Non_Required_Headers_Are_Removed_From_The_Documentation(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Documents = new Dictionary<string, string> { { "Some-Awesome-Api-Name-v8", testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -76,9 +84,11 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         }
         
         [Test, AutoData]
-        public void Then_The_Version_Header_Is_Added_To_The_Documentation(Product product)
+        public void Then_The_Version_Header_Is_Added_To_The_Documentation_And_Version_Set_As_Last_Char_Of_Product(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Name = "Some-Awesome-Api-Name-v8";
+            product.Documents = new Dictionary<string, string> { { "Some-Awesome-Api-Name-v8", testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -92,12 +102,16 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                 .Any(c => c["name"].Value<string>() == "X-Version").Should().BeTrue();
             actualObject["paths"].Last().Last().Last().Children()["parameters"].Values()
                 .Any(c => c["name"].Value<string>() == "X-Version").Should().BeTrue();
+            actualObject["paths"].First().First().First().Children()["parameters"].Values()["example"].Values<string>()
+                .First().Should().Be("8");
         }
 
         [Test, AutoData]
         public void Then_The_SecurityScheme_For_Query_Is_Removed(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -112,10 +126,11 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         }
 
         [Test, AutoData]
-        public void Then_The_Servers_Url_Section_Is_Updated(Product product)
+        public void Then_The_Servers_Url_Section_Is_Updated_And_Secure_EndPoint_Removed(Product product)
         {
             product.Documentation = testDocumentation;
-            
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -134,6 +149,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             testDocumentation = testDocumentation.Replace("https://something-gateway.apprenticeships.education.gov.uk/something", "https://something-gateway.apprenticeships.education.gov.uk/sandbox/something");
             product.Documentation = testDocumentation;
             product.Id = product + "-Sandbox";
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -156,6 +173,9 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
                                                 ""servers"": [
                                                     {
                                                         ""url"": ""https://something-gateway.apprenticeships.education.gov.uk/something""
+                                                    },
+                                                    {
+                                                        ""url"": ""https://secure-something-gateway.apprenticeships.education.gov.uk/something""
                                                     }
                                                 ],
                                                 ""paths"": {

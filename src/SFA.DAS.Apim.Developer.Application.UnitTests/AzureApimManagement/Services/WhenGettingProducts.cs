@@ -22,20 +22,23 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
             GetProductsResponse apiResponse,
             GetProductApisResponse apiProductOne,
             GetProductApisResponse apiProductTwo,
+            GetProductApiItem apiProductTwoItem,
             string documentationResponse,
             [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
             ProductService service)
         {
             //Arrange
+            apiProductTwo.Value = [apiProductTwoItem];
             var expectedResponse = new List<Product>
             {
                 new Product
                 {
                     Id = apiResponse.Value.Last().Name,
-                    Name = apiProductTwo.Value.First().Name,
-                    DisplayName = apiProductTwo.Value.First().Properties.DisplayName,
-                    Description = apiProductTwo.Value.First().Properties.Description,
-                    Documentation = documentationResponse
+                    Name = apiProductTwoItem.Name,
+                    DisplayName = apiProductTwoItem.Properties.DisplayName,
+                    Description = apiProductTwoItem.Properties.Description,
+                    Documentation = documentationResponse,
+                    Documents = new Dictionary<string, string>{{apiProductTwoItem.Name.ToLower(), documentationResponse}}
                 }
             };
             apiProductOne.Count = 0;
@@ -48,8 +51,62 @@ namespace SFA.DAS.Apim.Developer.Application.UnitTests.AzureApimManagement.Servi
                 .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{apiResponse.Value.Last().Name}/Apis")),"application/json"))
                 .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductTwo, HttpStatusCode.OK, ""));
             azureApimManagementService
-                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwo.Value.First().Name}?api-version=2023-09-01-preview")),"application/vnd.oai.openapi+json"))
+                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwoItem.Name}?api-version=2023-09-01-preview")),"application/vnd.oai.openapi+json"))
                 .ReturnsAsync(new ApiResponse<object>(documentationResponse, HttpStatusCode.OK, ""));
+            
+            //Act
+            var actual = await service.GetProducts(new List<string>
+            {
+                apiResponse.Value.First().Properties.Groups.First().Name, 
+                apiResponse.Value.Last().Properties.Groups.Last().Name.ToUpper()
+            });
+
+            //Assert
+            actual.Should().BeEquivalentTo(expectedResponse);
+        }
+
+        [Test, MoqAutoData]
+        public async Task Then_If_There_Are_Multiple_Api_Versions_They_Are_Returned(
+            GetProductItem product,
+            GetProductsResponse apiResponse,
+            GetProductApisResponse apiProductTwo,
+            GetProductApiItem apiProductTwoItem,
+            GetProductApiItem apiProductTwoItem2,
+            string documentationResponse,
+            string documentationResponse2,
+            [Frozen] Mock<IAzureApimManagementService> azureApimManagementService,
+            ProductService service)
+        {
+            //Arrange
+            apiProductTwo.Value = [apiProductTwoItem,apiProductTwoItem2];
+            var expectedResponse = new List<Product>
+            {
+                new()
+                {
+                    Id = product.Name,
+                    Name = apiProductTwoItem2.Name,
+                    DisplayName = apiProductTwoItem2.Properties.DisplayName,
+                    Description = apiProductTwoItem2.Properties.Description,
+                    Documentation = documentationResponse2,
+                    Documents = new Dictionary<string, string>
+                    {
+                        {apiProductTwoItem.Name.ToLower(), documentationResponse},
+                        {apiProductTwoItem2.Name.ToLower(), documentationResponse2}
+                    }
+                }
+            };
+            apiResponse.Value = [product];
+            azureApimManagementService.Setup(x => x.Get<GetProductsResponse>(It.IsAny<GetProductsRequest>(), "application/json"))
+                .ReturnsAsync(new ApiResponse<GetProductsResponse>(apiResponse, HttpStatusCode.OK, ""));
+            azureApimManagementService
+                .Setup(x => x.Get<GetProductApisResponse>(It.Is<GetProductApiRequest>(c => c.GetUrl.Contains($"products/{product.Name}/Apis")),"application/json"))
+                .ReturnsAsync(new ApiResponse<GetProductApisResponse>(apiProductTwo, HttpStatusCode.OK, ""));
+            azureApimManagementService
+                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwoItem.Name}?api-version=2023-09-01-preview")),"application/vnd.oai.openapi+json"))
+                .ReturnsAsync(new ApiResponse<object>(documentationResponse, HttpStatusCode.OK, ""));
+            azureApimManagementService
+                .Setup(x => x.Get<object>(It.Is<GetProductApiDocumentationRequest>(c => c.GetUrl.Contains($"apis/{apiProductTwoItem2.Name}?api-version=2023-09-01-preview")),"application/vnd.oai.openapi+json"))
+                .ReturnsAsync(new ApiResponse<object>(documentationResponse2, HttpStatusCode.OK, ""));
             
             //Act
             var actual = await service.GetProducts(new List<string>

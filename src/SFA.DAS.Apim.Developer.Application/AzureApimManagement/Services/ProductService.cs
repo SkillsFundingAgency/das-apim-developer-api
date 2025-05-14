@@ -40,18 +40,27 @@ namespace SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services
                         continue;
                     }
 
-                    var documentation =
-                        await _azureApimManagementService.Get<object>(
-                            new GetProductApiDocumentationRequest(apiDetail.Body.Value.First().Name), "application/vnd.oai.openapi+json");
+                    var documents = new Dictionary<string, string>();
+                    
+                    foreach (var getProductApiItem in apiDetail.Body.Value)
+                    {
+                        var documentation =
+                            await _azureApimManagementService.Get<object>(
+                                new GetProductApiDocumentationRequest(getProductApiItem.Name), "application/vnd.oai.openapi+json");
+                    
+                        documents.Add(getProductApiItem.Name.ToLower(),documentation.Body.ToString());
+                    }
                     
                     returnList.Add(new Product
                     {
                         Id = value.Name,
-                        Name = apiDetail.Body.Value.First().Name,
-                        DisplayName = apiDetail.Body.Value.First().Properties.DisplayName,
-                        Description = apiDetail.Body.Value.First().Properties.Description,
-                        Documentation = documentation.Body.ToString()
+                        Name = apiDetail.Body.Value.Last().Name,
+                        DisplayName = apiDetail.Body.Value.Last().Properties.DisplayName,
+                        Description = apiDetail.Body.Value.Last().Properties.Description,
+                        Documentation = documents.Last().Value,
+                        Documents = documents
                     });
+                    
                 }
             }
 

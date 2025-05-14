@@ -31,6 +31,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.Controllers.Products
             foreach (var sourceProduct in mediatorResponse.Products)
             {
                 sourceProduct.Documentation = JsonConvert.SerializeObject(documentation);
+                sourceProduct.Documents = new Dictionary<string, string>{{sourceProduct.Name,JsonConvert.SerializeObject(documentation)}};
             }
             mediator.Setup(x => x.Send(It.Is<GetProductsQuery>(c => c.Groups.Equals(groups)), CancellationToken.None))
                 .ReturnsAsync(mediatorResponse);

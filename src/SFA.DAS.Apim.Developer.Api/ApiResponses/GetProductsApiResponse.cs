@@ -39,7 +39,7 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             foreach (var sourceDocument in source.Documents)
             {
                 var xVersionNumber = sourceDocument.Key.ToArray().Last().ToString();
-                var documentationObject = PrepareOpenApiDocumentation(source, isSandbox, xVersionNumber);    
+                var documentationObject = PrepareOpenApiDocumentation(sourceDocument.Value, isSandbox, xVersionNumber);    
                 documents.Add(sourceDocument.Key, documentationObject);
             }
             
@@ -55,13 +55,13 @@ namespace SFA.DAS.Apim.Developer.Api.ApiResponses
             };
         }
 
-        private static string PrepareOpenApiDocumentation(Product source, bool isSandbox, string xVersionNumber)
+        private static string PrepareOpenApiDocumentation(string source, bool isSandbox, string xVersionNumber)
         {
             var notRequiredSecurityHeaders = new List<string>
                 { "x-request-context-subscription-name", "x-request-context-subscription-is-sandbox" };
             var headerVersion = JObject.Parse(JsonConvert.SerializeObject(new HeaderVersion(xVersionNumber)));
 
-            var documentationObject = JObject.Parse(source.Documentation);
+            var documentationObject = JObject.Parse(source);
             documentationObject["security"]?.FirstOrDefault(c => c["apiKeyQuery"] != null)?.Remove();
 
             var secureUrlToRemove = documentationObject["servers"]?

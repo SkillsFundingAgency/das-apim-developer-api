@@ -19,6 +19,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             foreach (var sourceProduct in source.Products)
             {
                 sourceProduct.Documentation = JsonConvert.SerializeObject(documentation);
+                sourceProduct.Documents = new Dictionary<string, string>
+                    { { sourceProduct.Name, JsonConvert.SerializeObject(documentation) } };
             }
             var actual = (GetProductsApiResponse)source;
             
@@ -47,6 +49,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Non_Required_Security_Query_Options_Is_Removed_From_The_Documentation(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -106,6 +110,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_SecurityScheme_For_Query_Is_Removed(Product product)
         {
             product.Documentation = testDocumentation;
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -123,7 +129,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
         public void Then_The_Servers_Url_Section_Is_Updated_And_Secure_EndPoint_Removed(Product product)
         {
             product.Documentation = testDocumentation;
-            
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }
@@ -142,6 +149,8 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.ApiResponses
             testDocumentation = testDocumentation.Replace("https://something-gateway.apprenticeships.education.gov.uk/something", "https://something-gateway.apprenticeships.education.gov.uk/sandbox/something");
             product.Documentation = testDocumentation;
             product.Id = product + "-Sandbox";
+            product.Documents = new Dictionary<string, string>
+                { { product.Name, testDocumentation } };
             var source = new GetProductsQueryResponse
             {
                 Products = new List<Product> { product }

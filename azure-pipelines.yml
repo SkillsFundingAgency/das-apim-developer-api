@@ -106,6 +106,7 @@ stages:
   variables:
   - group: PREPROD Management Resources
   - group: PREPROD Shared Resources
+  - group: PREPROD das-apim-developer-api
   jobs:
   - template: pipeline-templates/job/deploy.yml
     parameters:

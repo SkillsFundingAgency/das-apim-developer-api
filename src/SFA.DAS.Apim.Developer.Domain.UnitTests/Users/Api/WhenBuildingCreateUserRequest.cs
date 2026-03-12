@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Web;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;

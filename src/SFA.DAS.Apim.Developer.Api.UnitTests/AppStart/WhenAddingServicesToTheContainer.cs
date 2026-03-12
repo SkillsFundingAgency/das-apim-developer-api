@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Apim.Developer.Api.AppStart;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -17,7 +18,7 @@ namespace SFA.DAS.Apim.Developer.Api.UnitTests.AppStart
 
         [TestCase(typeof(IAzureApimManagementService))]
         [TestCase(typeof(IAzureUserAuthenticationManagementService))]
-        [TestCase(typeof(IAzureTokenService))]
+        [TestCase(typeof(IAzureClientCredentialHelper))]
         [TestCase(typeof(ISubscriptionService))]
         [TestCase(typeof(IUserService))]
         [TestCase(typeof(IApimUserRepository))]

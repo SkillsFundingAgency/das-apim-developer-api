@@ -35,7 +35,7 @@ namespace SFA.DAS.Apim.Developer.Api.Controllers
             
                 return Ok((GetProductsApiResponse)result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
             }

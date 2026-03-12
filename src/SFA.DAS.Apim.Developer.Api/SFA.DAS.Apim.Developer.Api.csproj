@@ -6,7 +6,7 @@
     <ItemGroup>
         <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.4.0" />
         <PackageReference Include="MediatR" Version="12.5.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
         <PackageReference Include="Azure.Identity" Version="1.18.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.3" />
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="10.0.3" />
@@ -14,7 +14,7 @@
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.3" />
         <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="10.0.3" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.3" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.4" />
         <PackageReference Include="SFA.DAS.Api.Common" Version="17.1.165" />
         <PackageReference Include="SFA.DAS.Configuration.AzureTableStorage" Version="17.1.165" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />

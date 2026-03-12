@@ -4,6 +4,8 @@ using Azure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
+using SFA.DAS.Api.Common.Infrastructure;
+using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Apim.Developer.Application.AzureApimManagement.Services;
 using SFA.DAS.Apim.Developer.Data.Repository;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
@@ -24,12 +26,12 @@ namespace SFA.DAS.Apim.Developer.Api.AppStart
             services.AddHttpClient<IAzureUserAuthenticationManagementService, AzureUserAuthenticationManagementService>()
                 .AddPolicyHandler(HttpClientRetryPolicy());
             
-            services.AddTransient<IAzureTokenService, AzureTokenService>();
+            services.AddTransient<IAzureClientCredentialHelper, AzureClientCredentialHelper>();
             services.AddTransient<ISubscriptionService, SubscriptionService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IProductService, ProductService>();
             services.AddSingleton(new ChainedTokenCredential(
-                new ManagedIdentityCredential(options: new TokenCredentialOptions
+                new ManagedIdentityCredential(options: new ManagedIdentityCredentialOptions()
                 {
                     Retry = { NetworkTimeout = NetworkTimeout, MaxRetries = MaxRetries, Delay = Delay }
                 }),

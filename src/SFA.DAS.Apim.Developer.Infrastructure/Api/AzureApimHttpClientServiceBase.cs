@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Extensions;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Models;
@@ -12,10 +13,10 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 {
     public abstract class AzureApimHttpClientServiceBase
     {
-        private readonly IAzureTokenService _azureTokenService;
+        private readonly IAzureClientCredentialHelper _azureTokenService;
         private readonly HttpClient _httpClient;
 
-        protected AzureApimHttpClientServiceBase(IAzureTokenService azureTokenService, HttpClient httpClient, string baseAddress)
+        protected AzureApimHttpClientServiceBase(IAzureClientCredentialHelper azureTokenService, HttpClient httpClient, string baseAddress)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(baseAddress);
@@ -114,7 +115,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.Api
 
         private async Task AddAuthorization(HttpRequestMessage httpRequestMessage)
         {
-            var token = await _azureTokenService.GetToken();
+            var token = await _azureTokenService.GetAccessTokenAsync("https://management.azure.com/");
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
     }

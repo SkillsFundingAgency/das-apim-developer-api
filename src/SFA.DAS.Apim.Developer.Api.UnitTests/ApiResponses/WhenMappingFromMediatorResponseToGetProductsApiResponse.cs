@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

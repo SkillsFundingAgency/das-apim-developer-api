@@ -4,12 +4,13 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.Api.Common.Interfaces;
 using SFA.DAS.Apim.Developer.Domain.Configuration;
 using SFA.DAS.Apim.Developer.Domain.Interfaces;
 using SFA.DAS.Apim.Developer.Infrastructure.Api;
@@ -29,7 +30,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
         {
             //Arrange
             var url = $"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/";
-            var tokenProvider = new Mock<IAzureTokenService>();
+            var tokenProvider = new Mock<IAzureClientCredentialHelper>();
 
             var response = new HttpResponseMessage
             {
@@ -72,7 +73,7 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
         {
             //Arrange
             var url = $"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/";
-            var tokenProvider = new Mock<IAzureTokenService>();
+            var tokenProvider = new Mock<IAzureClientCredentialHelper>();
 
             var response = new HttpResponseMessage
             {
@@ -141,8 +142,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
         {
             //Arrange
             var url = $"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/";
-            var tokenProvider = new Mock<IAzureTokenService>();
-            tokenProvider.Setup(x => x.GetToken()).ReturnsAsync(authToken);
+            var tokenProvider = new Mock<IAzureClientCredentialHelper>();
+            tokenProvider.Setup(x => x.GetAccessTokenAsync("https://management.azure.com/")).ReturnsAsync(authToken);
 
             var response = new HttpResponseMessage
             {
@@ -186,8 +187,8 @@ namespace SFA.DAS.Apim.Developer.Infrastructure.UnitTests.Api
         {
             //Arrange
             var url = $"https://management.azure.com/{azureApimManagementConfiguration.ApimResourceId}/";
-            var tokenProvider = new Mock<IAzureTokenService>();
-            tokenProvider.Setup(x => x.GetToken()).ReturnsAsync(authToken);
+            var tokenProvider = new Mock<IAzureClientCredentialHelper>();
+            tokenProvider.Setup(x => x.GetAccessTokenAsync("https://management.azure.com/")).ReturnsAsync(authToken);
 
             var response = new HttpResponseMessage
             {

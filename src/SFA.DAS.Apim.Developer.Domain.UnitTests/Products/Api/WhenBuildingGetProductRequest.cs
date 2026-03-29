@@ -1,5 +1,5 @@
 using System.Web;
-using AutoFixture.NUnit3;
+using AutoFixture.NUnit4;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.Apim.Developer.Domain.Products.Api.Requests;
